@@ -15,7 +15,7 @@ public class CardSample : MonoBehaviour, ICardImformation, ICardStep
 
     public CardClassType CardClass => Data.Class;
 
-    public int CardCost => Data.Cost;
+    public int CardCost => Data.RuneStoneCost;
 
     public int CardEnergy => Data.Energy;
 

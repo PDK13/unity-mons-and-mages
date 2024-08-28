@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,16 +5,4 @@ using UnityEngine;
 public class CardConfig : ScriptableObject
 {
     public List<CardData> CardList = new List<CardData>();
-}
-
-[Serializable]
-public class CardData
-{
-    public CardNameType Name;
-    public CardOriginType Origin;
-    public CardClassType Class;
-    [Min(0)] public int Cost;
-    [Min(0)] public int Energy;
-    [Min(0)] public int Attack;
-    public Sprite Image;
 }
