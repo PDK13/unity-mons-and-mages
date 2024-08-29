@@ -48,24 +48,24 @@ public class PlayerData
         if (Stuned)
             DoWandNext(false);
         else
-            GameEvent.PlayerReady(PlayerIndex);
+            GameEvent.PlayerReady(PlayerIndex); //4.Player start their choice
     }
 
     //Choice
 
     public bool DoMediate(int RuneStoneAdd)
     {
+        if (Mediation[0] > 0 && Mediation[1] > 0)
+            return false;
+
         if (Mediation[0] == 0)
-        {
             Mediation[0] = RuneStoneAdd * 2;
-            return true;
-        }
         if (Mediation[1] == 0)
-        {
             Mediation[1] = RuneStoneAdd * 2;
-            return true;
-        }
-        return false;
+
+        GameEvent.PlayerMediate(PlayerIndex);
+
+        return true;
     }
 
     public bool DoCollect(CardData CardData)
@@ -83,6 +83,9 @@ public class PlayerData
             CardQueue.Add(CardData);
         }
 
+        GameEvent.PlayerCollect(PlayerIndex, CardData);
+        GameEvent.CardCollectActive(PlayerIndex, CardData);
+
         return true;
     }
 
@@ -92,7 +95,8 @@ public class PlayerData
         if (WandStep > CardQueue.Count - 1)
             WandStep = 0;
         if (CardActive)
-            CardQueue[WandStep].DoWandActive();
+            CardQueue[WandStep].DoWandActive(PlayerIndex);
+        GameEvent.PlayerWandNext(PlayerIndex);
     }
 
     //Opponent
@@ -131,11 +135,12 @@ public class CardData
 
     public bool DoWandActive(int PlayerIndex)
     {
-        //...
-        //...
+        DoCardActive();
         GameEvent.CardWandActive(PlayerIndex, this);
         return true;
     }
+
+    protected virtual void DoCardActive() { } //Every cards have their own unique active
 }
 
 [Serializable]
