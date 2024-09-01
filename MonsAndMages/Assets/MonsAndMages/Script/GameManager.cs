@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CardConfig m_cardConfig;
 
     private int m_playerCount;
-    private List<PlayerData> m_playerData = new List<PlayerData>(); //Max 4 player, min 2 player in game
-    private int m_playerTurn;
+    private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
+    private int m_playerTurn = 0;
 
     private int m_healthPointStart = 5;
     private int m_runeStoneStart = 5;
@@ -23,38 +23,32 @@ public class GameManager : MonoBehaviour
 
     public CardConfig CardConfig => m_cardConfig;
 
+    public IPlayer PlayerCurrent => m_player[m_playerTurn];
+
     //
 
-    private void Awake()
+    private void OnEnable()
     {
-        GameEvent.onPlayerTurn += OnPlayerTurn;
+        GameEvent.onPlayerEnd += OnPlayerEnd;
+    }
+
+    private void OnDisable()
+    {
+        GameEvent.onPlayerEnd -= OnPlayerEnd;
     }
 
     private void Start()
     {
-        for (int i = 0; i < m_playerCount; i++)
-            m_playerData.Add(new PlayerData(i, m_healthPointStart, m_runeStoneStart));
-
-        GameEvent.PlayerTurn(m_playerTurn);
-    }
-
-    private void OnDestroy()
-    {
-        GameEvent.onPlayerTurn -= OnPlayerTurn;
+        GameEvent.PlayerStart(PlayerCurrent, false);
     }
 
     //
 
-    private void GameStart()
+    private void OnPlayerEnd(IPlayer Player)
     {
-
+        m_playerTurn++;
+        if (m_playerTurn > m_player.Count - 1)
+            m_playerTurn = 0;
+        GameEvent.PlayerStart(PlayerCurrent, false);
     }
-
-    //
-
-    private void OnPlayerTurn(int PlayerIndex)
-    {
-        //Player start choice card from wild
-    }
-
 }

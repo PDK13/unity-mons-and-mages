@@ -1,71 +1,177 @@
 using System;
-using UnityEngine;
 
 public class GameEvent
 {
-    //CardEvent
+    //Value "Update" is FALSE for UI invoke, then value is TRUE for Player and System invoke
 
-    public static Action<int, CardNameType, Transform> onCardChoice;
-    public static Action<int, CardData> onCardCollectActive;
-    public static Action<int, CardData> onCardWandActive;
+    public static Action<IPlayer, bool> onPlayerStart;
+    public static Action<IPlayer, int, bool> onPlayerTakeRuneStoneFromSupply;
+    public static Action<IPlayer, bool> onPlayerTakeRuneStoneFromMediation;
+    public static Action<IPlayer, bool> onPlayerCheckStunned;
 
-    public static void CardChoice(int PlayerIndex, CardNameType CardName, Transform Card)
+    public static Action<IPlayer> onPlayerDoMediate;
+    public static Action<IPlayer> onPlayerDoCollect;
+
+    public static Action<IPlayer, ICard, bool> onCardAbilityOriginActive; //Origin Ability Event
+
+    public static Action<IPlayer, bool, bool> onPlayerDoWandNext;
+    public static Action<IPlayer> onPlayerDoWandActive;
+
+    public static Action<IPlayer, ICard, bool> onCardAttack; //Attack Event
+    public static Action<IPlayer, ICard, bool> onCardEnergyFill;
+    public static Action<IPlayer, ICard, bool> onCardEnergyCheck;
+    public static Action<IPlayer, ICard, bool> onCardEnergyActive;
+    public static Action<IPlayer, ICard, bool> onCardAbilityClassActive; //Class Ability Event
+    public static Action<IPlayer, ICard, bool> onCardAbilitySpellActive; //Spell Ability Event
+
+    public static Action<IPlayer> onPlayerEnd;
+
+    //
+
+    public static void PlayerStart(IPlayer Player, bool Update)
     {
-        onCardChoice?.Invoke(PlayerIndex, CardName, Card);
+        if (Update)
+            Player.TakeRuneStoneFromSupply(1);
+        onPlayerStart?.Invoke(Player, Update);
     }
 
-    public static void CardCollectActive(int PlayerIndex, CardData Card)
+    public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, bool Update)
     {
-        onCardCollectActive?.Invoke(PlayerIndex, Card);
+        if (Update)
+            Player.TakeRuneStoneFromSupply(1);
+        onPlayerTakeRuneStoneFromSupply?.Invoke(Player, Value, Update);
     }
 
-    public static void CardWandActive(int PlayerIndex, CardData Card)
+    public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, bool Update)
     {
-        onCardWandActive?.Invoke(PlayerIndex, Card);
+        if (Update)
+            Player.TakeRuneStoneFromMediation();
+        onPlayerTakeRuneStoneFromMediation?.Invoke(Player, Update);
     }
 
-    //PlayerEvent
-
-    public static Action<int> onPlayerTurn;
-    public static Action<int> onPlayerReady;
-    public static Action<int, CardData> onPlayerCollect;
-    public static Action<int> onPlayerMediate;
-    public static Action<int> onPlayerWandNext;
-    public static Action<int, int> onPlayerAttack;
-    public static Action<int, int> onPlayerHeal;
-
-    public static void PlayerTurn(int PlayerIndex)
+    public static void PlayerCheckStuned(IPlayer Player, bool Update)
     {
-        onPlayerTurn?.Invoke(PlayerIndex);
+        if (Update)
+        {
+            Player.CheckStunned();
+            //
+            if (Player.Stuned)
+                PlayerDoWandNext(Player, false, false);
+            else
+                PlayerEnd(Player);
+        }
+        onPlayerCheckStunned?.Invoke(Player, Update);
     }
 
-    public static void PlayerReady(int PlayerIndex)
+
+    public static void PlayerDoMediate(IPlayer Player)
     {
-        onPlayerReady?.Invoke(PlayerIndex);
+        onPlayerDoMediate?.Invoke(Player);
     }
 
-    public static void PlayerCollect(int PlayerIndex, CardData Card)
+    public static void PlayerDoCollect(IPlayer Player)
     {
-        onPlayerCollect?.Invoke(PlayerIndex, Card);
+        onPlayerDoCollect?.Invoke(Player);
     }
 
-    public static void PlayerMediate(int PlayerIndex)
+
+    public static void CardAbilityOriginActive(IPlayer Player, ICard Type, bool Update)
     {
-        onPlayerMediate?.Invoke(PlayerIndex);
+        if (Update)
+        {
+            Player.DoCardAbilityOriginActive();
+            Player.CardQueue[Player.WandStep].AbilityOriginActive(Player);
+        }
+        onCardAbilityOriginActive?.Invoke(Player, Type, Update);
+    } //Origin Ability Event
+
+
+    public static void PlayerDoWandNext(IPlayer Player, bool CardActive, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoWandNext();
+            if (CardActive)
+                PlayerDoWandActive(Player, false);
+        }
+        onPlayerDoWandNext?.Invoke(Player, CardActive, Update);
     }
 
-    public static void PlayerWandNext(int PlayerIndex)
+    public static void PlayerDoWandActive(IPlayer Player, bool Update)
     {
-        onPlayerWandNext?.Invoke(PlayerIndex);
+        if (Update)
+        {
+            Player.DoWandActive();
+            Player.CardQueue[Player.WandStep].DoWandActive(Player);
+        }
+        onPlayerDoWandActive?.Invoke(Player);
     }
 
-    public static void PlayerAttack(int PlayerIndex, int Value)
+
+    public static void CardAttack(IPlayer Player, ICard Card, bool Update)
     {
-        onPlayerAttack?.Invoke(PlayerIndex, Value);
+        if (Update)
+        {
+            Player.DoCardAttack();
+            //All other Player take damage
+        }
+        onCardAttack?.Invoke(Player, Card, Update);
+    } //Attack Event
+
+    public static void CardEnergyFill(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCardEnergyFill();
+            Player.CardQueue[Player.WandStep].DoEnergyFill(Player, 1);
+        }
+        onCardEnergyFill?.Invoke(Player, Card, Update);
     }
 
-    public static void PlayerHeal(int PlayerIndex, int Value)
+    public static void CardEnergyCheck(IPlayer Player, ICard Card, bool Update)
     {
-        onPlayerHeal?.Invoke(PlayerIndex, Value);
+        if (Update)
+        {
+            Player.DoCardEnergyCheck();
+            if (Player.CardQueue[Player.WandStep].EnergyFull)
+                CardEnergyActive(Player, Card, false);
+        }
+        onCardEnergyCheck?.Invoke(Player, Card, Update);
+    }
+
+    public static void CardEnergyActive(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCardEnergyActive();
+            Player.CardQueue[Player.WandStep].DoEnergyActive(Player);
+        }
+        onCardEnergyActive?.Invoke(Player, Card, Update);
+    }
+
+    public static void CardAbilityClassActive(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCardAbilityClassActive();
+            Player.CardQueue[Player.WandStep].AbilityClassActive(Player);
+        }
+        onCardAbilityClassActive?.Invoke(Player, Card, Update);
+    } //Class Ability Event
+
+    public static void CardSpellClassActive(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCardAbilitySpellActive();
+            Player.CardQueue[Player.WandStep].AbiltySpellActive(Player);
+        }
+        onCardAbilitySpellActive?.Invoke(Player, Card, Update);
+    } //Spell Ability Event
+
+
+    public static void PlayerEnd(IPlayer Player)
+    {
+        onPlayerEnd?.Invoke(Player);
     }
 }
