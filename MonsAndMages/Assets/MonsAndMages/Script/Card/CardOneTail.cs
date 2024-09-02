@@ -33,33 +33,35 @@ public class CardOneTail : MonoBehaviour, ICard
 
     //
 
-    public void DoCardAddActive(IPlayer Player) { }
+    public void DoCollectActive(IPlayer Player) { }
 
-    public void AbilityOriginActive(IPlayer Player) { }
+    public void OriginActive(IPlayer Player) { }
 
-    public void AbilityEnterActive(IPlayer Player) { }
+    public void EnterActive(IPlayer Player) { }
 
-    public void AbilityPassiveActive(IPlayer Player) { }
+    public void PassiveActive(IPlayer Player) { }
 
     //
 
-    public void DoWandActive(IPlayer Player) { }
+    public void WandActive(IPlayer Player) { }
 
-    public void DoAttackActive(IPlayer Player) { }
+    public void AttackActive(IPlayer Player) { }
 
-    public void DoEnergyFill(IPlayer Player, int Value)
+    public void EnergyFill(IPlayer Player, int Value)
     {
         m_data.EnergyCurrent += Value;
     }
 
+    public void EnergyCheck() { }
+
     //
 
-    public void DoEnergyActive(IPlayer Player)
+    public void EnergyActive(IPlayer Player)
     {
         m_data.EnergyCurrent -= m_data.EnergyPoint;
     }
 
-    public void AbilityClassActive(IPlayer Player) { }
+    public void ClassActive(IPlayer Player) { }
 
-    public void AbiltySpellActive(IPlayer Player) { } //Update...!
+    public void SpellActive(IPlayer Player) { } //Update...!
 }

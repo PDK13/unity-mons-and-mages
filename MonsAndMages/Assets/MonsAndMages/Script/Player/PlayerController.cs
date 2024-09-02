@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     //
 
+    public void DoChoice() { }
+
     public void DoMediate(int RuneStoneAdd)
     {
         if (m_data.Mediation[0] > 0 && m_data.Mediation[1] > 0)
@@ -62,8 +64,6 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_data.Mediation[0] = RuneStoneAdd * 2;
         if (m_data.Mediation[1] == 0)
             m_data.Mediation[1] = RuneStoneAdd * 2;
-
-        GameEvent.PlayerDoMediate(this);
     }
 
     public void DoCollect(ICard CardData)
@@ -80,11 +80,9 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_data.CardQueue.RemoveAt(0);
             m_data.CardQueue.Add(CardData);
         }
-
-        GameEvent.PlayerDoCollect(this);
     }
 
-    public void DoCardAbilityOriginActive() { }
+    public void DoCardOriginActive(ICard Card) { }
 
     //
 
@@ -97,15 +95,15 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCardAttack() { }
 
-    public void DoCardEnergyFill() { }
+    public void DoCardEnergyFill(ICard Card) { }
 
-    public void DoCardEnergyCheck() { }
+    public void DoCardEnergyCheck(ICard Card) { }
 
-    public void DoCardEnergyActive() { }
+    public void DoCardEnergyActive(ICard Card) { }
 
-    public void DoCardAbilityClassActive() { }
+    public void DoCardClassActive(ICard Card) { }
 
-    public void DoCardAbilitySpellActive() { }
+    public void DoCardSpellActive(ICard Card) { }
 
     //
 

@@ -30,11 +30,13 @@ public interface IPlayer
 
     //
 
+    void DoChoice();
+
     void DoMediate(int RuneStoneAdd);
 
-    void DoCollect(ICard CardData);
+    void DoCollect(ICard Card);
 
-    void DoCardAbilityOriginActive();
+    void DoCardOriginActive(ICard Card);
 
     //
 
@@ -44,15 +46,15 @@ public interface IPlayer
 
     void DoCardAttack(); //Attack other Players with Card got Wand on lasted moved
 
-    void DoCardEnergyFill(); //Fill energy for Card got Wand on lasted attack
+    void DoCardEnergyFill(ICard Card); //Fill energy for Card got Wand on lasted attack
 
-    void DoCardEnergyCheck(); //Check energy from Card got Wand on lasted filled energy
+    void DoCardEnergyCheck(ICard Card); //Check energy from Card got Wand on lasted filled energy
 
-    void DoCardEnergyActive(); //Active energy from Card got Wand on lasted filled energy
+    void DoCardEnergyActive(ICard Card); //Active energy from Card got Wand on lasted filled energy
 
-    void DoCardAbilityClassActive(); //Active class ability from Card got Wand on lasted filled energy
+    void DoCardClassActive(ICard Card); //Active class ability from Card got Wand on lasted filled energy
 
-    void DoCardAbilitySpellActive(); //Active spell ability from Card got Wand on lasted filled energy
+    void DoCardSpellActive(ICard Card); //Active spell ability from Card got Wand on lasted filled energy
 
     //
 

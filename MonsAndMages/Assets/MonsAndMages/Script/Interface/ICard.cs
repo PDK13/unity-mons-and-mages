@@ -24,27 +24,31 @@
 
     //
 
-    void DoCardAddActive(IPlayer Player); //Kích hoạt khi lên sân
+    void DoCollectActive(IPlayer Player); //Kích hoạt khi lên sân
 
-    void AbilityOriginActive(IPlayer Player); //Kích hoạt kĩ năng tộc khi lên sân
+    void OriginActive(IPlayer Player); //Kích hoạt kĩ năng tộc khi lên sân
 
-    void AbilityEnterActive(IPlayer Player); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
-
-    void AbilityPassiveActive(IPlayer Player); //Kích hoạt kĩ năng bị động
+    void EnterActive(IPlayer Player); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
     //
 
-    void DoWandActive(IPlayer Player); //Kích hoạt khi đặt trượng phép
-
-    void DoAttackActive(IPlayer Player); //Tấn công thường khi đặt trượng phép
-
-    void DoEnergyFill(IPlayer Player, int Value); //Nhận năng lượng khi đặt trượng phép
+    void PassiveActive(IPlayer Player); //Kích hoạt kĩ năng bị động
 
     //
 
-    void DoEnergyActive(IPlayer Player); //Kích hoạt kĩ năng khi đủ năng lượng
+    void WandActive(IPlayer Player); //Kích hoạt khi đặt trượng phép
 
-    void AbilityClassActive(IPlayer Player); //Kích hoạt kĩ năng hệ khi đủ năng lượng
+    void AttackActive(IPlayer Player); //Tấn công thường khi đặt trượng phép
 
-    void AbiltySpellActive(IPlayer Player); //Kích hoạt kĩ năng phép khi đủ năng lượng
+    void EnergyFill(IPlayer Player, int Value); //Nhận năng lượng khi đặt trượng phép
+
+    void EnergyCheck();
+
+    //
+
+    void EnergyActive(IPlayer Player); //Kích hoạt kĩ năng khi đủ năng lượng
+
+    void ClassActive(IPlayer Player); //Kích hoạt kĩ năng hệ khi đủ năng lượng
+
+    void SpellActive(IPlayer Player); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }

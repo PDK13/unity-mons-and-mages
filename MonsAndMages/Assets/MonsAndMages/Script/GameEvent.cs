@@ -9,20 +9,21 @@ public class GameEvent
     public static Action<IPlayer, bool> onPlayerTakeRuneStoneFromMediation;
     public static Action<IPlayer, bool> onPlayerCheckStunned;
 
-    public static Action<IPlayer> onPlayerDoMediate;
-    public static Action<IPlayer> onPlayerDoCollect;
+    public static Action<IPlayer, bool> onPlayerDoChoice;
+    public static Action<IPlayer, int, bool> onPlayerDoMediate;
+    public static Action<IPlayer, ICard, bool> onPlayerDoCollect;
 
-    public static Action<IPlayer, ICard, bool> onCardAbilityOriginActive; //Origin Ability Event
+    public static Action<IPlayer, ICard, bool> onCardAbilityOriginActive; //Origin Event
 
     public static Action<IPlayer, bool, bool> onPlayerDoWandNext;
     public static Action<IPlayer> onPlayerDoWandActive;
 
     public static Action<IPlayer, ICard, bool> onCardAttack; //Attack Event
-    public static Action<IPlayer, ICard, bool> onCardEnergyFill;
+    public static Action<IPlayer, ICard, bool> onCardEnergyFill; //Energy Event
     public static Action<IPlayer, ICard, bool> onCardEnergyCheck;
     public static Action<IPlayer, ICard, bool> onCardEnergyActive;
-    public static Action<IPlayer, ICard, bool> onCardAbilityClassActive; //Class Ability Event
-    public static Action<IPlayer, ICard, bool> onCardAbilitySpellActive; //Spell Ability Event
+    public static Action<IPlayer, ICard, bool> onCardAbilityClassActive; //Class Event
+    public static Action<IPlayer, ICard, bool> onCardAbilitySpellActive; //Spell Event
 
     public static Action<IPlayer> onPlayerEnd;
 
@@ -31,21 +32,27 @@ public class GameEvent
     public static void PlayerStart(IPlayer Player, bool Update)
     {
         if (Update)
-            Player.TakeRuneStoneFromSupply(1);
+            PlayerTakeRuneStoneFromSupply(Player, 1, false);
         onPlayerStart?.Invoke(Player, Update);
     }
 
     public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, bool Update)
     {
         if (Update)
-            Player.TakeRuneStoneFromSupply(1);
+        {
+            Player.TakeRuneStoneFromSupply(Value);
+            PlayerTakeRuneStoneFromMediation(Player, false);
+        }
         onPlayerTakeRuneStoneFromSupply?.Invoke(Player, Value, Update);
     }
 
     public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, bool Update)
     {
         if (Update)
+        {
             Player.TakeRuneStoneFromMediation();
+            PlayerCheckStuned(Player, false);
+        }
         onPlayerTakeRuneStoneFromMediation?.Invoke(Player, Update);
     }
 
@@ -58,32 +65,51 @@ public class GameEvent
             if (Player.Stuned)
                 PlayerDoWandNext(Player, false, false);
             else
-                PlayerEnd(Player);
+                PlayerDoChoice(Player, false);
         }
         onPlayerCheckStunned?.Invoke(Player, Update);
     }
 
 
-    public static void PlayerDoMediate(IPlayer Player)
+    public static void PlayerDoChoice(IPlayer Player, bool Update)
     {
-        onPlayerDoMediate?.Invoke(Player);
+        if (Update)
+            Player.DoChoice();
+        onPlayerDoChoice?.Invoke(Player, Update);
     }
 
-    public static void PlayerDoCollect(IPlayer Player)
-    {
-        onPlayerDoCollect?.Invoke(Player);
-    }
-
-
-    public static void CardAbilityOriginActive(IPlayer Player, ICard Type, bool Update)
+    public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update)
     {
         if (Update)
         {
-            Player.DoCardAbilityOriginActive();
-            Player.CardQueue[Player.WandStep].AbilityOriginActive(Player);
+            Player.DoMediate(RuneStoneAdd);
+            PlayerDoWandNext(Player, true, false);
         }
-        onCardAbilityOriginActive?.Invoke(Player, Type, Update);
-    } //Origin Ability Event
+        onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, Update);
+    } //Mediate Event
+
+    public static void PlayerDoCollect(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCollect(Card);
+            Card.DoCollectActive(Player);
+            CardOriginActive(Player, Card, false);
+        }
+        onPlayerDoCollect?.Invoke(Player, Card, Update);
+    } //Collect Event
+
+
+    public static void CardOriginActive(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+        {
+            Player.DoCardOriginActive(Card);
+            Card.OriginActive(Player);
+            PlayerDoWandNext(Player, true, false);
+        }
+        onCardAbilityOriginActive?.Invoke(Player, Card, Update);
+    } //Origin Event
 
 
     public static void PlayerDoWandNext(IPlayer Player, bool CardActive, bool Update)
@@ -93,6 +119,7 @@ public class GameEvent
             Player.DoWandNext();
             if (CardActive)
                 PlayerDoWandActive(Player, false);
+            //else??
         }
         onPlayerDoWandNext?.Invoke(Player, CardActive, Update);
     }
@@ -102,7 +129,8 @@ public class GameEvent
         if (Update)
         {
             Player.DoWandActive();
-            Player.CardQueue[Player.WandStep].DoWandActive(Player);
+            Player.CardQueue[Player.WandStep].WandActive(Player);
+            CardAttack(Player, Player.CardQueue[Player.WandStep], false);
         }
         onPlayerDoWandActive?.Invoke(Player);
     }
@@ -113,7 +141,9 @@ public class GameEvent
         if (Update)
         {
             Player.DoCardAttack();
+            Card.AttackActive(Player);
             //All other Player take damage
+            CardEnergyFill(Player, Card, false);
         }
         onCardAttack?.Invoke(Player, Card, Update);
     } //Attack Event
@@ -122,19 +152,22 @@ public class GameEvent
     {
         if (Update)
         {
-            Player.DoCardEnergyFill();
-            Player.CardQueue[Player.WandStep].DoEnergyFill(Player, 1);
+            Player.DoCardEnergyFill(Card);
+            Card.EnergyFill(Player, 1);
+            CardEnergyCheck(Player, Card, false);
         }
         onCardEnergyFill?.Invoke(Player, Card, Update);
-    }
+    } //Energy Event
 
     public static void CardEnergyCheck(IPlayer Player, ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardEnergyCheck();
-            if (Player.CardQueue[Player.WandStep].EnergyFull)
+            Player.DoCardEnergyCheck(Card);
+            Card.EnergyCheck();
+            if (Card.EnergyFull)
                 CardEnergyActive(Player, Card, false);
+            //else?
         }
         onCardEnergyCheck?.Invoke(Player, Card, Update);
     }
@@ -143,31 +176,34 @@ public class GameEvent
     {
         if (Update)
         {
-            Player.DoCardEnergyActive();
-            Player.CardQueue[Player.WandStep].DoEnergyActive(Player);
+            Player.DoCardEnergyActive(Card);
+            Card.EnergyActive(Player);
+            CardClassActive(Player, Card, false);
         }
         onCardEnergyActive?.Invoke(Player, Card, Update);
     }
 
-    public static void CardAbilityClassActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardClassActive(IPlayer Player, ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardAbilityClassActive();
-            Player.CardQueue[Player.WandStep].AbilityClassActive(Player);
+            Player.DoCardClassActive(Card);
+            Card.ClassActive(Player);
+            CardSpellActive(Player, Card, false);
         }
         onCardAbilityClassActive?.Invoke(Player, Card, Update);
-    } //Class Ability Event
+    } //Class Event
 
-    public static void CardSpellClassActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardSpellActive(IPlayer Player, ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardAbilitySpellActive();
-            Player.CardQueue[Player.WandStep].AbiltySpellActive(Player);
+            Player.DoCardSpellActive(Card);
+            Card.SpellActive(Player);
+            //Check other card??
         }
         onCardAbilitySpellActive?.Invoke(Player, Card, Update);
-    } //Spell Ability Event
+    } //Spell Event
 
 
     public static void PlayerEnd(IPlayer Player)
