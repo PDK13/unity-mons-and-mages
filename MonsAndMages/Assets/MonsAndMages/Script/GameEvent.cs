@@ -25,6 +25,7 @@ public class GameEvent
     public static Action<IPlayer, ICard, bool> onCardClassActive; //Class Event
     public static Action<IPlayer, ICard, bool> onCardSpellActive; //Spell Event
 
+    public static Action<IPlayer> onPlayerEndCheck;
     public static Action<IPlayer> onPlayerEnd;
 
     //
@@ -113,6 +114,11 @@ public class GameEvent
         onCardSpellActive?.Invoke(Player, Card, Update);
     } //Spell Event
 
+
+    public static void PlayerEndCheck(IPlayer Player)
+    {
+        onPlayerEndCheck?.Invoke(Player);
+    }
 
     public static void PlayerEnd(IPlayer Player)
     {

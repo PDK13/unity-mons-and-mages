@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
         GameEvent.onCardClassActive += OnCardClassActive; //Class Event
         GameEvent.onCardSpellActive += OnCardSpellActive; //Spell Event
 
+        GameEvent.onPlayerEndCheck += OnPlayerEndCheck;
         GameEvent.onPlayerEnd += OnPlayerEnd;
     }
 
@@ -76,6 +77,7 @@ public class GameManager : MonoBehaviour
         GameEvent.onCardClassActive -= OnCardClassActive;
         GameEvent.onCardSpellActive -= OnCardSpellActive;
 
+        GameEvent.onPlayerEndCheck -= OnPlayerEndCheck;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
     }
 
@@ -246,6 +248,11 @@ public class GameManager : MonoBehaviour
         }
     } //Spell Event
 
+
+    private void OnPlayerEndCheck(IPlayer Player)
+    {
+        //Check any card can active energy?!
+    }
 
     private void OnPlayerEnd(IPlayer Player)
     {
