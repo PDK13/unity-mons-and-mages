@@ -243,8 +243,8 @@ public class GameManager : MonoBehaviour
     {
         if (Update)
         {
-            Card.DoSpellActive(Player);
-            GameEvent.PlayerContinueCheck(Player, false);
+            Card.DoSpellActive();
+            GameEvent.PlayerContinueCheck(Card.Player, false);
         }
     } //Spell Event
 

@@ -52,5 +52,5 @@
 
     void DoClassActive(); //Kích hoạt kĩ năng hệ khi đủ năng lượng
 
-    void DoSpellActive(IPlayer Player); //Kích hoạt kĩ năng phép khi đủ năng lượng
+    void DoSpellActive(); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }
