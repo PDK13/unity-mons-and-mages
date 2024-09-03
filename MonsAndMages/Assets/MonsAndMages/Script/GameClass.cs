@@ -7,15 +7,19 @@ public class PlayerData
 {
     public int PlayerIndex;
     [Min(1)] public int HealthPoint;
+    [Min(0)] public int HealthCurrent;
     [Min(0)] public int RuneStone; //Use to get monsters from wild
     [Min(0)] public int StunPoint; //Max 3 to get 1 skip turn
     [Min(0)] public int StunCurrent;
-    public bool Stuned;
     public List<ICard> CardQueue = new List<ICard>();
     [Min(0)] public int WandStep;
     public int[] Mediation = { 0, 0 };
 
+    public bool Stuned => StunCurrent >= StunPoint;
+
     public int WandStepNext => WandStep + 1 > CardQueue.Count - 1 ? 0 : WandStep + 1;
+
+    public bool MediationEmty => Mediation[0] > 0 && Mediation[1] > 0;
 }
 
 [Serializable]
@@ -30,6 +34,8 @@ public class CardData
     [Min(0)] public int AttackPoint;
     [Min(0)] public int GrowCurrent;
     public Sprite Image;
+
+    public IPlayer Player;
 }
 
 [Serializable]

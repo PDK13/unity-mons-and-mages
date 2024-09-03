@@ -26,6 +26,8 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public int AttackCombine => m_data.AttackPoint + m_data.GrowCurrent;
 
+    public IPlayer Player => m_data.Player;
+
     public void Init(CardData Data)
     {
         m_data = Data;
@@ -33,35 +35,38 @@ public class CardOneTail : MonoBehaviour, ICard
 
     //
 
-    public void DoCollectActive(IPlayer Player) { }
+    public void DoCollectActive(IPlayer Player)
+    {
+        m_data.Player = Player;
+    }
 
-    public void OriginActive(IPlayer Player) { }
+    public void DoOriginActive() { }
 
-    public void EnterActive(IPlayer Player) { }
+    public void DoEnterActive() { }
 
-    public void PassiveActive(IPlayer Player) { }
+    public void DoPassiveActive() { }
 
     //
 
-    public void WandActive(IPlayer Player) { }
+    public void DoWandActive() { }
 
-    public void AttackActive(IPlayer Player) { }
+    public void DoAttackActive() { }
 
-    public void EnergyFill(IPlayer Player, int Value)
+    public void DoEnergyFill(int Value)
     {
         m_data.EnergyCurrent += Value;
     }
 
-    public void EnergyCheck() { }
+    public void DoEnergyCheck() { }
 
     //
 
-    public void EnergyActive(IPlayer Player)
+    public void DoEnergyActive()
     {
         m_data.EnergyCurrent -= m_data.EnergyPoint;
     }
 
-    public void ClassActive(IPlayer Player) { }
+    public void DoClassActive() { }
 
-    public void SpellActive(IPlayer Player) { } //Update...!
+    public void DoSpellActive() { } //Update...!
 }

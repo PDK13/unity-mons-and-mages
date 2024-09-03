@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
         GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerCheckStunned += OnPlayerCheckStunned;
+        GameEvent.onPlayerStunnedCheck += OnPlayerCheckStunned;
 
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate; //Mediate Event
@@ -50,7 +50,8 @@ public class GameManager : MonoBehaviour
         GameEvent.onCardClassActive += OnCardClassActive; //Class Event
         GameEvent.onCardSpellActive += OnCardSpellActive; //Spell Event
 
-        GameEvent.onPlayerEndCheck += OnPlayerEndCheck;
+        GameEvent.onPlayerContinueCheck += OnPlayerContinueCheck;
+        GameEvent.onPlayerContinue += OnPlayerContinue;
         GameEvent.onPlayerEnd += OnPlayerEnd;
     }
 
@@ -59,7 +60,7 @@ public class GameManager : MonoBehaviour
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
         GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerCheckStunned -= OnPlayerCheckStunned;
+        GameEvent.onPlayerStunnedCheck -= OnPlayerCheckStunned;
 
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
@@ -77,7 +78,8 @@ public class GameManager : MonoBehaviour
         GameEvent.onCardClassActive -= OnCardClassActive;
         GameEvent.onCardSpellActive -= OnCardSpellActive;
 
-        GameEvent.onPlayerEndCheck -= OnPlayerEndCheck;
+        GameEvent.onPlayerContinueCheck -= OnPlayerContinueCheck;
+        GameEvent.onPlayerContinue -= OnPlayerContinue;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
     }
 
@@ -98,7 +100,7 @@ public class GameManager : MonoBehaviour
     {
         if (Update)
         {
-            Player.TakeRuneStoneFromSupply(Value);
+            Player.DoTakeRuneStoneFromSupply(Value);
             GameEvent.PlayerTakeRuneStoneFromMediation(Player, false);
         }
     }
@@ -107,8 +109,8 @@ public class GameManager : MonoBehaviour
     {
         if (Update)
         {
-            Player.TakeRuneStoneFromMediation();
-            GameEvent.PlayerCheckStuned(Player, false);
+            Player.DoTakeRuneStoneFromMediation();
+            GameEvent.PlayerStunnedCheck(Player, false);
         }
     }
 
@@ -116,7 +118,7 @@ public class GameManager : MonoBehaviour
     {
         if (Update)
         {
-            Player.CheckStunned();
+            Player.DoStunnedCheck();
             //
             if (Player.Stuned)
                 GameEvent.PlayerDoWandNext(Player, false, false);
@@ -130,7 +132,7 @@ public class GameManager : MonoBehaviour
     {
         if (Update)
             Player.DoChoice();
-    }
+    } //Choice Event
 
     private void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update)
     {
@@ -147,18 +149,17 @@ public class GameManager : MonoBehaviour
         {
             Player.DoCollect(Card);
             Card.DoCollectActive(Player);
-            GameEvent.CardOriginActive(Player, Card, false);
+            GameEvent.CardOriginActive(Card, false);
         }
     } //Collect Event
 
 
-    private void OnCardAbilityOriginActive(IPlayer Player, ICard Card, bool Update)
+    private void OnCardAbilityOriginActive(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardOriginActive(Card);
-            Card.OriginActive(Player);
-            GameEvent.PlayerDoWandNext(Player, true, false);
+            Card.DoOriginActive();
+            GameEvent.PlayerDoWandNext(Card.Player, true, false);
         }
     } //Origin Event
 
@@ -170,7 +171,8 @@ public class GameManager : MonoBehaviour
             Player.DoWandNext();
             if (CardActive)
                 GameEvent.PlayerDoWandActive(Player, false);
-            //else??
+            else
+                GameEvent.PlayerEnd(Player);
         }
     }
 
@@ -179,83 +181,95 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Player.DoWandActive();
-            Player.CardQueue[Player.WandStep].WandActive(Player);
-            GameEvent.CardAttack(Player, Player.CardQueue[Player.WandStep], false);
+            GameEvent.CardAttack(Player.CardQueue[Player.WandStep], false);
         }
     }
 
 
-    private void OnCardAttack(IPlayer Player, ICard Card, bool Update)
+    private void OnCardAttack(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardAttack();
-            Card.AttackActive(Player);
-            //All other Player take damage
-            GameEvent.CardEnergyFill(Player, Card, false);
+            Card.DoAttackActive();
+            for (int i = 0; i < m_player.Count; i++)
+            {
+                if (m_player[i] == Card.Player)
+                    continue;
+                m_player[i].HealthChange(-Card.AttackCombine);
+            }
+            GameEvent.CardEnergyFill(Card, false);
         }
     } //Attack Event
 
-    private void OnCardEnergyFill(IPlayer Player, ICard Card, bool Update)
+    private void OnCardEnergyFill(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardEnergyFill(Card);
-            Card.EnergyFill(Player, 1);
-            GameEvent.CardEnergyCheck(Player, Card, false);
+            Card.DoEnergyFill(1);
+            GameEvent.CardEnergyCheck(Card, false);
         }
     } //Energy Event
 
-    private void OnCardEnergyCheck(IPlayer Player, ICard Card, bool Update)
+    private void OnCardEnergyCheck(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardEnergyCheck(Card);
-            Card.EnergyCheck();
+            Card.DoEnergyCheck();
             if (Card.EnergyFull)
-                GameEvent.CardEnergyActive(Player, Card, false);
+                GameEvent.CardEnergyActive(Card, false);
             //else?
         }
     }
 
-    private void OnCardEnergyActive(IPlayer Player, ICard Card, bool Update)
+    private void OnCardEnergyActive(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardEnergyActive(Card);
-            Card.EnergyActive(Player);
-            GameEvent.CardClassActive(Player, Card, false);
+            Card.DoEnergyActive();
+            GameEvent.CardClassActive(Card, false);
         }
     }
 
-    private void OnCardClassActive(IPlayer Player, ICard Card, bool Update)
+    private void OnCardClassActive(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardClassActive(Card);
-            Card.ClassActive(Player);
-            GameEvent.CardSpellActive(Player, Card, false);
+            Card.DoClassActive();
+            GameEvent.CardSpellActive(Card, false);
         }
     } //Class Event
 
-    private void OnCardSpellActive(IPlayer Player, ICard Card, bool Update)
+    private void OnCardSpellActive(ICard Card, bool Update)
     {
         if (Update)
         {
-            Player.DoCardSpellActive(Card);
-            Card.SpellActive(Player);
-            //Check other card??
+            Card.DoSpellActive(Player);
+            GameEvent.PlayerContinueCheck(Player, false);
         }
     } //Spell Event
 
 
-    private void OnPlayerEndCheck(IPlayer Player)
+    private void OnPlayerContinueCheck(IPlayer Player, bool Update)
     {
-        //Check any card can active energy?!
+        if (Update)
+        {
+            Player.DoContinueCheck(Player);
+            if (Player.CardQueue.Exists(t => t.EnergyFull))
+                GameEvent.PlayerContinue(Player, false);
+            else
+                GameEvent.PlayerEnd(Player);
+        }
     }
+
+    private void OnPlayerContinue(IPlayer Player, bool Update)
+    {
+        if (Update)
+            Player.DoContinue(Player);
+    } //Continue Event
 
     private void OnPlayerEnd(IPlayer Player)
     {
+        Player.DoEnd(Player);
         m_playerTurn++;
         if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;

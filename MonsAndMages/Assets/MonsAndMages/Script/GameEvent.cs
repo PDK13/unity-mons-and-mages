@@ -7,25 +7,27 @@ public class GameEvent
     public static Action<IPlayer, bool> onPlayerStart;
     public static Action<IPlayer, int, bool> onPlayerTakeRuneStoneFromSupply;
     public static Action<IPlayer, bool> onPlayerTakeRuneStoneFromMediation;
-    public static Action<IPlayer, bool> onPlayerCheckStunned;
+    public static Action<IPlayer, bool> onPlayerStunnedCheck;
 
     public static Action<IPlayer, bool> onPlayerDoChoice;
     public static Action<IPlayer, int, bool> onPlayerDoMediate; //Mediate Event
     public static Action<IPlayer, ICard, bool> onPlayerDoCollect; //Collect Event
 
-    public static Action<IPlayer, ICard, bool> onCardOriginActive; //Origin Event
+    public static Action<ICard, bool> onCardOriginActive; //Origin Event
 
     public static Action<IPlayer, bool, bool> onPlayerDoWandNext;
     public static Action<IPlayer, bool> onPlayerDoWandActive;
 
-    public static Action<IPlayer, ICard, bool> onCardAttack; //Attack Event
-    public static Action<IPlayer, ICard, bool> onCardEnergyFill; //Energy Event
-    public static Action<IPlayer, ICard, bool> onCardEnergyCheck;
-    public static Action<IPlayer, ICard, bool> onCardEnergyActive;
-    public static Action<IPlayer, ICard, bool> onCardClassActive; //Class Event
-    public static Action<IPlayer, ICard, bool> onCardSpellActive; //Spell Event
+    public static Action<ICard, bool> onCardAttack; //Attack Event
+    public static Action<ICard, bool> onCardEnergyFill; //Energy Event
+    public static Action<ICard, bool> onCardEnergyCheck;
+    public static Action<ICard, bool> onCardEnergyActive;
+    public static Action<ICard, bool> onCardClassActive; //Class Event
+    public static Action<ICard, bool> onCardSpellActive; //Spell Event
 
-    public static Action<IPlayer> onPlayerEndCheck;
+    public static Action<IPlayer, bool> onPlayerContinueCheck;
+    public static Action<IPlayer, bool> onPlayerContinue;
+
     public static Action<IPlayer> onPlayerEnd;
 
     //
@@ -45,31 +47,35 @@ public class GameEvent
         onPlayerTakeRuneStoneFromMediation?.Invoke(Player, Update);
     }
 
-    public static void PlayerCheckStuned(IPlayer Player, bool Update)
+    public static void PlayerStunnedCheck(IPlayer Player, bool Update)
     {
-        onPlayerCheckStunned?.Invoke(Player, Update);
+        onPlayerStunnedCheck?.Invoke(Player, Update);
     }
 
 
     public static void PlayerDoChoice(IPlayer Player, bool Update)
     {
         onPlayerDoChoice?.Invoke(Player, Update);
-    }
+    } //Choice Event
 
     public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update)
     {
+        if (!Player.MediationEmty)
+            return;
         onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, Update);
     } //Mediate Event
 
     public static void PlayerDoCollect(IPlayer Player, ICard Card, bool Update)
     {
+        if (Player.RuneStone < Card.RuneStoneCost)
+            return;
         onPlayerDoCollect?.Invoke(Player, Card, Update);
     } //Collect Event
 
 
-    public static void CardOriginActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardOriginActive(ICard Card, bool Update)
     {
-        onCardOriginActive?.Invoke(Player, Card, Update);
+        onCardOriginActive?.Invoke(Card, Update);
     } //Origin Event
 
 
@@ -84,41 +90,47 @@ public class GameEvent
     }
 
 
-    public static void CardAttack(IPlayer Player, ICard Card, bool Update)
+    public static void CardAttack(ICard Card, bool Update)
     {
-        onCardAttack?.Invoke(Player, Card, Update);
+        onCardAttack?.Invoke(Card, Update);
     } //Attack Event
 
-    public static void CardEnergyFill(IPlayer Player, ICard Card, bool Update)
+    public static void CardEnergyFill(ICard Card, bool Update)
     {
-        onCardEnergyFill?.Invoke(Player, Card, Update);
+        onCardEnergyFill?.Invoke(Card, Update);
     } //Energy Event
 
-    public static void CardEnergyCheck(IPlayer Player, ICard Card, bool Update)
+    public static void CardEnergyCheck(ICard Card, bool Update)
     {
-        onCardEnergyCheck?.Invoke(Player, Card, Update);
+        onCardEnergyCheck?.Invoke(Card, Update);
     }
 
-    public static void CardEnergyActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardEnergyActive(ICard Card, bool Update)
     {
-        onCardEnergyActive?.Invoke(Player, Card, Update);
+        onCardEnergyActive?.Invoke(Card, Update);
     }
 
-    public static void CardClassActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardClassActive(ICard Card, bool Update)
     {
-        onCardClassActive?.Invoke(Player, Card, Update);
+        onCardClassActive?.Invoke(Card, Update);
     } //Class Event
 
-    public static void CardSpellActive(IPlayer Player, ICard Card, bool Update)
+    public static void CardSpellActive(ICard Card, bool Update)
     {
-        onCardSpellActive?.Invoke(Player, Card, Update);
+        onCardSpellActive?.Invoke(Card, Update);
     } //Spell Event
 
 
-    public static void PlayerEndCheck(IPlayer Player)
+    public static void PlayerContinueCheck(IPlayer Player, bool Update)
     {
-        onPlayerEndCheck?.Invoke(Player);
+        onPlayerContinueCheck?.Invoke(Player, Update);
     }
+
+    public static void PlayerContinue(IPlayer Player, bool Update)
+    {
+        onPlayerContinue?.Invoke(Player, Update);
+    } //Continue Event
+
 
     public static void PlayerEnd(IPlayer Player)
     {

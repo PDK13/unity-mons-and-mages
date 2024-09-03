@@ -25,9 +25,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public int[] Mediation => m_data.Mediation;
 
+    public bool MediationEmty => m_data.MediationEmty;
+
     //
 
-    public void TakeRuneStoneFromSupply(int Value)
+    public void DoTakeRuneStoneFromSupply(int Value)
     {
         if (Value <= 0)
         {
@@ -37,7 +39,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_data.RuneStone += 1;
     }
 
-    public void TakeRuneStoneFromMediation()
+    public void DoTakeRuneStoneFromMediation()
     {
         for (int i = 0; i < m_data.Mediation.Length; i++)
         {
@@ -49,7 +51,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
     }
 
-    public void CheckStunned() { }
+    public void DoStunnedCheck() { }
 
     //
 
@@ -57,9 +59,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoMediate(int RuneStoneAdd)
     {
-        if (m_data.Mediation[0] > 0 && m_data.Mediation[1] > 0)
-            return;
-
         if (m_data.Mediation[0] == 0)
             m_data.Mediation[0] = RuneStoneAdd * 2;
         if (m_data.Mediation[1] == 0)
@@ -68,9 +67,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCollect(ICard CardData)
     {
-        if (m_data.RuneStone < CardData.RuneStoneCost)
-            return;
-
         m_data.RuneStone -= CardData.RuneStoneCost;
 
         if (m_data.CardQueue.Count < 5 || CardQueue[0] != null)
@@ -82,8 +78,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
     }
 
-    public void DoCardOriginActive(ICard Card) { }
-
     //
 
     public void DoWandNext()
@@ -91,54 +85,32 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_data.WandStep = m_data.WandStepNext;
     }
 
-    public void DoWandActive() { }
-
-    public void DoCardAttack() { }
-
-    public void DoCardEnergyFill(ICard Card) { }
-
-    public void DoCardEnergyCheck(ICard Card) { }
-
-    public void DoCardEnergyActive(ICard Card) { }
-
-    public void DoCardClassActive(ICard Card) { }
-
-    public void DoCardSpellActive(ICard Card) { }
+    public void DoWandActive()
+    {
+        CardQueue[WandStep].DoWandActive();
+    }
 
     //
 
-    public void TakeStun(int Value = 1)
+    public void DoContinueCheck(IPlayer Player) { }
+
+    public void DoContinue(IPlayer Player) { }
+
+    //
+
+    public void DoEnd(IPlayer Player) { }
+
+    //
+
+    public void StunChange(int Value)
     {
-        if (Value <= 0)
-        {
-            Debug.LogErrorFormat("{0} Stun set to 1", Value);
-            Value = 1;
-        }
-        m_data.StunPoint += Value;
-        if (StunPoint >= 3)
-        {
-            m_data.StunPoint = 0;
-            m_data.Stuned = true;
-        }
+        m_data.StunCurrent += Value;
+        m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
     }
 
-    public void TakeDamage(int Value)
+    public void HealthChange(int Value)
     {
-        if (Value <= 0)
-        {
-            Debug.LogErrorFormat("{0} Damage set to 1", Value);
-            Value = 1;
-        }
-        m_data.HealthPoint -= Value;
-    }
-
-    public void DoHeal(int Value)
-    {
-        if (Value <= 0)
-        {
-            Debug.LogErrorFormat("{0} Heal set to 1", Value);
-            Value = 1;
-        }
-        m_data.HealthPoint += Value;
+        m_data.HealthCurrent += Value;
+        m_data.HealthCurrent = Mathf.Clamp(m_data.HealthCurrent, 0, m_data.HealthPoint);
     }
 }
