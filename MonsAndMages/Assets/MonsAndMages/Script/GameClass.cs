@@ -33,6 +33,7 @@ public class CardData
     [Min(0)] public int EnergyCurrent;
     [Min(0)] public int AttackPoint;
     [Min(0)] public int GrowCurrent;
+    [Min(0)] public int RuneStoneTake; //When Wand move to card, get Rune Stone
     public Sprite Image;
 
     public IPlayer Player;

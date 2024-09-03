@@ -12,11 +12,114 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1042eb4b1dbe5174aad0d7ed21ccfaaf, type: 3}
   m_Name: card-config
   m_EditorClassIdentifier: 
-  CardList:
-  - Name: Fox
+  Card:
+  - Name: 1
+    Origin: 0
+    Class: 0
+    RuneStoneCost: 0
+    EnergyPoint: 0
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: 0e2c0bd7cea32104db82e997b0167c4b, type: 3}
+  - Name: 2
+    Origin: 2
+    Class: 3
+    RuneStoneCost: 5
+    EnergyPoint: 3
+    EnergyCurrent: 0
+    AttackPoint: 2
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: e308d5d1238d6fe40ae867e5a188d269, type: 3}
+  - Name: 3
+    Origin: 1
+    Class: 6
+    RuneStoneCost: 3
+    EnergyPoint: 2
+    EnergyCurrent: 0
+    AttackPoint: 1
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: 603b8148d241e214091ac8293f61b354, type: 3}
+  - Name: 4
+    Origin: 1
+    Class: 0
+    RuneStoneCost: 5
+    EnergyPoint: 3
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: e8db983cdf512c04ca947e840b786e9c, type: 3}
+  - Name: 5
     Origin: 1
     Class: 1
-    Cost: 5
-    Energy: 3
-    Attack: 0
-    Image: {fileID: 21300000, guid: 089b55338bed4e147ade45c7881a3331, type: 3}
+    RuneStoneCost: 6
+    EnergyPoint: 3
+    EnergyCurrent: 0
+    AttackPoint: 3
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: cbfe947cfb012d74893b5c41fec73365, type: 3}
+  - Name: 6
+    Origin: 1
+    Class: 5
+    RuneStoneCost: 4
+    EnergyPoint: 2
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: cb88c35353627044897419c3c291139d, type: 3}
+  - Name: 7
+    Origin: 2
+    Class: 6
+    RuneStoneCost: 4
+    EnergyPoint: 2
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: 1694e0bd42c29b946900eed6a8e4d79e, type: 3}
+  - Name: 8
+    Origin: 2
+    Class: 0
+    RuneStoneCost: 4
+    EnergyPoint: 0
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 1
+    Image: {fileID: 21300000, guid: dca5cd6a76676d74b871f43c1f2d2749, type: 3}
+  - Name: 9
+    Origin: 2
+    Class: 2
+    RuneStoneCost: 5
+    EnergyPoint: 3
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: 165e9ece6594b9046b785a104043d0b3, type: 3}
+  - Name: 10
+    Origin: 6
+    Class: 0
+    RuneStoneCost: 3
+    EnergyPoint: 2
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 0
+    Image: {fileID: 21300000, guid: b073d87d07d93fa4dbd0fbe12ac4be39, type: 3}
+  - Name: 11
+    Origin: 2
+    Class: 0
+    RuneStoneCost: 4
+    EnergyPoint: 0
+    EnergyCurrent: 0
+    AttackPoint: 0
+    GrowCurrent: 0
+    RuneStoneTake: 1
+    Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}
