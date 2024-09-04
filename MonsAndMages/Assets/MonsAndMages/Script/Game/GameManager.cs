@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     //
 
     [SerializeField] private CardConfig m_cardConfig;
+    [SerializeField] private PlayerController m_basePlayer;
 
     private int m_playerCount;
     private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
@@ -83,8 +84,14 @@ public class GameManager : MonoBehaviour
         GameEvent.onPlayerEnd -= OnPlayerEnd;
     }
 
+    private void Awake()
+    {
+        GameManager.instance = this;
+    }
+
     private void Start()
     {
+        m_player.Add(m_basePlayer.GetComponent<IPlayer>());
         GameEvent.PlayerStart(PlayerCurrent, false);
     }
 
