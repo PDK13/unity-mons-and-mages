@@ -1,5 +1,9 @@
+using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,10 +12,10 @@ public class GameManager : MonoBehaviour
     //
 
     [SerializeField] private CardConfig m_cardConfig;
-    [SerializeField] private PlayerController m_basePlayer;
+    [SerializeField] private Transform m_playerContent;
 
     private int m_playerCount;
-    private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
+    private IPlayer[] m_player = new IPlayer[0]; //Max 4 player, min 2 player in game
     private int m_playerTurn = 0;
 
     private int m_healthPointStart = 5;
@@ -25,6 +29,11 @@ public class GameManager : MonoBehaviour
     public CardConfig CardConfig => m_cardConfig;
 
     public IPlayer PlayerCurrent => m_player[m_playerTurn];
+
+    public IPlayer GetPlayer(int PlayerIndex)
+    {
+        return m_player[PlayerIndex];
+    }
 
     //
 
@@ -89,9 +98,15 @@ public class GameManager : MonoBehaviour
         GameManager.instance = this;
     }
 
-    private void Start()
+    //
+
+    public void PlayerJoin(IPlayer[] Player)
     {
-        m_player.Add(m_basePlayer.GetComponent<IPlayer>());
+        m_player = Player;
+
+        for (int i = 0; i < m_player.Length; i++)
+            m_player[i].Init(new PlayerData(i));
+
         GameEvent.PlayerStart(PlayerCurrent, false);
     }
 
@@ -198,7 +213,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoAttackActive();
-            for (int i = 0; i < m_player.Count; i++)
+            for (int i = 0; i < m_player.Length; i++)
             {
                 if (m_player[i] == Card.Player)
                     continue;
@@ -278,7 +293,7 @@ public class GameManager : MonoBehaviour
     {
         Player.DoEnd(Player);
         m_playerTurn++;
-        if (m_playerTurn > m_player.Count - 1)
+        if (m_playerTurn > m_player.Length - 1)
             m_playerTurn = 0;
         GameEvent.PlayerStart(PlayerCurrent, false);
     }

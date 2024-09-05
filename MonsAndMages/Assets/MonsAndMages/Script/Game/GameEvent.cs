@@ -4,6 +4,11 @@ public class GameEvent
 {
     //Value "Update" is FALSE for UI invoke, then value is TRUE for Player and System invoke
 
+    public static Action<IPlayer, bool> onViewPlayer;
+    public static Action<bool> onViewCollect;
+
+    public static Action<ICard, bool> onCardTap;
+
     public static Action<IPlayer, bool> onPlayerStart;
     public static Action<IPlayer, int, bool> onPlayerTakeRuneStoneFromSupply;
     public static Action<IPlayer, bool> onPlayerTakeRuneStoneFromMediation;
@@ -31,6 +36,17 @@ public class GameEvent
     public static Action<IPlayer> onPlayerEnd;
 
     //
+
+    public static void ViewPlayer(IPlayer Player, bool Update)
+    {
+        onViewPlayer?.Invoke(Player, Update);
+    }
+
+    public static void ViewCollect(bool Update)
+    {
+        onViewCollect?.Invoke(Update);
+    }
+
 
     public static void PlayerStart(IPlayer Player, bool Update)
     {

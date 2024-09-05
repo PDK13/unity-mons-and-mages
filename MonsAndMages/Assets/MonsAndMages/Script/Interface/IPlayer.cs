@@ -22,6 +22,8 @@ public interface IPlayer
 
     bool MediationEmty { get; }
 
+    void Init(PlayerData Data);
+
     //
 
     void DoTakeRuneStoneFromSupply(int Value); //Take 1 rune stone from supply

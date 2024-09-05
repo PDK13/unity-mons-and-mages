@@ -27,6 +27,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool MediationEmty => m_data.MediationEmty;
 
+    public void Init(PlayerData Data)
+    {
+        m_data = Data;
+    }
+
     //
 
     public void DoTakeRuneStoneFromSupply(int Value)

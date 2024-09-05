@@ -36,7 +36,7 @@ public class WildController : MonoBehaviour
             CardClone.SetActive(true);
             CardClone.name = "card-" + CardInfo.Name.ToString();
             CardClone.transform.localPosition = Vector3.zero;
-            CardClone.GetComponent<Image>().sprite = CardInfo.Image;
+            CardClone.GetComponent<CardController>().Init(CardInfo.Image);
             switch (CardInfo.Name)
             {
                 case CardNameType.Cornibus:
@@ -78,6 +78,7 @@ public class WildController : MonoBehaviour
             {
                 var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
                 Fill(CardTop, CardPoint);
+                CardTop.GetComponent<CardController>().Open(0.5f, null);
                 yield return new WaitForSeconds(0.5f);
             }
         }
