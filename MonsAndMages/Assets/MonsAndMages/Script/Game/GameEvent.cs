@@ -6,6 +6,7 @@ public class GameEvent
 
     public static Action<IPlayer, bool> onViewPlayer;
     public static Action<bool> onViewCollect;
+    public static Action<bool> onViewBack;
 
     public static Action<ICard, bool> onCardTap;
 
@@ -45,6 +46,11 @@ public class GameEvent
     public static void ViewCollect(bool Update)
     {
         onViewCollect?.Invoke(Update);
+    }
+
+    public static void ViewBack(bool Update)
+    {
+        onViewBack?.Invoke(Update);
     }
 
 

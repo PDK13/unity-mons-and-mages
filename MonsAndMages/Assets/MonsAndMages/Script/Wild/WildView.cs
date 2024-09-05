@@ -3,18 +3,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WildController : MonoBehaviour
+public class WildView : MonoBehaviour
 {
-    public static WildController instance;
-
     [SerializeField] private GameObject m_cardSample;
-    [SerializeField] private Transform m_cardContent;
     [SerializeField] private Transform m_cardDeck;
-
-    private void Awake()
-    {
-        WildController.instance = this;
-    }
+    [SerializeField] private Transform m_cardContent;
 
     private IEnumerator Start()
     {
