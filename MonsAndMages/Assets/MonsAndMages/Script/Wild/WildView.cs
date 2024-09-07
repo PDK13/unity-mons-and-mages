@@ -29,17 +29,17 @@ public class WildView : MonoBehaviour
     private void OnInit()
     {
         //Generate
-        foreach (var CardInfo in GameManager.instance.CardConfig.Card)
+        foreach (var CardCheck in GameManager.instance.CardConfig.Card)
         {
-            if (CardInfo.Name == CardNameType.Stage)
+            if (CardCheck.Name == CardNameType.Stage)
                 continue;
             //
             var CardClone = Instantiate(m_cardSample, m_cardDeck);
             CardClone.SetActive(true);
-            CardClone.name = "card-" + CardInfo.Name.ToString();
+            CardClone.name = "card-" + CardCheck.Name.ToString();
             CardClone.transform.localPosition = Vector3.zero;
-            CardClone.GetComponent<CardController>().Init(CardInfo.Image);
-            switch (CardInfo.Name)
+            CardClone.GetComponent<CardController>().Init(CardCheck);
+            switch (CardCheck.Name)
             {
                 case CardNameType.Cornibus:
                 case CardNameType.Duchess:
@@ -57,7 +57,7 @@ public class WildView : MonoBehaviour
                     Debug.LogError("Wild init error card");
                     break;
             }
-            CardClone.GetComponent<ICard>().Init(CardInfo);
+            CardClone.GetComponent<ICard>().Init(CardCheck);
         }
         //Suffle
         for (int i = 0; i < m_cardDeck.childCount; i++)

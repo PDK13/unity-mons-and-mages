@@ -34,6 +34,9 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void Init(PlayerData Data)
     {
         m_data = Data;
+        //
+
+        //
         GameManager.instance.PlayerJoin(this);
     }
 

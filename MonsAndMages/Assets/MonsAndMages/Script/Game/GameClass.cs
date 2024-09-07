@@ -32,18 +32,21 @@ public class PlayerData
 [Serializable]
 public class CardData
 {
+    public string Named = "";
     public CardNameType Name;
     public CardOriginType Origin;
     public CardClassType Class;
     [Min(0)] public int RuneStoneCost;
-    [Min(0)] public int EnergyPoint;
-    [Min(0)] public int EnergyCurrent;
+    [Min(0)] public int ManaPoint;
+    [Min(0)] public int ManaCurrent;
     [Min(0)] public int AttackPoint;
     [Min(0)] public int GrowCurrent;
     [Min(0)] public int RuneStoneTake; //When Wand move to card, get Rune Stone
     public Sprite Image;
 
     public IPlayer Player;
+
+    public int AttackCombine => AttackPoint + GrowCurrent;
 }
 
 [Serializable]

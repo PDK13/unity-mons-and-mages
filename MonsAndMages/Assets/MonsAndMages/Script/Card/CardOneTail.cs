@@ -18,17 +18,17 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public int RuneStoneCost => m_data.RuneStoneCost;
 
-    public int Energy => m_data.EnergyPoint;
+    public int Energy => m_data.ManaPoint;
 
-    public int EnergyCurrent => m_data.EnergyCurrent;
+    public int EnergyCurrent => m_data.ManaCurrent;
 
-    public bool EnergyFull => m_data.EnergyCurrent >= m_data.EnergyPoint;
+    public bool EnergyFull => m_data.ManaCurrent >= m_data.ManaPoint;
 
     public int Attack => m_data.AttackPoint;
 
     public int Grow => m_data.GrowCurrent;
 
-    public int AttackCombine => m_data.AttackPoint + m_data.GrowCurrent;
+    public int AttackCombine => m_data.AttackCombine;
 
     public IPlayer Player => m_data.Player;
 
@@ -68,7 +68,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void DoEnergyFill(int Value)
     {
-        m_data.EnergyCurrent += Value;
+        m_data.ManaCurrent += Value;
     }
 
     public void DoEnergyCheck() { }
@@ -77,7 +77,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void DoEnergyActive()
     {
-        m_data.EnergyCurrent -= m_data.EnergyPoint;
+        m_data.ManaCurrent -= m_data.ManaPoint;
     }
 
     public void DoClassActive() { }
