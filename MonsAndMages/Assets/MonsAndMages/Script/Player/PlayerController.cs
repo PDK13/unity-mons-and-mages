@@ -3,17 +3,21 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
+    [SerializeField] private Transform m_cardContent;
+
     private PlayerData m_data;
 
     //IPlayer
 
-    public int PlayerIndex => m_data.PlayerIndex;
+    public int Index => m_data.Index;
+
+    public bool Base => m_data.Base;
 
     public int HealthPoint => m_data.HealthPoint;
 
     public int RuneStone => m_data.RuneStone;
 
-    public int StunPoint => m_data.PlayerIndex;
+    public int StunPoint => m_data.StunPoint;
 
     public int StunCurrent => m_data.StunCurrent;
 
@@ -21,7 +25,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public List<ICard> CardQueue => m_data.CardQueue;
 
-    public int WandStep => m_data.PlayerIndex;
+    public int WandStep => m_data.Index;
 
     public int[] Mediation => m_data.Mediation;
 
@@ -30,6 +34,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void Init(PlayerData Data)
     {
         m_data = Data;
+        GameManager.instance.PlayerJoin(this);
     }
 
     //

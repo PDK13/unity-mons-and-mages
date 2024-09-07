@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
-public class TopView : MonoBehaviour
+public class PlayerView : MonoBehaviour
 {
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
@@ -11,16 +11,20 @@ public class TopView : MonoBehaviour
 
     private void OnEnable()
     {
+        GameEvent.onInit += OnInit;
+
         GameEvent.onViewPlayer += OnViewPlayer;
-        GameEvent.onViewCollect += OnViewCollect;
-        GameEvent.onViewBack += OnViewBack;
+        GameEvent.onViewWild += OnViewCollect;
+        GameEvent.onViewField += OnViewBack;
     }
 
     private void OnDisable()
     {
+        GameEvent.onInit -= OnInit;
+
         GameEvent.onViewPlayer -= OnViewPlayer;
-        GameEvent.onViewCollect -= OnViewCollect;
-        GameEvent.onViewBack -= OnViewBack;
+        GameEvent.onViewWild -= OnViewCollect;
+        GameEvent.onViewField -= OnViewBack;
     }
 
     //
@@ -32,15 +36,23 @@ public class TopView : MonoBehaviour
 
     public void BtnViewCollect()
     {
-        GameEvent.ViewCollect(false);
+        GameEvent.ViewWild(false);
     }
 
     public void BtnViewBack()
     {
-        GameEvent.ViewBack(false);
+        GameEvent.ViewField(false);
     }
 
     //
+
+    private void OnInit()
+    {
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.SetActive(false);
+    }
+
 
     private void OnViewPlayer(IPlayer Player, bool Update)
     {
@@ -52,9 +64,9 @@ public class TopView : MonoBehaviour
         }
         else
         {
-            m_btnCollect.SetActive(true);
+            m_btnCollect.SetActive(GameManager.instance.PlayerView);
             m_btnBack.SetActive(false);
-            m_playerContent.SetActive(true);
+            m_playerContent.SetActive(GameManager.instance.PlayerView);
         }
     }
 
@@ -69,7 +81,7 @@ public class TopView : MonoBehaviour
         else
         {
             m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(true);
+            m_btnBack.SetActive(GameManager.instance.PlayerView);
             m_playerContent.SetActive(false);
         }
     }
@@ -84,9 +96,9 @@ public class TopView : MonoBehaviour
         }
         else
         {
-            m_btnCollect.SetActive(true);
+            m_btnCollect.SetActive(GameManager.instance.PlayerView);
             m_btnBack.SetActive(false);
-            m_playerContent.SetActive(true);
+            m_playerContent.SetActive(GameManager.instance.PlayerView);
         }
     }
 }

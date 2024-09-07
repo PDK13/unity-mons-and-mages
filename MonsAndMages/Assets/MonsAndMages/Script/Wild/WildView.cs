@@ -9,15 +9,24 @@ public class WildView : MonoBehaviour
     [SerializeField] private Transform m_cardDeck;
     [SerializeField] private Transform m_cardContent;
 
-    private IEnumerator Start()
+    private void OnEnable()
     {
-        m_cardSample.SetActive(false);
-
-        Init();
-        yield return InitFill();
+        GameEvent.onInit += OnInit;
+        GameEvent.onInitWild += OnInitWild;
     }
 
-    private void Init()
+    private void OnDisable()
+    {
+        GameEvent.onInit -= OnInit;
+        GameEvent.onInitWild -= OnInitWild;
+    }
+
+    private void Start()
+    {
+        m_cardSample.SetActive(false);
+    }
+
+    private void OnInit()
     {
         //Generate
         foreach (var CardInfo in GameManager.instance.CardConfig.Card)
@@ -61,23 +70,33 @@ public class WildView : MonoBehaviour
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
 
-    private IEnumerator InitFill()
+    private void OnInitWild()
     {
-        yield return new WaitForSeconds(3f);
+        StartCoroutine(WildFill());
+    }
+
+    //
+
+    private IEnumerator WildFill()
+    {
+        GameEvent.CardFill();
+
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
             var CardPoint = m_cardContent.GetChild(i);
             if (CardPoint.childCount == 0)
             {
                 var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
-                Fill(CardTop, CardPoint);
+                CardFill(CardTop, CardPoint);
                 CardTop.GetComponent<CardController>().Open(0.5f, null);
                 yield return new WaitForSeconds(0.5f);
             }
         }
+
+        GameEvent.CardFillComplete();
     }
 
-    private void Fill(Transform Card, Transform Point)
+    private void CardFill(Transform Card, Transform Point)
     {
         Card.SetParent(Point, true);
         Card.DOLocalMove(Vector3.zero, 1).SetEase(Ease.OutQuad);

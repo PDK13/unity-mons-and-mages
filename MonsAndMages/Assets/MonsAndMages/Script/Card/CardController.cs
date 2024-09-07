@@ -9,12 +9,27 @@ public class CardController : MonoBehaviour
     [SerializeField] private GameObject m_mask;
     [SerializeField] private GameObject m_renderer;
 
+    private ICard m_card;
     private Tweener m_tween;
+
+    public ICard Card
+    {
+        get
+        {
+            if (m_card == null)
+                m_card = GetComponent<ICard>();
+            return m_card;
+        }
+    }
+
+    //
 
     public void BtnTap()
     {
         Debug.Log("Card tap invoke");
     }
+
+    //
 
     public void Init(Sprite Image)
     {

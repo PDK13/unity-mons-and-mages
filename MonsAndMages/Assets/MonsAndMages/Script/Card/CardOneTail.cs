@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CardOneTail : MonoBehaviour, ICard
 {
     private CardData m_data;
+    private CardController m_controller;
 
     //ICard
 
@@ -30,6 +31,16 @@ public class CardOneTail : MonoBehaviour, ICard
     public int AttackCombine => m_data.AttackPoint + m_data.GrowCurrent;
 
     public IPlayer Player => m_data.Player;
+
+    public CardController Controller
+    {
+        get
+        {
+            if (m_controller == null)
+                m_controller = this.GetComponent<CardController>();
+            return m_controller;
+        }
+    }
 
     public void Init(CardData Data)
     {

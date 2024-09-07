@@ -5,7 +5,8 @@ using UnityEngine;
 [Serializable]
 public class PlayerData
 {
-    public int PlayerIndex;
+    public int Index; //Index player on this device
+    public bool Base; //Base player on this device
     [Min(1)] public int HealthPoint;
     [Min(0)] public int HealthCurrent;
     [Min(0)] public int RuneStone; //Use to get monsters from wild
@@ -21,9 +22,10 @@ public class PlayerData
 
     public bool MediationEmty => Mediation[0] > 0 && Mediation[1] > 0;
 
-    public PlayerData(int PlayerIndex)
+    public PlayerData(int Index, bool Base)
     {
-        this.PlayerIndex = PlayerIndex;
+        this.Index = Index;
+        this.Base = Base;
     }
 }
 

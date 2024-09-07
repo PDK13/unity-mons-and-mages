@@ -2,7 +2,9 @@ using System.Collections.Generic;
 
 public interface IPlayer
 {
-    int PlayerIndex { get; }
+    int Index { get; }
+
+    bool Base { get; }
 
     int HealthPoint { get; }
 

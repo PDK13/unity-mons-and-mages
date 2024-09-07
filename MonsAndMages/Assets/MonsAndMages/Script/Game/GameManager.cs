@@ -11,12 +11,20 @@ public class GameManager : MonoBehaviour
 
     //
 
+    [SerializeField][Min(0)] private int m_PlayerStart = 0;
+    [SerializeField][Min(0)] private int m_playerIndex = 0;
+    [SerializeField] private bool m_sameDevice = true;
+
+    [Space]
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private Transform m_playerContent;
 
+    private bool m_gameStart = false;
+
     private int m_playerCount;
-    private IPlayer[] m_player = new IPlayer[0]; //Max 4 player, min 2 player in game
+    private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
     private int m_playerTurn = 0;
+    private bool m_playerView = false;
 
     private int m_healthPointStart = 5;
     private int m_runeStoneStart = 5;
@@ -30,15 +38,15 @@ public class GameManager : MonoBehaviour
 
     public IPlayer PlayerCurrent => m_player[m_playerTurn];
 
-    public IPlayer GetPlayer(int PlayerIndex)
-    {
-        return m_player[PlayerIndex];
-    }
+    public bool PlayerView => m_gameStart ? m_sameDevice || m_player[m_playerTurn].Base : false;
 
     //
 
     private void OnEnable()
     {
+        GameEvent.onGameStart += OnGameStart;
+
+        GameEvent.onPlayerTurn += OnPlayerTurn;
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
         GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
@@ -67,6 +75,9 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
+        GameEvent.onGameStart -= OnGameStart;
+
+        GameEvent.onPlayerTurn -= OnPlayerTurn;
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
         GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
@@ -98,24 +109,87 @@ public class GameManager : MonoBehaviour
         GameManager.instance = this;
     }
 
-    //
-
-    public void PlayerJoin(IPlayer[] Player)
+    private IEnumerator Start()
     {
-        m_player = Player;
+        Debug.Log("Init Game");
 
-        for (int i = 0; i < m_player.Length; i++)
-            m_player[i].Init(new PlayerData(i));
+        m_playerTurn = m_PlayerStart;
 
-        GameEvent.PlayerStart(PlayerCurrent, false);
+        yield return null;
+
+        GameEvent.Init();
+
+        yield return null;
+
+        PlayerData[] PlayerJoin = new PlayerData[2]
+        {
+            new PlayerData(0, m_playerIndex == 0),
+            new PlayerData(1, m_playerIndex == 1),
+        };
+        GameEvent.InitPlayer(PlayerJoin);
+
+        yield return new WaitForSeconds(3f);
+
+        GameEvent.ViewWild();
+
+        yield return new WaitForSeconds(2f);
+
+        GameEvent.InitWild();
+
+        yield return new WaitForSeconds(7f);
+
+        GameEvent.ViewField();
+
+        yield return new WaitForSeconds(2f);
+
+        m_gameStart = true;
+
+        GameEvent.GameStart();
+
+        Debug.Log("Start Game");
     }
 
     //
 
+    public void PlayerJoin(IPlayer Player)
+    {
+        if (m_player.Exists(t => t == Player))
+            return;
+        m_player.Add(Player);
+    }
+
+    public IPlayer GetPlayer(int PlayerIndex)
+    {
+        return m_player[PlayerIndex];
+    }
+
+    //
+
+    private void OnGameStart()
+    {
+        GameEvent.PlayerTurn(PlayerCurrent, true);
+    }
+
+
+    private void OnPlayerTurn(IPlayer Player, bool Update)
+    {
+        if (Update)
+            StartCoroutine(IEPlayerTurn());
+    }
+
+    private IEnumerator IEPlayerTurn()
+    {
+        GameEvent.ViewPlayer(PlayerCurrent);
+
+        yield return new WaitForSeconds(2f);
+
+        GameEvent.PlayerStart(PlayerCurrent);
+    }
+
     private void OnPlayerStart(IPlayer Player, bool Update)
     {
         if (Update)
-            GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, false);
+            GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1);
     }
 
     private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, bool Update)
@@ -123,7 +197,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Player.DoTakeRuneStoneFromSupply(Value);
-            GameEvent.PlayerTakeRuneStoneFromMediation(Player, false);
+            GameEvent.PlayerTakeRuneStoneFromMediation(Player);
         }
     }
 
@@ -132,7 +206,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Player.DoTakeRuneStoneFromMediation();
-            GameEvent.PlayerStunnedCheck(Player, false);
+            GameEvent.PlayerStunnedCheck(Player);
         }
     }
 
@@ -143,9 +217,9 @@ public class GameManager : MonoBehaviour
             Player.DoStunnedCheck();
             //
             if (Player.Stuned)
-                GameEvent.PlayerDoWandNext(Player, false, false);
+                GameEvent.PlayerDoWandNext(Player, false);
             else
-                GameEvent.PlayerDoChoice(Player, false);
+                GameEvent.PlayerDoChoice(Player);
         }
     }
 
@@ -161,7 +235,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Player.DoMediate(RuneStoneAdd);
-            GameEvent.PlayerDoWandNext(Player, true, false);
+            GameEvent.PlayerDoWandNext(Player, true);
         }
     } //Mediate Event
 
@@ -171,7 +245,7 @@ public class GameManager : MonoBehaviour
         {
             Player.DoCollect(Card);
             Card.DoCollectActive(Player);
-            GameEvent.CardOriginActive(Card, false);
+            GameEvent.CardOriginActive(Card);
         }
     } //Collect Event
 
@@ -181,7 +255,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoOriginActive();
-            GameEvent.PlayerDoWandNext(Card.Player, true, false);
+            GameEvent.PlayerDoWandNext(Card.Player, true);
         }
     } //Origin Event
 
@@ -192,7 +266,7 @@ public class GameManager : MonoBehaviour
         {
             Player.DoWandNext();
             if (CardActive)
-                GameEvent.PlayerDoWandActive(Player, false);
+                GameEvent.PlayerDoWandActive(Player);
             else
                 GameEvent.PlayerEnd(Player);
         }
@@ -203,7 +277,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Player.DoWandActive();
-            GameEvent.CardAttack(Player.CardQueue[Player.WandStep], false);
+            GameEvent.CardAttack(Player.CardQueue[Player.WandStep]);
         }
     }
 
@@ -213,13 +287,13 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoAttackActive();
-            for (int i = 0; i < m_player.Length; i++)
+            for (int i = 0; i < m_player.Count; i++)
             {
                 if (m_player[i] == Card.Player)
                     continue;
                 m_player[i].HealthChange(-Card.AttackCombine);
             }
-            GameEvent.CardEnergyFill(Card, false);
+            GameEvent.CardEnergyFill(Card);
         }
     } //Attack Event
 
@@ -228,7 +302,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoEnergyFill(1);
-            GameEvent.CardEnergyCheck(Card, false);
+            GameEvent.CardEnergyCheck(Card);
         }
     } //Energy Event
 
@@ -238,7 +312,7 @@ public class GameManager : MonoBehaviour
         {
             Card.DoEnergyCheck();
             if (Card.EnergyFull)
-                GameEvent.CardEnergyActive(Card, false);
+                GameEvent.CardEnergyActive(Card);
             //else?
         }
     }
@@ -248,7 +322,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoEnergyActive();
-            GameEvent.CardClassActive(Card, false);
+            GameEvent.CardClassActive(Card);
         }
     }
 
@@ -257,7 +331,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoClassActive();
-            GameEvent.CardSpellActive(Card, false);
+            GameEvent.CardSpellActive(Card);
         }
     } //Class Event
 
@@ -266,7 +340,7 @@ public class GameManager : MonoBehaviour
         if (Update)
         {
             Card.DoSpellActive();
-            GameEvent.PlayerContinueCheck(Card.Player, false);
+            GameEvent.PlayerContinueCheck(Card.Player);
         }
     } //Spell Event
 
@@ -277,7 +351,7 @@ public class GameManager : MonoBehaviour
         {
             Player.DoContinueCheck(Player);
             if (Player.CardQueue.Exists(t => t.EnergyFull))
-                GameEvent.PlayerContinue(Player, false);
+                GameEvent.PlayerContinue(Player);
             else
                 GameEvent.PlayerEnd(Player);
         }
@@ -293,8 +367,8 @@ public class GameManager : MonoBehaviour
     {
         Player.DoEnd(Player);
         m_playerTurn++;
-        if (m_playerTurn > m_player.Length - 1)
+        if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;
-        GameEvent.PlayerStart(PlayerCurrent, false);
+        GameEvent.PlayerStart(PlayerCurrent);
     }
 }

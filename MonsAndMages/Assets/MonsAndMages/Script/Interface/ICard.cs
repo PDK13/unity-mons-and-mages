@@ -22,6 +22,8 @@
 
     IPlayer Player { get; }
 
+    CardController Controller { get; }
+
     void Init(CardData Data); //Khởi tạo bài
 
     //

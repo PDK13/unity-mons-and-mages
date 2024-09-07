@@ -4,30 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerView : MonoBehaviour
+public class FieldView : MonoBehaviour
 {
     [SerializeField] private GameObject m_playerSample;
     [SerializeField] private RectTransform m_playerContent;
 
-    private void Start()
+    private void OnEnable()
     {
-        OnInitPlayer(2);
+        GameEvent.onInitPlayer += OnInitPlayer;
     }
 
-    private void OnInitPlayer(int Count)
+    private void OnDisable()
     {
-        if (Count < 1)
-        {
-            Debug.LogWarning("Init player count set to 1");
-            Count = 1;
-        }
+        GameEvent.onInitPlayer -= OnInitPlayer;
+    }
 
-        for (int i = 1; i < Count; i++)
+    private void OnInitPlayer(PlayerData[] Player)
+    {
+        foreach (var PlayerCheck in Player)
         {
             var PlayerClone = Instantiate(m_playerSample, m_playerContent);
             PlayerClone.transform.localPosition = Vector3.right * m_playerContent.sizeDelta.x;
+            PlayerClone.GetComponent<PlayerController>().Init(PlayerCheck);
         }
-
-        GameManager.instance.PlayerJoin(transform.GetComponentsInChildren<IPlayer>());
     }
 }
