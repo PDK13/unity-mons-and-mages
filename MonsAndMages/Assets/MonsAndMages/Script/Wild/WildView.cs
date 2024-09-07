@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class WildView : MonoBehaviour
 {
     [SerializeField] private GameObject m_cardSample;
+    [SerializeField] private GameObject m_cardTrickSample;
     [SerializeField] private Transform m_cardDeck;
     [SerializeField] private Transform m_cardContent;
 
