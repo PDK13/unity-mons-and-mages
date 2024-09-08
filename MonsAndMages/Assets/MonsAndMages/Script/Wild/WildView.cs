@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class WildView : MonoBehaviour
 {
     [SerializeField] private GameObject m_cardSample;
-    [SerializeField] private GameObject m_cardTrickSample;
     [SerializeField] private Transform m_cardDeck;
     [SerializeField] private Transform m_cardContent;
 
@@ -32,16 +31,11 @@ public class WildView : MonoBehaviour
         //Generate
         foreach (var CardCheck in GameManager.instance.CardConfig.Card)
         {
-            if (CardCheck.Name == CardNameType.Stage)
-                continue;
-            //
-            var CardClone = Instantiate(m_cardSample, m_cardDeck);
-            CardClone.SetActive(true);
-            CardClone.name = "card-" + CardCheck.Name.ToString();
-            CardClone.transform.localPosition = Vector3.zero;
-            CardClone.GetComponent<CardController>().Init(CardCheck);
             switch (CardCheck.Name)
             {
+                case CardNameType.Stage:
+                    Debug.LogWarning("Not init Stage card in wild");
+                    continue;
                 case CardNameType.Cornibus:
                 case CardNameType.Duchess:
                 case CardNameType.DragonEgg:
@@ -52,13 +46,18 @@ public class WildView : MonoBehaviour
                 case CardNameType.OneTail:
                 case CardNameType.Pott:
                 case CardNameType.Umbella:
+                    var CardClone = Instantiate(m_cardSample, m_cardDeck);
+                    CardClone.SetActive(true);
+                    CardClone.name = "card-" + CardCheck.Name.ToString();
+                    CardClone.transform.localPosition = Vector3.zero;
+                    CardClone.GetComponent<CardController>().Init(CardCheck);
                     CardClone.AddComponent<CardOneTail>();
+                    CardClone.GetComponent<ICard>().Init(CardCheck);
                     break;
                 default:
-                    Debug.LogError("Wild init error card");
+                    Debug.LogError("Not found card to init in wild");
                     break;
             }
-            CardClone.GetComponent<ICard>().Init(CardCheck);
         }
         //Suffle
         for (int i = 0; i < m_cardDeck.childCount; i++)

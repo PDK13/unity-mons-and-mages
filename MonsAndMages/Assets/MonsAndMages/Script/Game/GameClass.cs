@@ -45,6 +45,7 @@ public class CardData
     public Sprite Image;
 
     public IPlayer Player;
+    public ICard Card;
 
     public int AttackCombine => AttackPoint + GrowCurrent;
 }

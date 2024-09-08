@@ -1,11 +1,54 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
+    [SerializeField] private GameObject m_cardPointSample;
     [SerializeField] private Transform m_cardContent;
 
     private PlayerData m_data;
+
+    //
+
+    private void OnEnable()
+    {
+        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+    }
+
+    private void OnDisable()
+    {
+        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+    }
+
+    private void Start()
+    {
+
+    }
+
+    //
+
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, bool Update)
+    {
+        if (Update)
+            StartCoroutine(IECardCollect(Card));
+    }
+
+    private IEnumerator IECardCollect(ICard Card)
+    {
+        if (m_data.CardQueue.Count >= 5)
+        {
+            var CardStage = m_cardContent.GetChild(0).GetComponentInChildren<ICardStage>();
+            if (CardStage != null)
+            {
+
+            }
+        }
+
+        yield return null;
+
+
+    }
 
     //IPlayer
 
@@ -34,9 +77,6 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void Init(PlayerData Data)
     {
         m_data = Data;
-        //
-
-        //
         GameManager.instance.PlayerJoin(this);
     }
 
