@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,13 +13,13 @@ public class WildView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
-        GameEvent.onInitWild += OnInitWild;
+        GameEvent.onWildPrepair += OnWildPrepair;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
-        GameEvent.onInitWild -= OnInitWild;
+        GameEvent.onWildPrepair -= OnWildPrepair;
     }
 
     private void Start()
@@ -62,7 +63,7 @@ public class WildView : MonoBehaviour
         //Suffle
         for (int i = 0; i < m_cardDeck.childCount; i++)
         {
-            var IndexRandom = Random.Range(0, (m_cardDeck.childCount - 1) * 10) / 10;
+            var IndexRandom = UnityEngine.Random.Range(0, (m_cardDeck.childCount - 1) * 10) / 10;
             m_cardDeck.GetChild(i).SetSiblingIndex(m_cardDeck.GetChild(IndexRandom).GetSiblingIndex());
         }
         //Pos
@@ -70,14 +71,12 @@ public class WildView : MonoBehaviour
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
 
-    private void OnInitWild()
+    private void OnWildPrepair()
     {
-        StartCoroutine(WildFill());
+        StartCoroutine(IEWildPrepair());
     }
 
-    //
-
-    private IEnumerator WildFill()
+    private IEnumerator IEWildPrepair()
     {
         GameEvent.CardFill();
 
@@ -88,7 +87,6 @@ public class WildView : MonoBehaviour
             {
                 var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
                 CardFill(CardTop, CardPoint);
-                CardTop.GetComponent<CardController>().Open(0.5f, null);
                 yield return new WaitForSeconds(0.5f);
             }
         }
@@ -100,5 +98,6 @@ public class WildView : MonoBehaviour
     {
         Card.SetParent(Point, true);
         Card.DOLocalMove(Vector3.zero, 1).SetEase(Ease.OutQuad);
+        Card.GetComponent<CardController>().Open(0.5f, null);
     }
 }

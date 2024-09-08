@@ -8,7 +8,7 @@ public class GameEvent
 
     public static Action onInit;
     public static Action<PlayerData[]> onInitPlayer;
-    public static Action onInitWild;
+    public static Action onWildPrepair;
     public static Action<Action> onGameStart;
 
     public static void Init()
@@ -23,7 +23,7 @@ public class GameEvent
 
     public static void InitWild()
     {
-        onInitWild?.Invoke();
+        onWildPrepair?.Invoke();
     }
 
     public static void GameStart(Action OnComplete)
@@ -65,6 +65,7 @@ public class GameEvent
 
     public static Action<ICard, Action> onCardTap;
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
+
     public static Action onCardFill;
     public static Action onCardFillComplete;
 
@@ -83,7 +84,7 @@ public class GameEvent
     public static Action<IPlayer, Action> onPlayerContinueCheck;
     public static Action<IPlayer, Action> onPlayerContinue;
 
-    public static Action<IPlayer> onPlayerEnd;
+    public static Action<IPlayer, Action> onPlayerEnd;
 
     public static void PlayerTurn(IPlayer Player, Action OnComplete)
     {
@@ -202,8 +203,8 @@ public class GameEvent
     } //Continue Event
 
 
-    public static void PlayerEnd(IPlayer Player)
+    public static void PlayerEnd(IPlayer Player, Action OnComplete)
     {
-        onPlayerEnd?.Invoke(Player);
+        onPlayerEnd?.Invoke(Player, OnComplete);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public interface IPlayer
 {
@@ -24,9 +25,10 @@ public interface IPlayer
 
     bool MediationEmty { get; }
 
+    PlayerController Controller { get; }
+
     void Init(PlayerData Data);
 
-    //
 
     void DoTakeRuneStoneFromSupply(int Value); //Take 1 rune stone from supply
 
@@ -34,21 +36,20 @@ public interface IPlayer
 
     void DoStunnedCheck(); //Check stun stage
 
-    //
 
     void DoChoice();
 
     void DoMediate(int RuneStoneAdd);
 
+    Transform DoCollectReady();
+
     void DoCollect(ICard Card);
 
-    //
 
     void DoWandNext(); //Move Wand Next
 
     void DoWandActive(); //Active Card at Wand after moved if not stunned
 
-    //
 
     void DoContinueCheck(IPlayer Player);
 
@@ -56,7 +57,6 @@ public interface IPlayer
 
     void DoEnd(IPlayer Player);
 
-    //
 
     void StunChange(int Value);
 

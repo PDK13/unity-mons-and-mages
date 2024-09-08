@@ -138,13 +138,13 @@ public class GameManager : MonoBehaviour
         Player.DoChoice();
     } //Choice Event
 
-    private void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd)
+    public void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
         Player.DoMediate(RuneStoneAdd);
         GameEvent.PlayerDoWandNext(Player, true, () => OnPlayerDoWandNext(Player, true));
     } //Mediate Event
 
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card)
+    public void OnPlayerDoCollect(IPlayer Player, ICard Card)
     {
         Player.DoCollect(Card);
         Card.DoCollectActive(Player);
@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
         if (CardActive)
             GameEvent.PlayerDoWandActive(Player, () => OnPlayerDoWandActive(Player));
         else
-            GameEvent.PlayerEnd(Player);
+            GameEvent.PlayerEnd(Player, () => OnPlayerEnd(Player));
     }
 
     private void OnPlayerDoWandActive(IPlayer Player)
@@ -226,7 +226,7 @@ public class GameManager : MonoBehaviour
         if (Player.CardQueue.Exists(t => t.EnergyFull))
             GameEvent.PlayerContinue(Player, () => OnPlayerContinue(Player));
         else
-            GameEvent.PlayerEnd(Player);
+            GameEvent.PlayerEnd(Player, () => OnPlayerEnd(Player));
     }
 
     private void OnPlayerContinue(IPlayer Player)

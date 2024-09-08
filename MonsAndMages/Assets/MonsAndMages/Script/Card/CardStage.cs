@@ -26,9 +26,9 @@ public class CardStage : MonoBehaviour, ICard, ICardStage
 
     public int AttackCombine => 0;
 
-    public IPlayer Player => throw new System.NotImplementedException();
+    public IPlayer Player => null;
 
-    public CardController Controller => throw new System.NotImplementedException();
+    public CardController Controller => this.GetComponent<CardController>();
 
     public void Init(CardData Data) { }
 
@@ -40,7 +40,6 @@ public class CardStage : MonoBehaviour, ICard, ICardStage
 
     public void DoPassiveActive() { }
 
-    //
 
     public void DoWandActive() { }
 
@@ -50,7 +49,6 @@ public class CardStage : MonoBehaviour, ICard, ICardStage
 
     public void DoEnergyCheck() { }
 
-    //
 
     public void DoEnergyActive() { }
 

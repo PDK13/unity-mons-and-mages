@@ -7,10 +7,17 @@ using UnityEngine;
 
 public class PlayerView : MonoBehaviour
 {
+    public static PlayerView instance;
+
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
     [SerializeField] private GameObject m_playerContent;
     [SerializeField] private GameObject m_startBox;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void OnEnable()
     {

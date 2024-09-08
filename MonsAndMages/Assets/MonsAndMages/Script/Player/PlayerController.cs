@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +39,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool MediationEmty => m_data.MediationEmty;
 
+    public PlayerController Controller => this;
+
     public void Init(PlayerData Data)
     {
         m_data = Data;
@@ -49,7 +52,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         GameManager.instance.PlayerJoin(this);
     }
 
-    //
 
     public void DoTakeRuneStoneFromSupply(int Value)
     {
@@ -75,7 +77,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStunnedCheck() { }
 
-    //
 
     public void DoChoice() { }
 
@@ -87,10 +88,9 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_data.Mediation[1] = RuneStoneAdd * 2;
     }
 
-    public void DoCollect(ICard Card)
+    public Transform DoCollectReady()
     {
-        m_data.RuneStone -= Card.RuneStoneCost;
-
+        Debug.Log("???");
         if (m_data.CardQueue.Count >= 5 && CardQueue[0].Name == CardNameType.Stage)
         {
             Destroy(m_cardContent.GetChild(0).gameObject);
@@ -100,12 +100,16 @@ public class PlayerController : MonoBehaviour, IPlayer
         var CardPoint = Instantiate(m_cardPointSample, m_cardContent);
         CardPoint.SetActive(true);
         CardPoint.name = "card-point";
-        Card.Controller.transform.SetParent(CardPoint.transform, true);
-        Card.Controller.transform.localPosition = Vector3.zero;
+
+        return CardPoint.transform;
+    }
+
+    public void DoCollect(ICard Card)
+    {
+        m_data.RuneStone -= Card.RuneStoneCost;
         m_data.CardQueue.Add(Card);
     }
 
-    //
 
     public void DoWandNext()
     {
@@ -117,17 +121,14 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>().DoWandActive();
     }
 
-    //
 
     public void DoContinueCheck(IPlayer Player) { }
 
     public void DoContinue(IPlayer Player) { }
 
-    //
 
     public void DoEnd(IPlayer Player) { }
 
-    //
 
     public void StunChange(int Value)
     {

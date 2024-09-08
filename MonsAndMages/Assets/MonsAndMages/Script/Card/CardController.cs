@@ -16,14 +16,59 @@ public class CardController : MonoBehaviour
 
     public ICard Card => GetComponent<ICard>();
 
+    private void OnEnable()
+    {
+        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+    }
+
+    private void OnDisable()
+    {
+        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+    }
+
+    //
+
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
+    {
+        if (!Card.Equals(this.Card))
+            return;
+
+        var CardRenderer = Card.Controller.m_renderer.GetComponent<Image>();
+        var CardObject = Card.Controller.transform;
+        var TopView = PlayerView.instance.transform;
+        var DownView = Player.DoCollectReady().transform;
+        float DurationMove = 1f;
+
+        CardRenderer.maskable = false;
+        CardObject.SetParent(TopView, true);
+        CardObject.DOScale(Vector3.one * 2.5f, DurationMove * 0.7f).SetEase(Ease.OutQuad).SetDelay(DurationMove * 0.3f);
+        CardObject.DOLocalMove(Vector3.zero, DurationMove).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            GameEvent.ViewField(() =>
+            {
+                Card.Controller.transform.SetParent(DownView.transform, true);
+                CardObject.DOScale(Vector3.one, DurationMove * 0.5f).SetEase(Ease.OutQuad);
+                CardObject.DOLocalMove(Vector3.zero, DurationMove).SetEase(Ease.OutQuad).OnComplete(() =>
+                {
+                    CardRenderer.maskable = true;
+
+                    OnComplete?.Invoke();
+                });
+            });
+        });
+    }
+
     //
 
     public void BtnTap()
     {
+        Debug.Log("Tap on " + this.gameObject.name);
         EffectAlpha(1f, () =>
         {
+            GameEvent.CardTap(Card, null);
             //Test
-            GameEvent.PlayerDoCollect(GameManager.instance.PlayerCurrent, Card, null);
+            var Player = GameManager.instance.PlayerCurrent;
+            GameEvent.PlayerDoCollect(Player, Card, () => GameManager.instance.OnPlayerDoCollect(Player, Card));
         });
     }
 

@@ -32,15 +32,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public IPlayer Player => m_data.Player;
 
-    public CardController Controller
-    {
-        get
-        {
-            if (m_controller == null)
-                m_controller = this.GetComponent<CardController>();
-            return m_controller;
-        }
-    }
+    public CardController Controller => this.GetComponent<CardController>();
 
     public void Init(CardData Data)
     {
