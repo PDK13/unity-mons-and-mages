@@ -41,70 +41,6 @@ public class GameManager : MonoBehaviour
 
     public bool PlayerView => m_gameStart ? m_sameDevice || m_player[m_playerTurn].Base : false;
 
-    //
-
-    //private void OnEnable()
-    //{
-    //    GameEvent.onGameStart += OnGameStart;
-
-    //    GameEvent.onPlayerTurn += OnPlayerTurn;
-    //    GameEvent.onPlayerStart += OnPlayerStart;
-    //    GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
-    //    GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
-    //    GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
-
-    //    GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
-    //    GameEvent.onPlayerDoMediate += OnPlayerDoMediate; //Mediate Event
-    //    GameEvent.onPlayerDoCollect += OnPlayerDoCollect; //Collect Event
-
-    //    GameEvent.onCardOriginActive += OnCardAbilityOriginActive; //Origin Event
-
-    //    GameEvent.onPlayerDoWandNext += OnPlayerDoWandNext;
-    //    GameEvent.onPlayerDoWandActive += OnPlayerDoWandActive;
-
-    //    GameEvent.onCardAttack += OnCardAttack; //Attack Event
-    //    GameEvent.onCardEnergyFill += OnCardEnergyFill; //Energy Event
-    //    GameEvent.onCardEnergyCheck += OnCardEnergyCheck;
-    //    GameEvent.onCardEnergyActive += OnCardEnergyActive;
-    //    GameEvent.onCardClassActive += OnCardClassActive; //Class Event
-    //    GameEvent.onCardSpellActive += OnCardSpellActive; //Spell Event
-
-    //    GameEvent.onPlayerContinueCheck += OnPlayerContinueCheck;
-    //    GameEvent.onPlayerContinue += OnPlayerContinue;
-    //    GameEvent.onPlayerEnd += OnPlayerEnd;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    GameEvent.onGameStart -= OnGameStart;
-
-    //    GameEvent.onPlayerTurn -= OnPlayerTurn;
-    //    GameEvent.onPlayerStart -= OnPlayerStart;
-    //    GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
-    //    GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
-    //    GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
-
-    //    GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
-    //    GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
-    //    GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
-
-    //    GameEvent.onCardOriginActive -= OnCardAbilityOriginActive;
-
-    //    GameEvent.onPlayerDoWandNext -= OnPlayerDoWandNext;
-    //    GameEvent.onPlayerDoWandActive -= OnPlayerDoWandActive;
-
-    //    GameEvent.onCardAttack -= OnCardAttack;
-    //    GameEvent.onCardEnergyFill -= OnCardEnergyFill;
-    //    GameEvent.onCardEnergyCheck -= OnCardEnergyCheck;
-    //    GameEvent.onCardEnergyActive -= OnCardEnergyActive;
-    //    GameEvent.onCardClassActive -= OnCardClassActive;
-    //    GameEvent.onCardSpellActive -= OnCardSpellActive;
-
-    //    GameEvent.onPlayerContinueCheck -= OnPlayerContinueCheck;
-    //    GameEvent.onPlayerContinue -= OnPlayerContinue;
-    //    GameEvent.onPlayerEnd -= OnPlayerEnd;
-    //}
-
     private void Awake()
     {
         GameManager.instance = this;
@@ -112,8 +48,6 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        Debug.Log("Init Game");
-
         m_playerTurn = m_PlayerStart;
 
         GameEvent.Init();
@@ -142,8 +76,6 @@ public class GameManager : MonoBehaviour
         m_gameStart = true;
 
         GameEvent.GameStart(() => OnGameStart());
-
-        Debug.Log("Start Game");
     }
 
     //
