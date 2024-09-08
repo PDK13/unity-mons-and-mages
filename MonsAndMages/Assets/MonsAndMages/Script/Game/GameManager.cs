@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,67 +43,67 @@ public class GameManager : MonoBehaviour
 
     //
 
-    private void OnEnable()
-    {
-        GameEvent.onGameStart += OnGameStart;
+    //private void OnEnable()
+    //{
+    //    GameEvent.onGameStart += OnGameStart;
 
-        GameEvent.onPlayerTurn += OnPlayerTurn;
-        GameEvent.onPlayerStart += OnPlayerStart;
-        GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerStunnedCheck += OnPlayerCheckStunned;
+    //    GameEvent.onPlayerTurn += OnPlayerTurn;
+    //    GameEvent.onPlayerStart += OnPlayerStart;
+    //    GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
+    //    GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
+    //    GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
 
-        GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
-        GameEvent.onPlayerDoMediate += OnPlayerDoMediate; //Mediate Event
-        GameEvent.onPlayerDoCollect += OnPlayerDoCollect; //Collect Event
+    //    GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
+    //    GameEvent.onPlayerDoMediate += OnPlayerDoMediate; //Mediate Event
+    //    GameEvent.onPlayerDoCollect += OnPlayerDoCollect; //Collect Event
 
-        GameEvent.onCardOriginActive += OnCardAbilityOriginActive; //Origin Event
+    //    GameEvent.onCardOriginActive += OnCardAbilityOriginActive; //Origin Event
 
-        GameEvent.onPlayerDoWandNext += OnPlayerDoWandNext;
-        GameEvent.onPlayerDoWandActive += OnPlayerDoWandActive;
+    //    GameEvent.onPlayerDoWandNext += OnPlayerDoWandNext;
+    //    GameEvent.onPlayerDoWandActive += OnPlayerDoWandActive;
 
-        GameEvent.onCardAttack += OnCardAttack; //Attack Event
-        GameEvent.onCardEnergyFill += OnCardEnergyFill; //Energy Event
-        GameEvent.onCardEnergyCheck += OnCardEnergyCheck;
-        GameEvent.onCardEnergyActive += OnCardEnergyActive;
-        GameEvent.onCardClassActive += OnCardClassActive; //Class Event
-        GameEvent.onCardSpellActive += OnCardSpellActive; //Spell Event
+    //    GameEvent.onCardAttack += OnCardAttack; //Attack Event
+    //    GameEvent.onCardEnergyFill += OnCardEnergyFill; //Energy Event
+    //    GameEvent.onCardEnergyCheck += OnCardEnergyCheck;
+    //    GameEvent.onCardEnergyActive += OnCardEnergyActive;
+    //    GameEvent.onCardClassActive += OnCardClassActive; //Class Event
+    //    GameEvent.onCardSpellActive += OnCardSpellActive; //Spell Event
 
-        GameEvent.onPlayerContinueCheck += OnPlayerContinueCheck;
-        GameEvent.onPlayerContinue += OnPlayerContinue;
-        GameEvent.onPlayerEnd += OnPlayerEnd;
-    }
+    //    GameEvent.onPlayerContinueCheck += OnPlayerContinueCheck;
+    //    GameEvent.onPlayerContinue += OnPlayerContinue;
+    //    GameEvent.onPlayerEnd += OnPlayerEnd;
+    //}
 
-    private void OnDisable()
-    {
-        GameEvent.onGameStart -= OnGameStart;
+    //private void OnDisable()
+    //{
+    //    GameEvent.onGameStart -= OnGameStart;
 
-        GameEvent.onPlayerTurn -= OnPlayerTurn;
-        GameEvent.onPlayerStart -= OnPlayerStart;
-        GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerStunnedCheck -= OnPlayerCheckStunned;
+    //    GameEvent.onPlayerTurn -= OnPlayerTurn;
+    //    GameEvent.onPlayerStart -= OnPlayerStart;
+    //    GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
+    //    GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
+    //    GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
 
-        GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
-        GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
-        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+    //    GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
+    //    GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
+    //    GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
 
-        GameEvent.onCardOriginActive -= OnCardAbilityOriginActive;
+    //    GameEvent.onCardOriginActive -= OnCardAbilityOriginActive;
 
-        GameEvent.onPlayerDoWandNext -= OnPlayerDoWandNext;
-        GameEvent.onPlayerDoWandActive -= OnPlayerDoWandActive;
+    //    GameEvent.onPlayerDoWandNext -= OnPlayerDoWandNext;
+    //    GameEvent.onPlayerDoWandActive -= OnPlayerDoWandActive;
 
-        GameEvent.onCardAttack -= OnCardAttack;
-        GameEvent.onCardEnergyFill -= OnCardEnergyFill;
-        GameEvent.onCardEnergyCheck -= OnCardEnergyCheck;
-        GameEvent.onCardEnergyActive -= OnCardEnergyActive;
-        GameEvent.onCardClassActive -= OnCardClassActive;
-        GameEvent.onCardSpellActive -= OnCardSpellActive;
+    //    GameEvent.onCardAttack -= OnCardAttack;
+    //    GameEvent.onCardEnergyFill -= OnCardEnergyFill;
+    //    GameEvent.onCardEnergyCheck -= OnCardEnergyCheck;
+    //    GameEvent.onCardEnergyActive -= OnCardEnergyActive;
+    //    GameEvent.onCardClassActive -= OnCardClassActive;
+    //    GameEvent.onCardSpellActive -= OnCardSpellActive;
 
-        GameEvent.onPlayerContinueCheck -= OnPlayerContinueCheck;
-        GameEvent.onPlayerContinue -= OnPlayerContinue;
-        GameEvent.onPlayerEnd -= OnPlayerEnd;
-    }
+    //    GameEvent.onPlayerContinueCheck -= OnPlayerContinueCheck;
+    //    GameEvent.onPlayerContinue -= OnPlayerContinue;
+    //    GameEvent.onPlayerEnd -= OnPlayerEnd;
+    //}
 
     private void Awake()
     {
@@ -115,11 +116,7 @@ public class GameManager : MonoBehaviour
 
         m_playerTurn = m_PlayerStart;
 
-        yield return null;
-
         GameEvent.Init();
-
-        yield return null;
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
@@ -130,7 +127,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        GameEvent.ViewWild();
+        GameEvent.ViewWild(null);
 
         yield return new WaitForSeconds(2f);
 
@@ -138,13 +135,13 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(7f);
 
-        GameEvent.ViewField();
+        GameEvent.ViewField(null);
 
         yield return new WaitForSeconds(2f);
 
         m_gameStart = true;
 
-        GameEvent.GameStart();
+        GameEvent.GameStart(() => OnGameStart());
 
         Debug.Log("Start Game");
     }
@@ -167,200 +164,143 @@ public class GameManager : MonoBehaviour
 
     private void OnGameStart()
     {
-        GameEvent.PlayerTurn(PlayerCurrent, true);
+        GameEvent.PlayerTurn(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
     }
 
 
-    private void OnPlayerTurn(IPlayer Player, bool Update)
+    private void OnPlayerTurn(IPlayer Player)
     {
-        if (Update)
-            StartCoroutine(IEPlayerTurn());
+        GameEvent.ViewField(() => GameEvent.ViewPlayer(PlayerCurrent, () => OnPlayerStart(PlayerCurrent)));
+
     }
 
-    private IEnumerator IEPlayerTurn()
+    private void OnPlayerStart(IPlayer Player)
     {
-        GameEvent.ViewPlayer(PlayerCurrent);
-
-        yield return new WaitForSeconds(2f);
-
-        GameEvent.PlayerStart(PlayerCurrent);
+        GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () => OnPlayerTakeRuneStoneFromSupply(Player, 1));
     }
 
-    private void OnPlayerStart(IPlayer Player, bool Update)
+    private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
     {
-        if (Update)
-            GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1);
+        Player.DoTakeRuneStoneFromSupply(Value);
+        GameEvent.PlayerTakeRuneStoneFromMediation(Player, () => OnPlayerTakeRuneStoneFromMediation(Player));
     }
 
-    private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, bool Update)
+    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player)
     {
-        if (Update)
-        {
-            Player.DoTakeRuneStoneFromSupply(Value);
-            GameEvent.PlayerTakeRuneStoneFromMediation(Player);
-        }
+        Player.DoTakeRuneStoneFromMediation();
+        GameEvent.PlayerStunnedCheck(Player, () => OnPlayerStunnedCheck(Player));
     }
 
-    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player, bool Update)
+    private void OnPlayerStunnedCheck(IPlayer Player)
     {
-        if (Update)
-        {
-            Player.DoTakeRuneStoneFromMediation();
-            GameEvent.PlayerStunnedCheck(Player);
-        }
-    }
-
-    private void OnPlayerCheckStunned(IPlayer Player, bool Update)
-    {
-        if (Update)
-        {
-            Player.DoStunnedCheck();
-            //
-            if (Player.Stuned)
-                GameEvent.PlayerDoWandNext(Player, false);
-            else
-                GameEvent.PlayerDoChoice(Player);
-        }
+        Player.DoStunnedCheck();
+        //
+        if (Player.Stuned)
+            GameEvent.PlayerDoWandNext(Player, false, () => OnPlayerDoWandNext(Player, false));
+        else
+            GameEvent.PlayerDoChoice(Player, () => OnPlayerDoChoice(Player));
     }
 
 
-    private void OnPlayerDoChoice(IPlayer Player, bool Update)
+    private void OnPlayerDoChoice(IPlayer Player)
     {
-        if (Update)
-            Player.DoChoice();
+        Player.DoChoice();
     } //Choice Event
 
-    private void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update)
+    private void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
-        if (Update)
-        {
-            Player.DoMediate(RuneStoneAdd);
-            GameEvent.PlayerDoWandNext(Player, true);
-        }
+        Player.DoMediate(RuneStoneAdd);
+        GameEvent.PlayerDoWandNext(Player, true, () => OnPlayerDoWandNext(Player, true));
     } //Mediate Event
 
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, bool Update)
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card)
     {
-        if (Update)
-        {
-            Player.DoCollect(Card);
-            Card.DoCollectActive(Player);
-            GameEvent.CardOriginActive(Card);
-        }
+        Player.DoCollect(Card);
+        Card.DoCollectActive(Player);
+        GameEvent.CardOriginActive(Card, () => OnCardAbilityOriginActive(Card));
     } //Collect Event
 
 
-    private void OnCardAbilityOriginActive(ICard Card, bool Update)
+    private void OnCardAbilityOriginActive(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoOriginActive();
-            GameEvent.PlayerDoWandNext(Card.Player, true);
-        }
+        Card.DoOriginActive();
+        GameEvent.PlayerDoWandNext(Card.Player, true, () => OnPlayerDoWandNext(Card.Player, true));
     } //Origin Event
 
 
-    private void OnPlayerDoWandNext(IPlayer Player, bool CardActive, bool Update)
+    private void OnPlayerDoWandNext(IPlayer Player, bool CardActive)
     {
-        if (Update)
-        {
-            Player.DoWandNext();
-            if (CardActive)
-                GameEvent.PlayerDoWandActive(Player);
-            else
-                GameEvent.PlayerEnd(Player);
-        }
+        Player.DoWandNext();
+        if (CardActive)
+            GameEvent.PlayerDoWandActive(Player, () => OnPlayerDoWandActive(Player));
+        else
+            GameEvent.PlayerEnd(Player);
     }
 
-    private void OnPlayerDoWandActive(IPlayer Player, bool Update)
+    private void OnPlayerDoWandActive(IPlayer Player)
     {
-        if (Update)
-        {
-            Player.DoWandActive();
-            GameEvent.CardAttack(Player.CardQueue[Player.WandStep]);
-        }
+        Player.DoWandActive();
+        GameEvent.CardAttack(Player.CardQueue[Player.WandStep], () => OnCardAttack(Player.CardQueue[Player.WandStep]));
     }
 
 
-    private void OnCardAttack(ICard Card, bool Update)
+    private void OnCardAttack(ICard Card)
     {
-        if (Update)
+        Card.DoAttackActive();
+        for (int i = 0; i < m_player.Count; i++)
         {
-            Card.DoAttackActive();
-            for (int i = 0; i < m_player.Count; i++)
-            {
-                if (m_player[i] == Card.Player)
-                    continue;
-                m_player[i].HealthChange(-Card.AttackCombine);
-            }
-            GameEvent.CardEnergyFill(Card);
+            if (m_player[i] == Card.Player)
+                continue;
+            m_player[i].HealthChange(-Card.AttackCombine);
         }
+        GameEvent.CardEnergyFill(Card, () => OnCardEnergyFill(Card));
     } //Attack Event
 
-    private void OnCardEnergyFill(ICard Card, bool Update)
+    private void OnCardEnergyFill(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoEnergyFill(1);
-            GameEvent.CardEnergyCheck(Card);
-        }
+        Card.DoEnergyFill(1);
+        GameEvent.CardEnergyCheck(Card, () => OnCardEnergyCheck(Card));
     } //Energy Event
 
-    private void OnCardEnergyCheck(ICard Card, bool Update)
+    private void OnCardEnergyCheck(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoEnergyCheck();
-            if (Card.EnergyFull)
-                GameEvent.CardEnergyActive(Card);
-            //else?
-        }
+        Card.DoEnergyCheck();
+        if (Card.EnergyFull)
+            GameEvent.CardEnergyActive(Card, () => OnCardEnergyActive(Card));
+        //else?
     }
 
-    private void OnCardEnergyActive(ICard Card, bool Update)
+    private void OnCardEnergyActive(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoEnergyActive();
-            GameEvent.CardClassActive(Card);
-        }
+        Card.DoEnergyActive();
+        GameEvent.CardClassActive(Card, () => OnCardClassActive(Card));
     }
 
-    private void OnCardClassActive(ICard Card, bool Update)
+    private void OnCardClassActive(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoClassActive();
-            GameEvent.CardSpellActive(Card);
-        }
+        Card.DoClassActive();
+        GameEvent.CardSpellActive(Card, () => OnCardSpellActive(Card));
     } //Class Event
 
-    private void OnCardSpellActive(ICard Card, bool Update)
+    private void OnCardSpellActive(ICard Card)
     {
-        if (Update)
-        {
-            Card.DoSpellActive();
-            GameEvent.PlayerContinueCheck(Card.Player);
-        }
+        Card.DoSpellActive();
+        GameEvent.PlayerContinueCheck(Card.Player, () => OnPlayerContinueCheck(Card.Player));
     } //Spell Event
 
 
-    private void OnPlayerContinueCheck(IPlayer Player, bool Update)
+    private void OnPlayerContinueCheck(IPlayer Player)
     {
-        if (Update)
-        {
-            Player.DoContinueCheck(Player);
-            if (Player.CardQueue.Exists(t => t.EnergyFull))
-                GameEvent.PlayerContinue(Player);
-            else
-                GameEvent.PlayerEnd(Player);
-        }
+        Player.DoContinueCheck(Player);
+        if (Player.CardQueue.Exists(t => t.EnergyFull))
+            GameEvent.PlayerContinue(Player, () => OnPlayerContinue(Player));
+        else
+            GameEvent.PlayerEnd(Player);
     }
 
-    private void OnPlayerContinue(IPlayer Player, bool Update)
+    private void OnPlayerContinue(IPlayer Player)
     {
-        if (Update)
-            Player.DoContinue(Player);
+        Player.DoContinue(Player);
     } //Continue Event
 
     private void OnPlayerEnd(IPlayer Player)
@@ -369,6 +309,6 @@ public class GameManager : MonoBehaviour
         m_playerTurn++;
         if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;
-        GameEvent.PlayerStart(PlayerCurrent);
+        GameEvent.PlayerStart(PlayerCurrent, () => OnGameStart());
     }
 }

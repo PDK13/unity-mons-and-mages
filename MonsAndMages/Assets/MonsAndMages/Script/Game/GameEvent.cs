@@ -9,7 +9,7 @@ public class GameEvent
     public static Action onInit;
     public static Action<PlayerData[]> onInitPlayer;
     public static Action onInitWild;
-    public static Action onGameStart;
+    public static Action<Action> onGameStart;
 
     public static void Init()
     {
@@ -26,110 +26,110 @@ public class GameEvent
         onInitWild?.Invoke();
     }
 
-    public static void GameStart()
+    public static void GameStart(Action OnComplete)
     {
-        onGameStart?.Invoke();
+        onGameStart?.Invoke(OnComplete);
     }
 
     //Ui-Event
 
-    public static Action<IPlayer, bool> onViewPlayer;
-    public static Action<bool> onViewWild;
-    public static Action<bool> onViewField;
+    public static Action<IPlayer, Action> onViewPlayer;
+    public static Action<Action> onViewWild;
+    public static Action<Action> onViewField;
 
-    public static void ViewPlayer(IPlayer Player, bool Update = false)
+    public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
-        onViewPlayer?.Invoke(Player, Update);
+        onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
 
-    public static void ViewWild(bool Update = false)
+    public static void ViewWild(Action OnComplete)
     {
-        onViewWild?.Invoke(Update);
+        onViewWild?.Invoke(OnComplete);
     } //View Wild side
 
-    public static void ViewField(bool Update = false)
+    public static void ViewField(Action OnComplete)
     {
-        onViewField?.Invoke(Update);
+        onViewField?.Invoke(OnComplete);
     } //View Player side
 
     //Match-Event
 
-    public static Action<IPlayer, bool> onPlayerTurn;
-    public static Action<IPlayer, bool> onPlayerStart;
-    public static Action<IPlayer, int, bool> onPlayerTakeRuneStoneFromSupply;
-    public static Action<IPlayer, bool> onPlayerTakeRuneStoneFromMediation;
-    public static Action<IPlayer, bool> onPlayerStunnedCheck;
+    public static Action<IPlayer, Action> onPlayerTurn;
+    public static Action<IPlayer, Action> onPlayerStart;
+    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply;
+    public static Action<IPlayer, Action> onPlayerTakeRuneStoneFromMediation;
+    public static Action<IPlayer, Action> onPlayerStunnedCheck;
 
-    public static Action<IPlayer, bool> onPlayerDoChoice;
-    public static Action<IPlayer, int, bool> onPlayerDoMediate; //Mediate Event
+    public static Action<IPlayer, Action> onPlayerDoChoice;
+    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
 
-    public static Action<ICard, bool> onCardTap;
-    public static Action<IPlayer, ICard, bool> onPlayerDoCollect; //Collect Event
+    public static Action<ICard, Action> onCardTap;
+    public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
     public static Action onCardFill;
     public static Action onCardFillComplete;
 
-    public static Action<ICard, bool> onCardOriginActive; //Origin Event
+    public static Action<ICard, Action> onCardOriginActive; //Origin Event
 
-    public static Action<IPlayer, bool, bool> onPlayerDoWandNext;
-    public static Action<IPlayer, bool> onPlayerDoWandActive;
+    public static Action<IPlayer, bool, Action> onPlayerDoWandNext;
+    public static Action<IPlayer, Action> onPlayerDoWandActive;
 
-    public static Action<ICard, bool> onCardAttack; //Attack Event
-    public static Action<ICard, bool> onCardEnergyFill; //Energy Event
-    public static Action<ICard, bool> onCardEnergyCheck;
-    public static Action<ICard, bool> onCardEnergyActive;
-    public static Action<ICard, bool> onCardClassActive; //Class Event
-    public static Action<ICard, bool> onCardSpellActive; //Spell Event
+    public static Action<ICard, Action> onCardAttack; //Attack Event
+    public static Action<ICard, Action> onCardEnergyFill; //Energy Event
+    public static Action<ICard, Action> onCardEnergyCheck;
+    public static Action<ICard, Action> onCardEnergyActive;
+    public static Action<ICard, Action> onCardClassActive; //Class Event
+    public static Action<ICard, Action> onCardSpellActive; //Spell Event
 
-    public static Action<IPlayer, bool> onPlayerContinueCheck;
-    public static Action<IPlayer, bool> onPlayerContinue;
+    public static Action<IPlayer, Action> onPlayerContinueCheck;
+    public static Action<IPlayer, Action> onPlayerContinue;
 
     public static Action<IPlayer> onPlayerEnd;
 
-    public static void PlayerTurn(IPlayer Player, bool Update = false)
+    public static void PlayerTurn(IPlayer Player, Action OnComplete)
     {
-        onPlayerTurn?.Invoke(Player, Update);
+        onPlayerTurn?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerStart(IPlayer Player, bool Update = false)
+    public static void PlayerStart(IPlayer Player, Action OnComplete)
     {
-        onPlayerStart?.Invoke(Player, Update);
+        onPlayerStart?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, bool Update = false)
+    public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, Action OnComplete)
     {
-        onPlayerTakeRuneStoneFromSupply?.Invoke(Player, Value, Update);
+        onPlayerTakeRuneStoneFromSupply?.Invoke(Player, Value, OnComplete);
     }
 
-    public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, bool Update = false)
+    public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, Action OnComplete)
     {
-        onPlayerTakeRuneStoneFromMediation?.Invoke(Player, Update);
+        onPlayerTakeRuneStoneFromMediation?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerStunnedCheck(IPlayer Player, bool Update = false)
+    public static void PlayerStunnedCheck(IPlayer Player, Action OnComplete)
     {
-        onPlayerStunnedCheck?.Invoke(Player, Update);
+        onPlayerStunnedCheck?.Invoke(Player, OnComplete);
     }
 
 
-    public static void PlayerDoChoice(IPlayer Player, bool Update = false)
+    public static void PlayerDoChoice(IPlayer Player, Action OnComplete)
     {
-        onPlayerDoChoice?.Invoke(Player, Update);
+        onPlayerDoChoice?.Invoke(Player, OnComplete);
     } //Choice Event
 
-    public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update = false)
+    public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, Action OnComplete)
     {
-        onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, Update);
+        onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, OnComplete);
     } //Mediate Event
 
 
-    public static void CardTap(ICard Card, bool Update = false)
+    public static void CardTap(ICard Card, Action OnComplete)
     {
-        onCardTap?.Invoke(Card, Update);
+        onCardTap?.Invoke(Card, OnComplete);
     }
 
-    public static void PlayerDoCollect(IPlayer Player, ICard Card, bool Update = false)
+    public static void PlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
-        onPlayerDoCollect?.Invoke(Player, Card, Update);
+        onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
 
     public static void CardFill()
@@ -143,62 +143,62 @@ public class GameEvent
     }
 
 
-    public static void CardOriginActive(ICard Card, bool Update = false)
+    public static void CardOriginActive(ICard Card, Action OnComplete)
     {
-        onCardOriginActive?.Invoke(Card, Update);
+        onCardOriginActive?.Invoke(Card, OnComplete);
     } //Origin Event
 
 
-    public static void PlayerDoWandNext(IPlayer Player, bool CardActive, bool Update = false)
+    public static void PlayerDoWandNext(IPlayer Player, bool CardActive, Action OnComplete)
     {
-        onPlayerDoWandNext?.Invoke(Player, CardActive, Update);
+        onPlayerDoWandNext?.Invoke(Player, CardActive, OnComplete);
     }
 
-    public static void PlayerDoWandActive(IPlayer Player, bool Update = false)
+    public static void PlayerDoWandActive(IPlayer Player, Action OnComplete)
     {
-        onPlayerDoWandActive?.Invoke(Player, Update);
+        onPlayerDoWandActive?.Invoke(Player, OnComplete);
     }
 
 
-    public static void CardAttack(ICard Card, bool Update = false)
+    public static void CardAttack(ICard Card, Action OnComplete)
     {
-        onCardAttack?.Invoke(Card, Update);
+        onCardAttack?.Invoke(Card, OnComplete);
     } //Attack Event
 
-    public static void CardEnergyFill(ICard Card, bool Update = false)
+    public static void CardEnergyFill(ICard Card, Action OnComplete)
     {
-        onCardEnergyFill?.Invoke(Card, Update);
+        onCardEnergyFill?.Invoke(Card, OnComplete);
     } //Energy Event
 
-    public static void CardEnergyCheck(ICard Card, bool Update = false)
+    public static void CardEnergyCheck(ICard Card, Action OnComplete)
     {
-        onCardEnergyCheck?.Invoke(Card, Update);
+        onCardEnergyCheck?.Invoke(Card, OnComplete);
     }
 
-    public static void CardEnergyActive(ICard Card, bool Update = false)
+    public static void CardEnergyActive(ICard Card, Action OnComplete)
     {
-        onCardEnergyActive?.Invoke(Card, Update);
+        onCardEnergyActive?.Invoke(Card, OnComplete);
     }
 
-    public static void CardClassActive(ICard Card, bool Update = false)
+    public static void CardClassActive(ICard Card, Action OnComplete)
     {
-        onCardClassActive?.Invoke(Card, Update);
+        onCardClassActive?.Invoke(Card, OnComplete);
     } //Class Event
 
-    public static void CardSpellActive(ICard Card, bool Update = false)
+    public static void CardSpellActive(ICard Card, Action OnComplete)
     {
-        onCardSpellActive?.Invoke(Card, Update);
+        onCardSpellActive?.Invoke(Card, OnComplete);
     } //Spell Event
 
 
-    public static void PlayerContinueCheck(IPlayer Player, bool Update = false)
+    public static void PlayerContinueCheck(IPlayer Player, Action OnComplete)
     {
-        onPlayerContinueCheck?.Invoke(Player, Update);
+        onPlayerContinueCheck?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerContinue(IPlayer Player, bool Update = false)
+    public static void PlayerContinue(IPlayer Player, Action OnComplete)
     {
-        onPlayerContinue?.Invoke(Player, Update);
+        onPlayerContinue?.Invoke(Player, OnComplete);
     } //Continue Event
 
 

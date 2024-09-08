@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -13,35 +14,55 @@ public class PlayerView : MonoBehaviour
     {
         GameEvent.onInit += OnInit;
 
-        GameEvent.onViewPlayer += OnViewPlayer;
-        GameEvent.onViewWild += OnViewCollect;
-        GameEvent.onViewField += OnViewBack;
+        GameEvent.onPlayerStart += OnPlayerStart;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
 
-        GameEvent.onViewPlayer -= OnViewPlayer;
-        GameEvent.onViewWild -= OnViewCollect;
-        GameEvent.onViewField -= OnViewBack;
+        GameEvent.onPlayerStart -= OnPlayerStart;
     }
 
     //
 
     public void BtnViewPlayer(int PlayerIndex)
     {
-        GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.SetActive(false);
+        GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), () =>
+        {
+            m_btnCollect.SetActive(GameManager.instance.PlayerView);
+            m_btnBack.SetActive(false);
+            m_playerContent.SetActive(GameManager.instance.PlayerView);
+        });
     }
 
     public void BtnViewCollect()
     {
-        GameEvent.ViewWild(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.SetActive(false);
+        GameEvent.ViewWild(() =>
+        {
+            m_btnCollect.SetActive(false);
+            m_btnBack.SetActive(GameManager.instance.PlayerView);
+            m_playerContent.SetActive(false);
+        });
     }
 
     public void BtnViewBack()
     {
-        GameEvent.ViewField(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.SetActive(false);
+        GameEvent.ViewField(() =>
+        {
+            m_btnCollect.SetActive(GameManager.instance.PlayerView);
+            m_btnBack.SetActive(false);
+            m_playerContent.SetActive(GameManager.instance.PlayerView);
+        });
     }
 
     //
@@ -53,48 +74,9 @@ public class PlayerView : MonoBehaviour
         m_playerContent.SetActive(false);
     }
 
-
-    private void OnViewPlayer(IPlayer Player, bool Update)
+    private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
-        if (!Update)
-        {
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(false);
-            m_playerContent.SetActive(false);
-        }
-        else
-        {
-            m_btnCollect.SetActive(GameManager.instance.PlayerView);
-            m_btnBack.SetActive(false);
-            m_playerContent.SetActive(GameManager.instance.PlayerView);
-        }
-    }
-
-    private void OnViewCollect(bool Update)
-    {
-        if (!Update)
-        {
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(false);
-            m_playerContent.SetActive(false);
-        }
-        else
-        {
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(GameManager.instance.PlayerView);
-            m_playerContent.SetActive(false);
-        }
-    }
-
-    private void OnViewBack(bool Update)
-    {
-        if (!Update)
-        {
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(false);
-            m_playerContent.SetActive(false);
-        }
-        else
+        if (Player.Base)
         {
             m_btnCollect.SetActive(GameManager.instance.PlayerView);
             m_btnBack.SetActive(false);

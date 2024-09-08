@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,36 +40,18 @@ public class GameView : MonoBehaviour
     }
 
 
-    private void OnViewPlayer(IPlayer Player, bool Update)
+    private void OnViewPlayer(IPlayer Player, Action OnComplete)
     {
-        if (!Update)
-        {
-            m_playerContent
-                .DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, 1f)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() => GameEvent.ViewPlayer(Player, true));
-        }
+        m_playerContent.DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
     }
 
-    private void OnViewCollect(bool Update)
+    private void OnViewCollect(Action OnComplete)
     {
-        if (!Update)
-        {
-            m_gameContent
-                .DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() => GameEvent.ViewWild(true));
-        }
+        m_gameContent.DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
     }
 
-    private void OnViewBack(bool Update)
+    private void OnViewBack(Action OnComplete)
     {
-        if (!Update)
-        {
-            m_gameContent
-                .DOLocalMoveY(0f, 1f)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() => GameEvent.ViewField(true));
-        }
+        m_gameContent.DOLocalMoveY(0f, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
     }
 }

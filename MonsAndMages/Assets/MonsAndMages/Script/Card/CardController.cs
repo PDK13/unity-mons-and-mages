@@ -9,31 +9,22 @@ public class CardController : MonoBehaviour
 {
     [SerializeField] private GameObject m_mask;
     [SerializeField] private GameObject m_renderer;
+    [SerializeField] private GameObject m_rendererAlpha;
     [SerializeField] private TextMeshProUGUI m_tmpGrow;
     [SerializeField] private TextMeshProUGUI m_tmpMana;
     [SerializeField] private TextMeshProUGUI m_tmpDamage;
 
-    private ICard m_card;
-    private Tweener m_tween;
-
-    public ICard Card
-    {
-        get
-        {
-            if (m_card == null)
-                m_card = GetComponent<ICard>();
-            return m_card;
-        }
-    }
+    public ICard Card => GetComponent<ICard>();
 
     //
 
     public void BtnTap()
     {
-        Debug.Log(Card.Name + " Card Tap");
-        GameEvent.CardTap(Card, true);
-        //Test
-        GameEvent.PlayerDoCollect(GameManager.instance.PlayerCurrent, Card, true);
+        EffectAlpha(1f, () =>
+        {
+            //Test
+            GameEvent.PlayerDoCollect(GameManager.instance.PlayerCurrent, Card, null);
+        });
     }
 
     //
@@ -43,6 +34,8 @@ public class CardController : MonoBehaviour
         m_mask.SetActive(true);
         m_renderer.SetActive(false);
         m_renderer.GetComponent<Image>().sprite = Card.Image;
+        m_rendererAlpha.GetComponent<Image>().sprite = Card.Image;
+        m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
         InfoGrowUpdate(Card.GrowCurrent);
         InfoManaUpdate(Card.ManaCurrent, Card.ManaPoint);
@@ -51,18 +44,17 @@ public class CardController : MonoBehaviour
 
     public void Open(float Duration, Action OnComplete)
     {
-        m_tween.Kill();
         this.transform.eulerAngles = Vector3.zero;
         m_mask.SetActive(true);
         m_renderer.SetActive(false);
-        m_tween = this.transform
+        this.transform
             .DOLocalRotate(Vector3.up * 90f, Duration / 2)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
                 m_mask.SetActive(false);
                 m_renderer.SetActive(true);
-                m_tween = this.transform
+                this.transform
                     .DOLocalRotate(Vector3.zero, Duration / 2)
                     .SetEase(Ease.Linear)
                     .OnComplete(() => OnComplete?.Invoke());
@@ -71,23 +63,46 @@ public class CardController : MonoBehaviour
 
     public void Close(float Duration, Action OnComplete)
     {
-        m_tween.Kill();
         this.transform.eulerAngles = Vector3.zero;
         m_mask.SetActive(false);
         m_renderer.SetActive(true);
-        m_tween = this.transform
+        this.transform
             .DOLocalRotate(Vector3.up * 90f, Duration / 2)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
                 m_mask.SetActive(true);
                 m_renderer.SetActive(false);
-                m_tween = this.transform
+                this.transform
                     .DOLocalRotate(Vector3.zero, Duration / 2)
                     .SetEase(Ease.Linear)
                     .OnComplete(() => OnComplete?.Invoke());
             });
     }
+
+
+    public void Effect(CardEffectType Type, float Duration, Action OnComplete)
+    {
+        switch (Type)
+        {
+            case CardEffectType.Alpha:
+                EffectAlpha(Duration, OnComplete);
+                break;
+        }
+    }
+
+    public void EffectAlpha(float Duration, Action OnComplete)
+    {
+        var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
+        AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+            });
+        });
+    }
+
 
     public void InfoShow(bool Show)
     {

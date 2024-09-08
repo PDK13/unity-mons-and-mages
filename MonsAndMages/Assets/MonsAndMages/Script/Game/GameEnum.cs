@@ -40,3 +40,8 @@ public enum CardTrickType
 {
 
 }
+
+public enum CardEffectType
+{
+    Alpha,
+}
