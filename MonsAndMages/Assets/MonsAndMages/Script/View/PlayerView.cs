@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,19 +10,20 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
     [SerializeField] private GameObject m_playerContent;
+    [SerializeField] private GameObject m_startBox;
 
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
 
-        GameEvent.onPlayerStart += OnPlayerStart;
+        GameEvent.onGameStart += OnGameStart;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
 
-        GameEvent.onPlayerStart -= OnPlayerStart;
+        GameEvent.onGameStart -= OnGameStart;
     }
 
     //
@@ -74,13 +76,20 @@ public class PlayerView : MonoBehaviour
         m_playerContent.SetActive(false);
     }
 
-    private void OnPlayerStart(IPlayer Player, Action OnComplete)
+    private void OnGameStart(Action OnComplete)
     {
-        if (Player.Base)
+        RectTransform StartBox = m_startBox.GetComponent<RectTransform>();
+        StartBox.anchoredPosition = Vector3.up * 100;
+        StartBox.DOAnchorPosY(-100, 0.5f).OnComplete(() =>
         {
-            m_btnCollect.SetActive(GameManager.instance.PlayerView);
-            m_btnBack.SetActive(false);
-            m_playerContent.SetActive(GameManager.instance.PlayerView);
-        }
+            StartBox.DOAnchorPosY(100, 0.25f).OnComplete(() =>
+            {
+                m_btnCollect.SetActive(GameManager.instance.PlayerView);
+                m_btnBack.SetActive(false);
+                m_playerContent.SetActive(GameManager.instance.PlayerView);
+                //
+                OnComplete?.Invoke();
+            }).SetDelay(0.25f);
+        });
     }
 }

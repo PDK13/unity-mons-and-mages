@@ -103,7 +103,6 @@ public class GameManager : MonoBehaviour
     private void OnPlayerTurn(IPlayer Player)
     {
         GameEvent.ViewField(() => GameEvent.ViewPlayer(PlayerCurrent, () => OnPlayerStart(PlayerCurrent)));
-
     }
 
     private void OnPlayerStart(IPlayer Player)
@@ -241,6 +240,6 @@ public class GameManager : MonoBehaviour
         m_playerTurn++;
         if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;
-        GameEvent.PlayerStart(PlayerCurrent, () => OnGameStart());
+        GameEvent.PlayerTurn(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
     }
 }
