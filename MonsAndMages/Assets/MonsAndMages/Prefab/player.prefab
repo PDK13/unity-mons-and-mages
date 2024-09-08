@@ -1562,6 +1562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5737c1753bb7004888fe8cccc5a9dbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cardPointSample: {fileID: 4387718475101243984}
   m_cardContent: {fileID: 8251891717430459947}
 --- !u!1 &7389548289056827521
 GameObject:
@@ -1878,7 +1879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1980,7 +1981,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2082,7 +2083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3164263085325813325, guid: 41fc1e3d30ee8db44aacc5f99fea9dd7, type: 3}
       propertyPath: m_AnchoredPosition.y

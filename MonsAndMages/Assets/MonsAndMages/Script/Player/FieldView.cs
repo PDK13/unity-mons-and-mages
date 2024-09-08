@@ -19,13 +19,19 @@ public class FieldView : MonoBehaviour
         GameEvent.onInitPlayer -= OnInitPlayer;
     }
 
+    private void Start()
+    {
+        m_playerSample.SetActive(false);
+    }
+
     private void OnInitPlayer(PlayerData[] Player)
     {
-        foreach (var PlayerCheck in Player)
+        for (int i = 0; i < Player.Length; i++)
         {
             var PlayerClone = Instantiate(m_playerSample, m_playerContent);
-            PlayerClone.transform.localPosition = Vector3.right * m_playerContent.sizeDelta.x;
-            PlayerClone.GetComponent<PlayerController>().Init(PlayerCheck);
+            PlayerClone.SetActive(true);
+            PlayerClone.transform.localPosition = Vector3.right * m_playerContent.sizeDelta.x * i;
+            PlayerClone.GetComponent<PlayerController>().Init(Player[i]);
         }
     }
 }

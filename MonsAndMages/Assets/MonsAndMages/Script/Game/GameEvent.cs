@@ -118,8 +118,6 @@ public class GameEvent
 
     public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, bool Update = false)
     {
-        if (!Player.MediationEmty)
-            return;
         onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, Update);
     } //Mediate Event
 
@@ -131,8 +129,6 @@ public class GameEvent
 
     public static void PlayerDoCollect(IPlayer Player, ICard Card, bool Update = false)
     {
-        if (Player.RuneStone < Card.RuneStoneCost)
-            return;
         onPlayerDoCollect?.Invoke(Player, Card, Update);
     } //Collect Event
 

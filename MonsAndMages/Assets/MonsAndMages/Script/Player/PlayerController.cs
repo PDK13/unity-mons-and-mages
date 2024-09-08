@@ -9,45 +9,9 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     private PlayerData m_data;
 
-    //
-
-    private void OnEnable()
-    {
-        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
-    }
-
-    private void OnDisable()
-    {
-        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
-    }
-
     private void Start()
     {
-
-    }
-
-    //
-
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, bool Update)
-    {
-        if (Update)
-            StartCoroutine(IECardCollect(Card));
-    }
-
-    private IEnumerator IECardCollect(ICard Card)
-    {
-        if (m_data.CardQueue.Count >= 5)
-        {
-            var CardStage = m_cardContent.GetChild(0).GetComponentInChildren<ICardStage>();
-            if (CardStage != null)
-            {
-
-            }
-        }
-
-        yield return null;
-
-
+        m_cardPointSample.SetActive(false);
     }
 
     //IPlayer
@@ -77,6 +41,11 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void Init(PlayerData Data)
     {
         m_data = Data;
+        m_data.Player = this;
+        //
+        for (int i = 0; i < m_cardContent.childCount; i++)
+            m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
+        //
         GameManager.instance.PlayerJoin(this);
     }
 
@@ -118,17 +87,22 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_data.Mediation[1] = RuneStoneAdd * 2;
     }
 
-    public void DoCollect(ICard CardData)
+    public void DoCollect(ICard Card)
     {
-        m_data.RuneStone -= CardData.RuneStoneCost;
+        m_data.RuneStone -= Card.RuneStoneCost;
 
-        if (m_data.CardQueue.Count < 5 || CardQueue[0] != null)
-            m_data.CardQueue.Add(CardData);
-        else
+        if (m_data.CardQueue.Count >= 5 && CardQueue[0].Name == CardNameType.Stage)
         {
+            Destroy(m_cardContent.GetChild(0).gameObject);
             m_data.CardQueue.RemoveAt(0);
-            m_data.CardQueue.Add(CardData);
         }
+
+        var CardPoint = Instantiate(m_cardPointSample, m_cardContent);
+        CardPoint.SetActive(true);
+        CardPoint.name = "card-point";
+        Card.Controller.transform.SetParent(CardPoint.transform, true);
+        Card.Controller.transform.localPosition = Vector3.zero;
+        m_data.CardQueue.Add(Card);
     }
 
     //
@@ -140,7 +114,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoWandActive()
     {
-        CardQueue[WandStep].DoWandActive();
+        m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>().DoWandActive();
     }
 
     //

@@ -16,6 +16,8 @@ public class PlayerData
     [Min(0)] public int WandStep;
     public int[] Mediation = { 0, 0 };
 
+    public IPlayer Player;
+
     public bool Stuned => StunCurrent >= StunPoint;
 
     public int WandStepNext => WandStep + 1 > CardQueue.Count - 1 ? 0 : WandStep + 1;

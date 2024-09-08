@@ -30,7 +30,10 @@ public class CardController : MonoBehaviour
 
     public void BtnTap()
     {
-        Debug.Log("Card tap invoke");
+        Debug.Log(Card.Name + " Card Tap");
+        GameEvent.CardTap(Card, true);
+        //Test
+        GameEvent.PlayerDoCollect(GameManager.instance.PlayerCurrent, Card, true);
     }
 
     //
