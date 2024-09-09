@@ -37,26 +37,33 @@ public class CardController : MonoBehaviour
         var CardObject = Card.Controller.transform;
         var TopView = PlayerView.instance.transform;
         var DownView = Player.DoCollectReady().transform;
-        float DurationMove = 1f;
 
         CardRenderer.maskable = false;
         CardObject.SetParent(TopView, true);
-        CardObject.DOScale(Vector3.one * 2.5f, DurationMove * 0.7f).SetEase(Ease.OutQuad).SetDelay(DurationMove * 0.3f);
-        CardObject.DOLocalMove(Vector3.zero, DurationMove).SetEase(Ease.OutQuad).OnComplete(() =>
+        CardObject.DOScale(Vector3.one * 2.5f, 0.7f).SetEase(Ease.OutQuad).SetDelay(0.3f);
+        CardObject.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             GameEvent.ViewField(() =>
             {
                 Card.Controller.transform.SetParent(DownView.transform, true);
-                CardObject.DOScale(Vector3.one, DurationMove * 0.5f).SetEase(Ease.OutQuad);
-                CardObject.DOLocalMove(Vector3.zero, DurationMove).SetEase(Ease.OutQuad).OnComplete(() =>
+                CardObject.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad).OnComplete(() =>
                 {
-                    CardRenderer.maskable = true;
+                    CardObject.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+                    {
+                        CardObject.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
+                        {
+                            CardRenderer.maskable = true;
+                            OnComplete?.Invoke();
+                        });
+                    });
+                });
+                CardObject.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+                {
 
-                    OnComplete?.Invoke();
                 });
             });
         });
-    }
+    } //Card do collect tween here
 
     //
 

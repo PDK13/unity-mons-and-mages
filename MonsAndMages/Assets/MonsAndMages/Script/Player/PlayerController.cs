@@ -90,7 +90,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public Transform DoCollectReady()
     {
-        Debug.Log("???");
         if (m_data.CardQueue.Count >= 5 && CardQueue[0].Name == CardNameType.Stage)
         {
             Destroy(m_cardContent.GetChild(0).gameObject);
