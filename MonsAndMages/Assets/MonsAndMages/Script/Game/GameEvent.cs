@@ -1,6 +1,8 @@
 //Value "Update" is FALSE for UI invoke, then value is TRUE for Player and System invoke
 
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class GameEvent
 {
@@ -38,6 +40,7 @@ public class GameEvent
     public static Action<Action> onViewField;
 
     public static Action<bool> onButtonInteractable;
+    public static Action<Button> onButtonPress;
 
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
@@ -57,6 +60,11 @@ public class GameEvent
     public static void ButtonInteractable(bool Interactable)
     {
         onButtonInteractable?.Invoke(Interactable);
+    }
+
+    public static void ButtonPressed(Button Button)
+    {
+        onButtonPress?.Invoke(Button);
     }
 
     //Match-Event

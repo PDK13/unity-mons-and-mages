@@ -14,19 +14,41 @@ public class CardController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_tmpMana;
     [SerializeField] private TextMeshProUGUI m_tmpDamage;
 
+    private bool m_effect = false;
+    private bool m_ready = false;
+    private Button m_button;
+
     public ICard Card => GetComponent<ICard>();
+
+    private void Awake()
+    {
+        m_button = GetComponent<Button>();
+    }
 
     private void OnEnable()
     {
+        GameEvent.onButtonPress += OnButtonPress;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
     }
 
     private void OnDisable()
     {
+        GameEvent.onButtonPress -= OnButtonPress;
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
     }
 
+    public void Start()
+    {
+        m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
+    }
+
     //
+
+    private void OnButtonPress(Button Button)
+    {
+        if (!Button.Equals(m_button))
+            m_ready = false;
+    }
 
     private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
@@ -69,16 +91,45 @@ public class CardController : MonoBehaviour
         GameEvent.ButtonInteractable(false);
         EffectAlpha(1f, () =>
         {
-            GameEvent.CardTap(Card, null);
-
-            //Test
-            var Player = GameManager.instance.PlayerCurrent;
-
-            GameEvent.PlayerDoCollect(Player, Card, () =>
+            switch (Card.Name)
             {
-                GameManager.instance.OnPlayerDoCollect(Player, Card);
-                GameEvent.ButtonInteractable(true);
-            });
+                case CardNameType.None:
+                    Debug.LogError("Card controller found " + this.gameObject.name + " got name None");
+                    break;
+                case CardNameType.Stage:
+                    GameEvent.ButtonInteractable(true);
+                    break;
+                default:
+                    if (!m_ready)
+                    {
+                        m_ready = true;
+                        GameEvent.ButtonInteractable(true);
+                    }
+                    else
+                    {
+                        GameEvent.CardTap(Card, null);
+
+                        if (Card.Player == null)
+                        {
+                            //Test
+                            var Player = GameManager.instance.PlayerCurrent;
+
+                            GameEvent.PlayerDoCollect(Player, Card, () =>
+                            {
+                                GameManager.instance.OnPlayerDoCollect(Player, Card);
+                                GameEvent.ButtonInteractable(true);
+                            });
+                        }
+                        else
+                        {
+                            //...
+                            GameEvent.ButtonInteractable(true);
+                        }
+
+                        m_ready = false;
+                    }
+                    break;
+            }
         });
     }
 
@@ -148,11 +199,15 @@ public class CardController : MonoBehaviour
 
     public void EffectAlpha(float Duration, Action OnComplete)
     {
+        if (m_effect)
+            return;
+        m_effect = true;
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
         AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
+                m_effect = false;
                 OnComplete?.Invoke();
             });
         });

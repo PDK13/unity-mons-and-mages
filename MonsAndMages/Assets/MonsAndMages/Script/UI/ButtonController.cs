@@ -12,6 +12,11 @@ public class ButtonController : MonoBehaviour
         m_button = GetComponent<Button>();
     }
 
+    private void Start()
+    {
+        m_button.onClick.AddListener(() => ButtonPress());
+    }
+
     private void OnEnable()
     {
         GameEvent.onButtonInteractable += OnButtonInteractable;
@@ -25,5 +30,10 @@ public class ButtonController : MonoBehaviour
     private void OnButtonInteractable(bool Interactable)
     {
         m_button.interactable = Interactable;
+    }
+
+    private void ButtonPress()
+    {
+        GameEvent.ButtonPressed(this.m_button);
     }
 }
