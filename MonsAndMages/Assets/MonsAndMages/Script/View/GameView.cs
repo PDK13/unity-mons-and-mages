@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class GameView : MonoBehaviour
@@ -16,6 +17,8 @@ public class GameView : MonoBehaviour
         GameEvent.onViewPlayer += OnViewPlayer;
         GameEvent.onViewWild += OnViewCollect;
         GameEvent.onViewField += OnViewBack;
+
+        GameEvent.onCardRumble += OnCardRumble;
     }
 
     private void OnDisable()
@@ -25,6 +28,8 @@ public class GameView : MonoBehaviour
         GameEvent.onViewPlayer -= OnViewPlayer;
         GameEvent.onViewWild -= OnViewCollect;
         GameEvent.onViewField -= OnViewBack;
+
+        GameEvent.onCardRumble -= OnCardRumble;
     }
 
     //
@@ -53,5 +58,15 @@ public class GameView : MonoBehaviour
     private void OnViewBack(Action OnComplete)
     {
         m_gameContent.DOLocalMoveY(0f, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
+    }
+
+    private void OnCardRumble(ICard Card, Action OnComplete)
+    {
+        var PosCurrent = this.GetComponent<RectTransform>().localPosition;
+        this.transform.DOShakePosition(0.5f, 10, 50).OnComplete(() =>
+        {
+            this.transform.localPosition = PosCurrent;
+            OnComplete?.Invoke();
+        });
     }
 }

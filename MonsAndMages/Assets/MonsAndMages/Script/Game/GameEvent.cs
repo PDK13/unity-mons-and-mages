@@ -93,6 +93,7 @@ public class GameEvent
     public static Action<ICard, Action> onCardTap;
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
 
+    public static Action<ICard, Action> onCardRumble; //Make another card around it shake
 
     public static Action<ICard, Action> onCardOriginActive; //Origin Event
 
@@ -153,6 +154,12 @@ public class GameEvent
     {
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
+
+
+    public static void CardRumble(ICard Card, Action OnComplete)
+    {
+        onCardRumble?.Invoke(Card, OnComplete);
+    }
 
 
     public static void CardOriginActive(ICard Card, Action OnComplete)

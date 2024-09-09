@@ -26,7 +26,6 @@
 
     void Init(CardData Data); //Khởi tạo bài
 
-    //
 
     void DoCollectActive(IPlayer Player); //Kích hoạt khi lên sân
 
@@ -34,11 +33,9 @@
 
     void DoEnterActive(); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
-    //
 
     void DoPassiveActive(); //Kích hoạt kĩ năng bị động
 
-    //
 
     void DoWandActive(); //Kích hoạt khi đặt trượng phép
 
@@ -48,7 +45,6 @@
 
     void DoEnergyCheck();
 
-    //
 
     void DoEnergyActive(); //Kích hoạt kĩ năng khi đủ năng lượng
 

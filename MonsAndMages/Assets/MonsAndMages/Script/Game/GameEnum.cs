@@ -45,3 +45,11 @@ public enum CardEffectType
 {
     Alpha,
 }
+
+public enum DirectorType
+{
+    Up,
+    Down,
+    Left,
+    Right,
+}
