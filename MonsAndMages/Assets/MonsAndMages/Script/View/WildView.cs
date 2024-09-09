@@ -73,12 +73,16 @@ public class WildView : MonoBehaviour
 
     private void OnWildFill()
     {
+        if (m_cardDeck.childCount == 0)
+            return;
+
         StartCoroutine(IEWildFill());
     }
 
     private IEnumerator IEWildFill()
     {
-        GameEvent.CardFill();
+        if (m_cardDeck.childCount == 0)
+            yield break;
 
         for (int i = 0; i < m_cardContent.childCount; i++)
         {

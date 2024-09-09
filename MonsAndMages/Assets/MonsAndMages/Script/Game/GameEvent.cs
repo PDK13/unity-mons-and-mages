@@ -9,8 +9,12 @@ public class GameEvent
     //Init-Event
 
     public static Action onInit;
+
     public static Action<PlayerData[]> onInitPlayer;
+
     public static Action onWildFill;
+    public static Action onWildCardFillComplete;
+
     public static Action<Action> onGameStart;
 
     public static void Init()
@@ -18,15 +22,23 @@ public class GameEvent
         onInit?.Invoke();
     }
 
+
     public static void InitPlayer(PlayerData[] Player)
     {
         onInitPlayer?.Invoke(Player);
     }
 
-    public static void InitWild()
+
+    public static void WildCardFill()
     {
         onWildFill?.Invoke();
     }
+
+    public static void CardFillComplete()
+    {
+        onWildCardFillComplete?.Invoke();
+    }
+
 
     public static void GameStart(Action OnComplete)
     {
@@ -69,8 +81,8 @@ public class GameEvent
 
     //Match-Event
 
-    public static Action<IPlayer, Action> onPlayerTurn;
-    public static Action<IPlayer, Action> onPlayerStart;
+    public static Action<IPlayer, Action> onPlayerStart; //Start player turn after done any next turn progess
+
     public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply;
     public static Action<IPlayer, Action> onPlayerTakeRuneStoneFromMediation;
     public static Action<IPlayer, Action> onPlayerStunnedCheck;
@@ -81,8 +93,6 @@ public class GameEvent
     public static Action<ICard, Action> onCardTap;
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
 
-    public static Action onCardFill;
-    public static Action onCardFillComplete;
 
     public static Action<ICard, Action> onCardOriginActive; //Origin Event
 
@@ -101,15 +111,11 @@ public class GameEvent
 
     public static Action<IPlayer, Action> onPlayerEnd;
 
-    public static void PlayerTurn(IPlayer Player, Action OnComplete)
-    {
-        onPlayerTurn?.Invoke(Player, OnComplete);
-    }
-
     public static void PlayerStart(IPlayer Player, Action OnComplete)
     {
         onPlayerStart?.Invoke(Player, OnComplete);
     }
+
 
     public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, Action OnComplete)
     {
@@ -147,16 +153,6 @@ public class GameEvent
     {
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
-
-    public static void CardFill()
-    {
-        onCardFill?.Invoke();
-    }
-
-    public static void CardFillComplete()
-    {
-        onCardFillComplete?.Invoke();
-    }
 
 
     public static void CardOriginActive(ICard Card, Action OnComplete)

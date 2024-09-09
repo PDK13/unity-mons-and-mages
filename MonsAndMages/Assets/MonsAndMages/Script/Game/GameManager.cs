@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        GameEvent.InitWild();
+        GameEvent.WildCardFill();
 
         yield return new WaitForSeconds(7f);
 
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
 
         m_gameStart = true;
 
-        GameEvent.GameStart(() => OnGameStart());
+        GameEvent.GameStart(() => GameStart());
     }
 
     //
@@ -94,21 +94,27 @@ public class GameManager : MonoBehaviour
 
     //
 
-    private void OnGameStart()
+    private void GameStart()
     {
-        GameEvent.PlayerTurn(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
+        GameEvent.PlayerStart(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
     }
 
+    //
 
     private void OnPlayerTurn(IPlayer Player)
     {
-        GameEvent.ViewField(() => GameEvent.ViewPlayer(PlayerCurrent, () => OnPlayerStart(PlayerCurrent)));
+        GameEvent.ViewField(() =>
+        {
+            GameEvent.ViewPlayer(PlayerCurrent, () =>
+            {
+                GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () =>
+                {
+                    OnPlayerTakeRuneStoneFromSupply(Player, 1);
+                });
+            });
+        });
     }
 
-    private void OnPlayerStart(IPlayer Player)
-    {
-        GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () => OnPlayerTakeRuneStoneFromSupply(Player, 1));
-    }
 
     private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
     {
@@ -240,6 +246,6 @@ public class GameManager : MonoBehaviour
         m_playerTurn++;
         if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;
-        GameEvent.PlayerTurn(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
+        GameEvent.PlayerStart(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
     }
 }
