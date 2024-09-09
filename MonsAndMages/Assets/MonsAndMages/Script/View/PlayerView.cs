@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 
 public class PlayerView : MonoBehaviour
@@ -14,6 +15,10 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_playerContent;
     [SerializeField] private GameObject m_startBox;
 
+    [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
+
+    private IPlayer m_playerBase;
+
     private void Awake()
     {
         instance = this;
@@ -22,6 +27,7 @@ public class PlayerView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
+        GameEvent.onInitPlayer += OnInitPlayer;
 
         GameEvent.onGameStart += OnGameStart;
     }
@@ -29,6 +35,7 @@ public class PlayerView : MonoBehaviour
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
+        GameEvent.onInitPlayer += OnInitPlayer;
 
         GameEvent.onGameStart -= OnGameStart;
     }
@@ -81,6 +88,17 @@ public class PlayerView : MonoBehaviour
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
         m_playerContent.SetActive(false);
+    }
+
+    private void OnInitPlayer(PlayerData[] Player)
+    {
+        foreach (var PlayerCheck in Player)
+        {
+            if (!PlayerCheck.Base)
+                continue;
+            m_playerBase = PlayerCheck.Player;
+            m_tmpRuneStone.text = PlayerCheck.Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+        }
     }
 
     private void OnGameStart(Action OnComplete)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4813714793538034902}
   - component: {fileID: 7730470627680121931}
   - component: {fileID: 5879219465860357692}
+  - component: {fileID: 9023411013069506587}
   m_Layer: 5
   m_Name: renderer
   m_TagString: Untagged
@@ -75,6 +76,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9023411013069506587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701322156118787910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 2, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &945387606471437748
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,6 +667,7 @@ GameObject:
   - component: {fileID: 6579715562159598248}
   - component: {fileID: 5090766707334347801}
   - component: {fileID: 875287233257269919}
+  - component: {fileID: 9080653693932122795}
   m_Layer: 5
   m_Name: card
   m_TagString: Untagged
@@ -757,3 +774,15 @@ MonoBehaviour:
   m_tmpGrow: {fileID: 8360055858762163421}
   m_tmpMana: {fileID: 5521872341414088170}
   m_tmpDamage: {fileID: 4868520995796396851}
+--- !u!114 &9080653693932122795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4790769038840088764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c043caf3a5e4ad42b04034f0b40901a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
