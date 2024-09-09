@@ -13,13 +13,13 @@ public class WildView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
-        GameEvent.onWildPrepair += OnWildPrepair;
+        GameEvent.onWildFill += OnWildFill;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
-        GameEvent.onWildPrepair -= OnWildPrepair;
+        GameEvent.onWildFill -= OnWildFill;
     }
 
     private void Start()
@@ -71,23 +71,30 @@ public class WildView : MonoBehaviour
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
 
-    private void OnWildPrepair()
+    private void OnWildFill()
     {
-        StartCoroutine(IEWildPrepair());
+        StartCoroutine(IEWildFill());
     }
 
-    private IEnumerator IEWildPrepair()
+    private IEnumerator IEWildFill()
     {
         GameEvent.CardFill();
 
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
             var CardPoint = m_cardContent.GetChild(i);
-            if (CardPoint.childCount == 0)
+            switch (CardPoint.childCount)
             {
-                var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
-                CardFill(CardTop, CardPoint);
-                yield return new WaitForSeconds(0.5f);
+                case 0:
+                    var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
+                    CardFill(CardTop, CardPoint);
+                    yield return new WaitForSeconds(0.5f);
+                    break;
+                case 1:
+                    continue;
+                default:
+                    Debug.LogError("Wild fill found 2 game object in card point " + i);
+                    break;
             }
         }
 

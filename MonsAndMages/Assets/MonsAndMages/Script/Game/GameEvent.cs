@@ -8,7 +8,7 @@ public class GameEvent
 
     public static Action onInit;
     public static Action<PlayerData[]> onInitPlayer;
-    public static Action onWildPrepair;
+    public static Action onWildFill;
     public static Action<Action> onGameStart;
 
     public static void Init()
@@ -23,7 +23,7 @@ public class GameEvent
 
     public static void InitWild()
     {
-        onWildPrepair?.Invoke();
+        onWildFill?.Invoke();
     }
 
     public static void GameStart(Action OnComplete)
@@ -36,6 +36,8 @@ public class GameEvent
     public static Action<IPlayer, Action> onViewPlayer;
     public static Action<Action> onViewWild;
     public static Action<Action> onViewField;
+
+    public static Action<bool> onButtonInteractable;
 
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
@@ -51,6 +53,11 @@ public class GameEvent
     {
         onViewField?.Invoke(OnComplete);
     } //View Player side
+
+    public static void ButtonInteractable(bool Interactable)
+    {
+        onButtonInteractable?.Invoke(Interactable);
+    }
 
     //Match-Event
 

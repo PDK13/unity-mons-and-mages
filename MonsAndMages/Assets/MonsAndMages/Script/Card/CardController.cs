@@ -57,10 +57,7 @@ public class CardController : MonoBehaviour
                         });
                     });
                 });
-                CardObject.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-                {
-
-                });
+                CardObject.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad);
             });
         });
     } //Card do collect tween here
@@ -69,13 +66,19 @@ public class CardController : MonoBehaviour
 
     public void BtnTap()
     {
-        Debug.Log("Tap on " + this.gameObject.name);
+        GameEvent.ButtonInteractable(false);
         EffectAlpha(1f, () =>
         {
             GameEvent.CardTap(Card, null);
+
             //Test
             var Player = GameManager.instance.PlayerCurrent;
-            GameEvent.PlayerDoCollect(Player, Card, () => GameManager.instance.OnPlayerDoCollect(Player, Card));
+
+            GameEvent.PlayerDoCollect(Player, Card, () =>
+            {
+                GameManager.instance.OnPlayerDoCollect(Player, Card);
+                GameEvent.ButtonInteractable(true);
+            });
         });
     }
 
