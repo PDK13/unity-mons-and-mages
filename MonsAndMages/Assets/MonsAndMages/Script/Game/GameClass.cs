@@ -24,10 +24,12 @@ public class PlayerData
 
     public bool MediationEmty => Mediation[0] > 0 && Mediation[1] > 0;
 
-    public PlayerData(int Index, bool Base)
+    public PlayerData(int Index, bool Base, int HealthPoint, int RuneStone)
     {
         this.Index = Index;
         this.Base = Base;
+        this.HealthPoint = HealthPoint;
+        this.RuneStone = RuneStone;
     }
 }
 

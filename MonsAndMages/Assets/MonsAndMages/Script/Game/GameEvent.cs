@@ -1,5 +1,3 @@
-//Value "Update" is FALSE for UI invoke, then value is TRUE for Player and System invoke
-
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,40 +7,16 @@ public class GameEvent
     //Init-Event
 
     public static Action onInit;
-
     public static Action<PlayerData[]> onInitPlayer;
-
-    public static Action onWildFill;
-    public static Action onWildCardFillComplete;
-
-    public static Action<Action> onGameStart;
 
     public static void Init()
     {
         onInit?.Invoke();
     }
 
-
     public static void InitPlayer(PlayerData[] Player)
     {
         onInitPlayer?.Invoke(Player);
-    }
-
-
-    public static void WildCardFill()
-    {
-        onWildFill?.Invoke();
-    }
-
-    public static void CardFillComplete()
-    {
-        onWildCardFillComplete?.Invoke();
-    }
-
-
-    public static void GameStart(Action OnComplete)
-    {
-        onGameStart?.Invoke(OnComplete);
     }
 
     //Ui-Event
@@ -92,6 +66,8 @@ public class GameEvent
 
     public static Action<ICard, Action> onCardTap;
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
+
+    public static Action<Action> onWildFill;
 
     public static Action<ICard, Action> onCardRumble; //Make another card around it shake
 
@@ -154,6 +130,12 @@ public class GameEvent
     {
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
+
+
+    public static void WildCardFill(Action OnComplete)
+    {
+        onWildFill?.Invoke(OnComplete);
+    }
 
 
     public static void CardRumble(ICard Card, Action OnComplete)

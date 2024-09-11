@@ -66,22 +66,13 @@ public class CardController : MonoBehaviour
         {
             GameEvent.ViewField(() =>
             {
-                GameEvent.onWildFill();
+                GameEvent.onWildFill(null);
                 transform.SetParent(DownView.transform, true);
-                this.transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad).OnComplete(() =>
+                this.transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad).OnComplete(() => Rumble(() =>
                 {
-                    this.transform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
-                    {
-                        this.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
-                        {
-                            CardRenderer.maskable = true;
-                            GameEvent.CardRumble(Card, () =>
-                            {
-                                OnComplete?.Invoke();
-                            });
-                        });
-                    });
-                });
+                    CardRenderer.maskable = true;
+                    OnComplete?.Invoke();
+                }));
                 this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad);
             });
         });
@@ -119,7 +110,7 @@ public class CardController : MonoBehaviour
 
                             GameEvent.PlayerDoCollect(Player, Card, () =>
                             {
-                                GameManager.instance.OnPlayerDoCollect(Player, Card);
+                                GameManager.instance.PlayerDoCollect(Player, Card);
                                 GameEvent.ButtonInteractable(true);
                             });
                         }
@@ -190,20 +181,18 @@ public class CardController : MonoBehaviour
     }
 
 
-    public void Shake(DirectorType Director)
+    public void Rumble(Action OnComplete)
     {
-        this.transform.DOScale(Vector2.one * 1.2f, 0.02f).SetEase(Ease.OutExpo);
-        //this.transform.DORotate(Vector3.up * )
-
-        switch (Director)
+        this.transform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            case DirectorType.Up:
-            case DirectorType.Down:
-                break;
-            case DirectorType.Left:
-            case DirectorType.Right:
-                break;
-        }
+            this.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                GameEvent.CardRumble(Card, () =>
+                {
+                    OnComplete?.Invoke();
+                });
+            });
+        });
     }
 
 

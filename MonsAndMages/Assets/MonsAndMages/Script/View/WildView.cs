@@ -10,6 +10,8 @@ public class WildView : MonoBehaviour
     [SerializeField] private Transform m_cardDeck;
     [SerializeField] private Transform m_cardContent;
 
+    private bool m_wildFillFirstTime = true;
+
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
@@ -71,18 +73,20 @@ public class WildView : MonoBehaviour
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
 
-    private void OnWildFill()
+    private void OnWildFill(Action OnComplete)
     {
         if (m_cardDeck.childCount == 0)
+        {
+            OnComplete?.Invoke();
             return;
-
-        StartCoroutine(IEWildFill());
+        }
+        StartCoroutine(IEWildFill(OnComplete));
     }
 
-    private IEnumerator IEWildFill()
+    private IEnumerator IEWildFill(Action OnComplete)
     {
-        if (m_cardDeck.childCount == 0)
-            yield break;
+        if (m_wildFillFirstTime)
+            yield return new WaitForSeconds(2f);
 
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
@@ -101,8 +105,12 @@ public class WildView : MonoBehaviour
                     break;
             }
         }
+        if (m_wildFillFirstTime)
+            yield return new WaitForSeconds(2f);
 
-        GameEvent.CardFillComplete();
+        OnComplete?.Invoke();
+
+        m_wildFillFirstTime = false;
     }
 
     private void CardFill(Transform Card, Transform Point)

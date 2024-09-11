@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     private int m_playerTurn = 0;
     private bool m_playerView = false;
 
-    private int m_healthPointStart = 5;
+    private int m_healthPointStart = 40;
     private int m_runeStoneStart = 5;
 
     private List<WildCardData> m_wildCardData = new List<WildCardData>(); //Max 9 card in wild
@@ -54,28 +54,21 @@ public class GameManager : MonoBehaviour
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
-            new PlayerData(0, m_playerIndex == 0),
-            new PlayerData(1, m_playerIndex == 1),
+            new PlayerData(0, m_playerIndex == 0, m_healthPointStart, m_runeStoneStart),
+            new PlayerData(1, m_playerIndex == 1, m_healthPointStart, m_runeStoneStart),
         };
         GameEvent.InitPlayer(PlayerJoin);
 
-        yield return new WaitForSeconds(3f);
-
-        GameEvent.ViewWild(null);
-
         yield return new WaitForSeconds(2f);
 
-        GameEvent.WildCardFill();
-
-        yield return new WaitForSeconds(7f);
-
-        GameEvent.ViewField(null);
-
-        yield return new WaitForSeconds(2f);
-
-        m_gameStart = true;
-
-        GameEvent.GameStart(() => GameStart());
+        GameEvent.ViewWild(() =>
+        {
+            GameEvent.WildCardFill(() =>
+            {
+                m_gameStart = true;
+                PlayerCurrentStart();
+            });
+        });
     }
 
     //
@@ -94,158 +87,215 @@ public class GameManager : MonoBehaviour
 
     //
 
-    private void GameStart()
-    {
-        GameEvent.PlayerStart(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
-    }
-
-    //
-
-    private void OnPlayerTurn(IPlayer Player)
+    private void PlayerCurrentStart()
     {
         GameEvent.ViewField(() =>
         {
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
-                GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () =>
-                {
-                    OnPlayerTakeRuneStoneFromSupply(Player, 1);
-                });
+                PlayerStart(PlayerCurrent);
             });
         });
     }
 
+    private void PlayerStart(IPlayer Player)
+    {
+        GameEvent.PlayerStart(PlayerCurrent, () =>
+        {
+            Debug.Log("PlayerStart");
+            PlayerTakeRuneStoneFromSupply(Player, 1);
+        });
+    }
 
-    private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
+
+    private void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
     {
         Player.DoTakeRuneStoneFromSupply(Value);
-        GameEvent.PlayerTakeRuneStoneFromMediation(Player, () => OnPlayerTakeRuneStoneFromMediation(Player));
+        GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () =>
+        {
+            Debug.Log("PlayerTakeRuneStoneFromSupply");
+            PlayerTakeRuneStoneFromMediation(Player);
+        });
     }
 
-    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player)
+    private void PlayerTakeRuneStoneFromMediation(IPlayer Player)
     {
         Player.DoTakeRuneStoneFromMediation();
-        GameEvent.PlayerStunnedCheck(Player, () => OnPlayerStunnedCheck(Player));
+        GameEvent.PlayerTakeRuneStoneFromMediation(Player, () =>
+        {
+            Debug.Log("PlayerTakeRuneStoneFromMediation");
+            PlayerStunnedCheck(Player);
+        });
     }
 
-    private void OnPlayerStunnedCheck(IPlayer Player)
+    private void PlayerStunnedCheck(IPlayer Player)
     {
         Player.DoStunnedCheck();
-        //
-        if (Player.Stuned)
-            GameEvent.PlayerDoWandNext(Player, false, () => OnPlayerDoWandNext(Player, false));
-        else
-            GameEvent.PlayerDoChoice(Player, () => OnPlayerDoChoice(Player));
+        GameEvent.PlayerStunnedCheck(Player, () =>
+        {
+            Debug.Log("PlayerStunnedCheck"); //Not have ui yet!!
+            if (Player.Stuned)
+                PlayerDoWandNext(Player, false);
+            else
+                PlayerDoChoice(Player);
+        });
     }
 
 
-    private void OnPlayerDoChoice(IPlayer Player)
+    private void PlayerDoChoice(IPlayer Player)
     {
         Player.DoChoice();
+        GameEvent.PlayerDoChoice(Player, () =>
+        {
+            Debug.Log("PlayerDoChoice");
+            //...
+        });
     } //Choice Event
 
-    public void OnPlayerDoMediate(IPlayer Player, int RuneStoneAdd)
+    public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
-        Player.DoMediate(RuneStoneAdd);
-        GameEvent.PlayerDoWandNext(Player, true, () => OnPlayerDoWandNext(Player, true));
+        GameEvent.PlayerDoMediate(Player, RuneStoneAdd, () =>
+        {
+            PlayerDoWandNext(Player, true);
+        });
     } //Mediate Event
 
-    public void OnPlayerDoCollect(IPlayer Player, ICard Card)
+    public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         Player.DoCollect(Card);
         Card.DoCollectActive(Player);
-        GameEvent.CardOriginActive(Card, () => OnCardAbilityOriginActive(Card));
+        GameEvent.PlayerDoCollect(Player, Card, () =>
+        {
+            CardOriginActive(Card);
+        });
     } //Collect Event
 
 
-    private void OnCardAbilityOriginActive(ICard Card)
+    private void CardOriginActive(ICard Card)
     {
         Card.DoOriginActive();
-        GameEvent.PlayerDoWandNext(Card.Player, true, () => OnPlayerDoWandNext(Card.Player, true));
+        GameEvent.CardOriginActive(Card, () =>
+        {
+            PlayerDoWandNext(Card.Player, true);
+        });
     } //Origin Event
 
 
-    private void OnPlayerDoWandNext(IPlayer Player, bool CardActive)
+    private void PlayerDoWandNext(IPlayer Player, bool CardActive)
     {
         Player.DoWandNext();
-        if (CardActive)
-            GameEvent.PlayerDoWandActive(Player, () => OnPlayerDoWandActive(Player));
-        else
-            GameEvent.PlayerEnd(Player, () => OnPlayerEnd(Player));
+        GameEvent.PlayerDoWandNext(Player, CardActive, () =>
+        {
+            if (CardActive)
+                PlayerDoWandActive(Player);
+            else
+                GameEvent.PlayerEnd(Player, () => PlayerEnd(Player));
+        });
     }
 
-    private void OnPlayerDoWandActive(IPlayer Player)
+    private void PlayerDoWandActive(IPlayer Player)
     {
         Player.DoWandActive();
-        GameEvent.CardAttack(Player.CardQueue[Player.WandStep], () => OnCardAttack(Player.CardQueue[Player.WandStep]));
+        GameEvent.PlayerDoWandActive(Player, () =>
+        {
+            CardAttack(Player.CardQueue[Player.WandStep]);
+        });
     }
 
 
-    private void OnCardAttack(ICard Card)
+    private void CardAttack(ICard Card)
     {
         Card.DoAttackActive();
-        for (int i = 0; i < m_player.Count; i++)
+        GameEvent.CardAttack(Card, () =>
         {
-            if (m_player[i] == Card.Player)
-                continue;
-            m_player[i].HealthChange(-Card.AttackCombine);
-        }
-        GameEvent.CardEnergyFill(Card, () => OnCardEnergyFill(Card));
+            for (int i = 0; i < m_player.Count; i++)
+            {
+                if (m_player[i] == Card.Player)
+                    continue;
+                m_player[i].HealthChange(-Card.AttackCombine);
+            }
+            CardEnergyFill(Card);
+        });
     } //Attack Event
 
-    private void OnCardEnergyFill(ICard Card)
+    private void CardEnergyFill(ICard Card)
     {
         Card.DoEnergyFill(1);
-        GameEvent.CardEnergyCheck(Card, () => OnCardEnergyCheck(Card));
+        GameEvent.CardEnergyFill(Card, () =>
+        {
+            CardEnergyCheck(Card);
+        });
     } //Energy Event
 
-    private void OnCardEnergyCheck(ICard Card)
+    private void CardEnergyCheck(ICard Card)
     {
         Card.DoEnergyCheck();
-        if (Card.EnergyFull)
-            GameEvent.CardEnergyActive(Card, () => OnCardEnergyActive(Card));
-        //else?
+        GameEvent.CardEnergyCheck(Card, () =>
+        {
+            if (Card.EnergyFull)
+                CardEnergyActive(Card);
+            //else?
+        });
     }
 
-    private void OnCardEnergyActive(ICard Card)
+    private void CardEnergyActive(ICard Card)
     {
         Card.DoEnergyActive();
-        GameEvent.CardClassActive(Card, () => OnCardClassActive(Card));
+        GameEvent.CardEnergyActive(Card, () =>
+        {
+            CardClassActive(Card);
+        });
     }
 
-    private void OnCardClassActive(ICard Card)
+    private void CardClassActive(ICard Card)
     {
         Card.DoClassActive();
-        GameEvent.CardSpellActive(Card, () => OnCardSpellActive(Card));
+        GameEvent.CardClassActive(Card, () =>
+        {
+            CardSpellActive(Card);
+        });
     } //Class Event
 
-    private void OnCardSpellActive(ICard Card)
+    private void CardSpellActive(ICard Card)
     {
         Card.DoSpellActive();
-        GameEvent.PlayerContinueCheck(Card.Player, () => OnPlayerContinueCheck(Card.Player));
+        GameEvent.CardSpellActive(Card, () =>
+        {
+            PlayerContinueCheck(Card.Player);
+        });
     } //Spell Event
 
 
-    private void OnPlayerContinueCheck(IPlayer Player)
+    private void PlayerContinueCheck(IPlayer Player)
     {
         Player.DoContinueCheck(Player);
-        if (Player.CardQueue.Exists(t => t.EnergyFull))
-            GameEvent.PlayerContinue(Player, () => OnPlayerContinue(Player));
-        else
-            GameEvent.PlayerEnd(Player, () => OnPlayerEnd(Player));
+        GameEvent.PlayerContinueCheck(Player, () =>
+        {
+            if (Player.CardQueue.Exists(t => t.EnergyFull))
+                PlayerContinue(Player);
+            else
+                PlayerEnd(Player);
+        });
     }
 
-    private void OnPlayerContinue(IPlayer Player)
+    private void PlayerContinue(IPlayer Player)
     {
         Player.DoContinue(Player);
+        GameEvent.PlayerContinue(Player, () =>
+        {
+            //...
+        });
     } //Continue Event
 
-    private void OnPlayerEnd(IPlayer Player)
+    private void PlayerEnd(IPlayer Player)
     {
         Player.DoEnd(Player);
         m_playerTurn++;
         if (m_playerTurn > m_player.Count - 1)
             m_playerTurn = 0;
-        GameEvent.PlayerStart(PlayerCurrent, () => OnPlayerTurn(PlayerCurrent));
+        GameEvent.PlayerEnd(Player, () =>
+        {
+            PlayerCurrentStart();
+        });
     }
 }
