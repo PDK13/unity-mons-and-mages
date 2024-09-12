@@ -29,7 +29,10 @@ public class PlayerData
         this.Index = Index;
         this.Base = Base;
         this.HealthPoint = HealthPoint;
+        this.HealthCurrent = HealthPoint;
         this.RuneStone = RuneStone;
+        this.StunPoint = 3;
+        this.StunCurrent = 0;
     }
 }
 

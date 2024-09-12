@@ -43,13 +43,13 @@ public enum CardTrickType
 
 public enum CardEffectType
 {
+    None,
     Alpha,
 }
 
-public enum DirectorType
+public enum ViewType
 {
-    Up,
-    Down,
-    Left,
-    Right,
+    None,
+    Field,
+    Wild,
 }

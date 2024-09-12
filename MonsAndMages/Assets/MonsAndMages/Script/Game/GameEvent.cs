@@ -19,29 +19,31 @@ public class GameEvent
         onInitPlayer?.Invoke(Player);
     }
 
+
     //Ui-Event
 
+    public static Action<ViewType, Action> onView;
+    public static Action<bool> onViewUI;
     public static Action<IPlayer, Action> onViewPlayer;
-    public static Action<Action> onViewWild;
-    public static Action<Action> onViewField;
 
     public static Action<bool> onButtonInteractable;
     public static Action<Button> onButtonPress;
+
+    public static void View(ViewType Type, Action OnComplete)
+    {
+        onView?.Invoke(Type, OnComplete);
+    }
+
+    public static void ViewUi(bool Show)
+    {
+        onViewUI?.Invoke(Show);
+    }
 
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
         onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
 
-    public static void ViewWild(Action OnComplete)
-    {
-        onViewWild?.Invoke(OnComplete);
-    } //View Wild side
-
-    public static void ViewField(Action OnComplete)
-    {
-        onViewField?.Invoke(OnComplete);
-    } //View Player side
 
     public static void ButtonInteractable(bool Interactable)
     {
@@ -52,6 +54,7 @@ public class GameEvent
     {
         onButtonPress?.Invoke(Button);
     }
+
 
     //Match-Event
 

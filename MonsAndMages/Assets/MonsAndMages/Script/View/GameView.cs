@@ -10,13 +10,14 @@ public class GameView : MonoBehaviour
     [SerializeField] private RectTransform m_playerContent;
     [SerializeField] private RectTransform m_gameContent;
 
+    private ViewType m_viewType = ViewType.None;
+
     private void OnEnable()
     {
         GameEvent.onInitPlayer += OnInitPlayer;
 
+        GameEvent.onView += OnView;
         GameEvent.onViewPlayer += OnViewPlayer;
-        GameEvent.onViewWild += OnViewCollect;
-        GameEvent.onViewField += OnViewBack;
 
         GameEvent.onCardRumble += OnCardRumble;
     }
@@ -25,9 +26,8 @@ public class GameView : MonoBehaviour
     {
         GameEvent.onInitPlayer -= OnInitPlayer;
 
+        GameEvent.onView += OnView;
         GameEvent.onViewPlayer -= OnViewPlayer;
-        GameEvent.onViewWild -= OnViewCollect;
-        GameEvent.onViewField -= OnViewBack;
 
         GameEvent.onCardRumble -= OnCardRumble;
     }
@@ -45,20 +45,41 @@ public class GameView : MonoBehaviour
     }
 
 
+    private void OnView(ViewType Type, Action OnComplete)
+    {
+        if (m_viewType == Type)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+
+        m_viewType = Type;
+
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_gameContent
+                    .DOLocalMoveY(0f, 1f)
+                    .SetEase(Ease.OutQuad)
+                    .OnComplete(() => OnComplete?.Invoke());
+                break;
+            case ViewType.Wild:
+                m_gameContent
+                    .DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f)
+                    .SetEase(Ease.OutQuad)
+                    .OnComplete(() => OnComplete?.Invoke());
+                break;
+        }
+    }
+
     private void OnViewPlayer(IPlayer Player, Action OnComplete)
     {
-        m_playerContent.DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
+        m_playerContent
+            .DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, 1f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() => OnComplete?.Invoke());
     }
 
-    private void OnViewCollect(Action OnComplete)
-    {
-        m_gameContent.DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
-    }
-
-    private void OnViewBack(Action OnComplete)
-    {
-        m_gameContent.DOLocalMoveY(0f, 1f).SetEase(Ease.OutQuad).OnComplete(() => OnComplete?.Invoke());
-    }
 
     private void OnCardRumble(ICard Card, Action OnComplete)
     {

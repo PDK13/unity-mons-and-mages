@@ -64,7 +64,7 @@ public class CardController : MonoBehaviour
         this.transform.DOScale(Vector3.one * 2.5f, 0.7f).SetEase(Ease.OutQuad).SetDelay(0.3f);
         this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            GameEvent.ViewField(() =>
+            GameEvent.View(ViewType.Field, () =>
             {
                 GameEvent.onWildFill(null);
                 transform.SetParent(DownView.transform, true);

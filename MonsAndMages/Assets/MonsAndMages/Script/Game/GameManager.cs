@@ -12,34 +12,26 @@ public class GameManager : MonoBehaviour
 
     //
 
-    [SerializeField][Min(0)] private int m_PlayerStart = 0;
-    [SerializeField][Min(0)] private int m_playerIndex = 0;
+    [SerializeField][Min(0)] private int m_startIndex = 0;
+    [SerializeField][Min(0)] private int m_baseIndex = 0;
     [SerializeField] private bool m_sameDevice = true;
 
     [Space]
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private Transform m_playerContent;
 
-    private bool m_gameStart = false;
-
-    private int m_playerCount;
     private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
-    private int m_playerTurn = 0;
-    private bool m_playerView = false;
 
-    private int m_healthPointStart = 40;
-    private int m_runeStoneStart = 5;
-
-    private List<WildCardData> m_wildCardData = new List<WildCardData>(); //Max 9 card in wild
-    private List<CardNameType> m_baseCardData = new List<CardNameType>(); //Queue card left fill to wild
+    private int m_playerIndex = 0;
+    private bool m_playerChoice = false;
 
     //
 
     public CardConfig CardConfig => m_cardConfig;
 
-    public IPlayer PlayerCurrent => m_player[m_playerTurn];
+    public IPlayer PlayerCurrent => m_player[m_playerIndex];
 
-    public bool PlayerView => m_gameStart ? m_sameDevice || m_player[m_playerTurn].Base : false;
+    public bool PlayerChoice => m_playerChoice;
 
     private void Awake()
     {
@@ -48,24 +40,23 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        m_playerTurn = m_PlayerStart;
+        m_playerIndex = m_startIndex;
 
         GameEvent.Init();
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
-            new PlayerData(0, m_playerIndex == 0, m_healthPointStart, m_runeStoneStart),
-            new PlayerData(1, m_playerIndex == 1, m_healthPointStart, m_runeStoneStart),
+            new PlayerData(0, m_baseIndex == 0, 40, 5),
+            new PlayerData(1, m_baseIndex == 1, 40, 5),
         };
         GameEvent.InitPlayer(PlayerJoin);
 
         yield return new WaitForSeconds(2f);
 
-        GameEvent.ViewWild(() =>
+        GameEvent.View(ViewType.Wild, () =>
         {
             GameEvent.WildCardFill(() =>
             {
-                m_gameStart = true;
                 PlayerCurrentStart();
             });
         });
@@ -89,20 +80,20 @@ public class GameManager : MonoBehaviour
 
     private void PlayerCurrentStart()
     {
-        GameEvent.ViewField(() =>
+        GameEvent.View(ViewType.Field, () =>
         {
+            GameEvent.ViewUi(true);
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
                 PlayerStart(PlayerCurrent);
             });
         });
-    }
+    } //Camera move to Field and Player before start Player's turn
 
     private void PlayerStart(IPlayer Player)
     {
         GameEvent.PlayerStart(PlayerCurrent, () =>
         {
-            Debug.Log("PlayerStart");
             PlayerTakeRuneStoneFromSupply(Player, 1);
         });
     }
@@ -113,7 +104,6 @@ public class GameManager : MonoBehaviour
         Player.DoTakeRuneStoneFromSupply(Value);
         GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () =>
         {
-            Debug.Log("PlayerTakeRuneStoneFromSupply");
             PlayerTakeRuneStoneFromMediation(Player);
         });
     }
@@ -123,7 +113,6 @@ public class GameManager : MonoBehaviour
         Player.DoTakeRuneStoneFromMediation();
         GameEvent.PlayerTakeRuneStoneFromMediation(Player, () =>
         {
-            Debug.Log("PlayerTakeRuneStoneFromMediation");
             PlayerStunnedCheck(Player);
         });
     }
@@ -133,7 +122,6 @@ public class GameManager : MonoBehaviour
         Player.DoStunnedCheck();
         GameEvent.PlayerStunnedCheck(Player, () =>
         {
-            Debug.Log("PlayerStunnedCheck"); //Not have ui yet!!
             if (Player.Stuned)
                 PlayerDoWandNext(Player, false);
             else
@@ -144,16 +132,19 @@ public class GameManager : MonoBehaviour
 
     private void PlayerDoChoice(IPlayer Player)
     {
+        GameEvent.ViewUi(true);
         Player.DoChoice();
         GameEvent.PlayerDoChoice(Player, () =>
         {
-            Debug.Log("PlayerDoChoice");
-            //...
+            if (Player.Base)
+                m_playerChoice = true;
         });
     } //Choice Event
 
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
+        if (Player.Base)
+            m_playerChoice = false;
         GameEvent.PlayerDoMediate(Player, RuneStoneAdd, () =>
         {
             PlayerDoWandNext(Player, true);
@@ -162,6 +153,8 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
+        if (Player.Base)
+            m_playerChoice = false;
         Player.DoCollect(Card);
         Card.DoCollectActive(Player);
         GameEvent.PlayerDoCollect(Player, Card, () =>
@@ -290,9 +283,9 @@ public class GameManager : MonoBehaviour
     private void PlayerEnd(IPlayer Player)
     {
         Player.DoEnd(Player);
-        m_playerTurn++;
-        if (m_playerTurn > m_player.Count - 1)
-            m_playerTurn = 0;
+        m_playerIndex++;
+        if (m_playerIndex > m_player.Count - 1)
+            m_playerIndex = 0;
         GameEvent.PlayerEnd(Player, () =>
         {
             PlayerCurrentStart();
