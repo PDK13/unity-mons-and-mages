@@ -429,8 +429,9 @@ GameObject:
   - component: {fileID: 184115347}
   - component: {fileID: 184115346}
   - component: {fileID: 184115345}
-  - component: {fileID: 184115348}
   - component: {fileID: 184115349}
+  - component: {fileID: 184115350}
+  - component: {fileID: 184115348}
   m_Layer: 5
   m_Name: btn-player-2
   m_TagString: Untagged
@@ -581,6 +582,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 5, y: 5}
   m_UseGraphicAlpha: 1
+--- !u!114 &184115350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184115343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tmpIndex: {fileID: 1197589332}
+  m_tmpHealth: {fileID: 382949982}
+  m_tmpStun: {fileID: 2015216305}
 --- !u!1 &194380466
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,8 +979,9 @@ GameObject:
   - component: {fileID: 363679169}
   - component: {fileID: 363679168}
   - component: {fileID: 363679167}
-  - component: {fileID: 363679170}
   - component: {fileID: 363679171}
+  - component: {fileID: 363679172}
+  - component: {fileID: 363679170}
   m_Layer: 5
   m_Name: btn-player-1
   m_TagString: Untagged
@@ -1115,6 +1132,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 5, y: 5}
   m_UseGraphicAlpha: 1
+--- !u!114 &363679172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363679165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tmpIndex: {fileID: 1450783032}
+  m_tmpHealth: {fileID: 1323054053}
+  m_tmpStun: {fileID: 1992295852}
 --- !u!1 &382949980
 GameObject:
   m_ObjectHideFlags: 0
@@ -1405,8 +1437,9 @@ GameObject:
   - component: {fileID: 458693644}
   - component: {fileID: 458693643}
   - component: {fileID: 458693642}
-  - component: {fileID: 458693645}
   - component: {fileID: 458693646}
+  - component: {fileID: 458693647}
+  - component: {fileID: 458693645}
   m_Layer: 5
   m_Name: btn-player-3
   m_TagString: Untagged
@@ -1557,6 +1590,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 5, y: 5}
   m_UseGraphicAlpha: 1
+--- !u!114 &458693647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458693640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tmpIndex: {fileID: 1509650704}
+  m_tmpHealth: {fileID: 152803204}
+  m_tmpStun: {fileID: 1159596501}
 --- !u!1 &460262387
 GameObject:
   m_ObjectHideFlags: 0
@@ -3525,8 +3573,9 @@ GameObject:
   - component: {fileID: 1277927484}
   - component: {fileID: 1277927483}
   - component: {fileID: 1277927482}
-  - component: {fileID: 1277927485}
   - component: {fileID: 1277927486}
+  - component: {fileID: 1277927487}
+  - component: {fileID: 1277927485}
   m_Layer: 5
   m_Name: btn-player-4
   m_TagString: Untagged
@@ -3677,6 +3726,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 5, y: 5}
   m_UseGraphicAlpha: 1
+--- !u!114 &1277927487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277927480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tmpIndex: {fileID: 518710048}
+  m_tmpHealth: {fileID: 313995086}
+  m_tmpStun: {fileID: 760304686}
 --- !u!1 &1323054051
 GameObject:
   m_ObjectHideFlags: 0

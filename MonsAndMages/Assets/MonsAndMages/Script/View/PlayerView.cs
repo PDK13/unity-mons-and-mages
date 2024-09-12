@@ -15,7 +15,10 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
 
+    [Space]
     [SerializeField] private GameObject m_playerContent;
+
+    [Space]
     [SerializeField] private GameObject m_runeStoneShow;
     [SerializeField] private GameObject m_runeStoneSupply;
 
@@ -62,6 +65,12 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
     }
 
+    private void Start()
+    {
+        OnViewUI(false);
+        m_runeStoneSupply.SetActive(false);
+    }
+
     //
 
     public void BtnViewPlayer(int PlayerIndex)
@@ -100,9 +109,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnInit()
     {
-        OnViewUI(false);
-
-        m_runeStoneSupply.SetActive(false);
+        //...
     }
 
     private void OnInitPlayer(PlayerData[] Player)
@@ -116,6 +123,11 @@ public class PlayerView : MonoBehaviour
             }
 
             m_playerContent.transform.GetChild(i).gameObject.SetActive(true);
+
+            var ViewButton = m_playerContent.transform.GetChild(i).GetComponent<PlayerViewButton>();
+            ViewButton.Base = Player[i].Base;
+            ViewButton.Health = Player[i].HealthCurrent;
+            ViewButton.Stun = Player[i].StunCurrent;
 
             if (!Player[i].Base)
                 continue;
@@ -135,6 +147,7 @@ public class PlayerView : MonoBehaviour
     {
         if (!Show)
         {
+            m_runeStoneShow.SetActive(false);
             m_btnMediate.SetActive(false);
             m_btnCollect.SetActive(false);
             m_btnBack.SetActive(false);
@@ -145,6 +158,7 @@ public class PlayerView : MonoBehaviour
         bool Wild = m_viewType == ViewType.Wild;
         bool Base = GameManager.instance.PlayerCurrent.Base;
         bool Choice = GameManager.instance.PlayerChoice;
+        m_runeStoneShow.SetActive(Show && Base);
         m_btnMediate.SetActive(Show && Choice && Field && Base);
         m_btnCollect.SetActive(Show && Choice && Field && Base);
         m_btnBack.SetActive(Show && Wild);
@@ -170,7 +184,7 @@ public class PlayerView : MonoBehaviour
         RuneStone.transform.Find("fx-glow").DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
         RuneStone.anchorMax = Vector3.one * 0.5f;
         RuneStone.anchorMin = Vector3.one * 0.5f;
-        RuneStone.DOAnchorPos(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        RuneStone.DOAnchorPos(Vector3.up * 150, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             RuneStone.DOMove(m_runeStoneShow.transform.position, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
             {
