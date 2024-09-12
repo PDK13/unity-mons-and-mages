@@ -44,42 +44,6 @@ public class CardController : MonoBehaviour
 
     //
 
-    private void OnButtonPress(Button Button)
-    {
-        if (!Button.Equals(m_button))
-            m_ready = false;
-    }
-
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
-    {
-        if (!Card.Equals(this.Card))
-            return;
-
-        var CardRenderer = m_renderer.GetComponent<Image>();
-        var TopView = PlayerView.instance.transform;
-        var DownView = Player.DoCollectReady().transform;
-
-        CardRenderer.maskable = false;
-        this.transform.SetParent(TopView, true);
-        this.transform.DOScale(Vector3.one * 2.5f, 0.7f).SetEase(Ease.OutQuad).SetDelay(0.3f);
-        this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-        {
-            GameEvent.View(ViewType.Field, () =>
-            {
-                GameEvent.onWildFill(null);
-                transform.SetParent(DownView.transform, true);
-                this.transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad).OnComplete(() => Rumble(() =>
-                {
-                    CardRenderer.maskable = true;
-                    OnComplete?.Invoke();
-                }));
-                this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad);
-            });
-        });
-    } //Card do collect tween here
-
-    //
-
     public void BtnTap()
     {
         GameEvent.ButtonInteractable(false);
@@ -126,6 +90,42 @@ public class CardController : MonoBehaviour
             }
         });
     }
+
+    //
+
+    private void OnButtonPress(Button Button)
+    {
+        if (!Button.Equals(m_button))
+            m_ready = false;
+    }
+
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
+    {
+        if (!Card.Equals(this.Card))
+            return;
+
+        var CardRenderer = m_renderer.GetComponent<Image>();
+        var TopView = PlayerView.instance.transform;
+        var DownView = Player.DoCollectReady().transform;
+
+        CardRenderer.maskable = false;
+        this.transform.SetParent(TopView, true);
+        this.transform.DOScale(Vector3.one * 2.5f, 0.7f).SetEase(Ease.OutQuad).SetDelay(0.3f);
+        this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            GameEvent.View(ViewType.Field, () =>
+            {
+                GameEvent.onWildFill(null);
+                transform.SetParent(DownView.transform, true);
+                this.transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad).OnComplete(() => Rumble(() =>
+                {
+                    CardRenderer.maskable = true;
+                    OnComplete?.Invoke();
+                }));
+                this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad);
+            });
+        });
+    } //Card do collect tween here
 
     //
 

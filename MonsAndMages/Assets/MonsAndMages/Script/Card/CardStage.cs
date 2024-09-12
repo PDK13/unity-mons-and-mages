@@ -1,58 +1,71 @@
+using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CardStage : MonoBehaviour, ICard, ICardStage
+public class CardStage : MonoBehaviour
 {
-    //ICard
+    [SerializeField] private GameObject m_renderer;
+    [SerializeField] private GameObject m_rendererAlpha;
 
-    public CardNameType Name => CardNameType.Stage;
+    private bool m_effect = false;
+    private bool m_ready = false;
+    private Button m_button;
 
-    public CardOriginType Origin => CardOriginType.None;
+    private IPlayer Player => GetComponentInParent<IPlayer>();
 
-    public CardClassType Class => CardClassType.None;
+    private void Awake()
+    {
+        m_button = GetComponent<Button>();
+    }
 
-    public int RuneStoneCost => 0;
+    private void OnEnable()
+    {
+        //...
+    }
 
-    public int Energy => 0;
+    private void OnDisable()
+    {
+        //...
+    }
 
-    public int EnergyCurrent => 0;
+    public void Start()
+    {
+        m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
+    }
 
-    public bool EnergyFull => false;
+    public void BtnTap()
+    {
+        //...
+    }
 
-    public int Attack => 0;
+    //
 
-    public int Grow => 0;
+    public void Effect(CardEffectType Type, float Duration, Action OnComplete)
+    {
+        switch (Type)
+        {
+            case CardEffectType.Alpha:
+                EffectAlpha(Duration, OnComplete);
+                break;
+        }
+    }
 
-    public int AttackCombine => 0;
-
-    public IPlayer Player => null;
-
-    public CardController Controller => this.GetComponent<CardController>();
-
-    public void Init(CardData Data) { }
-
-    public void DoCollectActive(IPlayer Player) { }
-
-    public void DoOriginActive() { }
-
-    public void DoEnterActive() { }
-
-    public void DoPassiveActive() { }
-
-
-    public void DoWandActive() { }
-
-    public void DoAttackActive() { }
-
-    public void DoEnergyFill(int Value) { }
-
-    public void DoEnergyCheck() { }
-
-
-    public void DoEnergyActive() { }
-
-    public void DoClassActive() { }
-
-    public void DoSpellActive() { }
+    public void EffectAlpha(float Duration, Action OnComplete)
+    {
+        if (m_effect)
+            return;
+        m_effect = true;
+        var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
+        AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                m_effect = false;
+                OnComplete?.Invoke();
+            });
+        });
+    }
 }
