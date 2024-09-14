@@ -25,6 +25,7 @@ public class GameEvent
     public static Action<ViewType, Action> onView;
     public static Action<bool> onViewUI;
     public static Action<IPlayer, Action> onViewPlayer;
+    public static Action<bool, Action> onViewInfo;
 
     public static Action<bool> onButtonInteractable;
     public static Action<Button> onButtonPress;
@@ -43,6 +44,11 @@ public class GameEvent
     {
         onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
+
+    public static void ViewInfo(bool Show, Action OnComplete)
+    {
+        onViewInfo?.Invoke(Show, OnComplete);
+    }
 
 
     public static void ButtonInteractable(bool Interactable)

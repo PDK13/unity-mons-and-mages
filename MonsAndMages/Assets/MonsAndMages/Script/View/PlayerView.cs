@@ -51,6 +51,7 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.onView += OnView;
         GameEvent.onViewUI += OnViewUI;
+        GameEvent.onViewInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
@@ -67,6 +68,7 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.onView -= OnView;
         GameEvent.onViewUI -= OnViewUI;
+        GameEvent.onViewInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
@@ -78,8 +80,18 @@ public class PlayerView : MonoBehaviour
 
     private void Start()
     {
-        OnViewUI(false);
+        m_btnMediate.SetActive(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+
+        m_playerContent.gameObject.SetActive(false);
+
+        m_infoMask.gameObject.SetActive(false);
+        m_btnInfoAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(false);
+
         m_runeStoneSupply.SetActive(false);
+        m_runeStoneShow.SetActive(false);
     }
 
     //
@@ -174,6 +186,34 @@ public class PlayerView : MonoBehaviour
         m_btnCollect.SetActive(Show && Choice && Field && Base);
         m_btnBack.SetActive(Show && Wild);
         m_playerContent.gameObject.SetActive(Show && Field && Base);
+    }
+
+    private void OnViewInfo(bool Show, Action OnComplete)
+    {
+        m_infoMask.gameObject.SetActive(true);
+        if (Show)
+        {
+            m_infoMask.alpha = 0;
+            m_infoMask
+                .DOFade(1f, 0.1f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() => OnComplete?.Invoke());
+        }
+        else
+        {
+            m_infoMask.alpha = 1;
+            m_infoMask
+                .DOFade(0f, 0.1f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() =>
+                {
+                    m_infoMask.gameObject.SetActive(false);
+                    OnComplete?.Invoke();
+                });
+        }
+        m_btnInfoAccept.SetActive(Show);
+        m_btnInfoCancel.SetActive(Show);
+        //OnComplete?.Invoke();
     }
 
 

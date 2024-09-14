@@ -97,11 +97,13 @@ public class CardController : MonoBehaviour
         //    }
         //});
 
-        if (!m_top)
-            MoveTop(() => GameEvent.ButtonInteractable(true));
-        else
-            MoveBack(() => GameEvent.ButtonInteractable(true));
-        m_top = !m_top;
+        GameEvent.ViewInfo(m_top, () =>
+        {
+            if (!m_top) MoveTop(1f, () => GameEvent.ButtonInteractable(true));
+            else
+                MoveBack(1f, () => GameEvent.ButtonInteractable(true));
+            m_top = !m_top;
+        });
     }
 
     //
@@ -118,12 +120,12 @@ public class CardController : MonoBehaviour
             return;
 
         Renderer.maskable = false;
-        MoveTop(() =>
+        MoveTop(1f, () =>
         {
             m_point = Player.DoCollectReady().transform;
             GameEvent.View(ViewType.Field, () =>
             {
-                MoveBack(() =>
+                MoveBack(1f, () =>
                 {
                     Rumble(() =>
                     {
@@ -259,24 +261,24 @@ public class CardController : MonoBehaviour
     }
 
 
-    public void MoveTop(Action OnComplete)
+    public void MoveTop(float Duration, Action OnComplete)
     {
         this.transform.SetParent(PlayerView.instance.InfoView, true);
 
         Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, this.transform.DOScale(Vector3.one * 2.5f, 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, this.transform.DOLocalMove(Vector3.zero, 1f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOScale(Vector3.one * 2.5f, Duration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() => OnComplete?.Invoke());
         CardTween.Play();
     }
 
-    public void MoveBack(Action OnComplete)
+    public void MoveBack(float Duration, Action OnComplete)
     {
         var PointWorld = m_point.position;
 
         Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, this.transform.DOScale(Vector3.one, 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, this.transform.DOMove(PointWorld, 1f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOScale(Vector3.one, Duration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOMove(PointWorld, Duration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
             this.transform.SetParent(m_point, true);
