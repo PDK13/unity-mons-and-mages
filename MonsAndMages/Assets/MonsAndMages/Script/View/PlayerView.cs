@@ -17,7 +17,12 @@ public class PlayerView : MonoBehaviour
 
     [Space]
     [SerializeField] private Transform m_playerContent;
+
+    [Space]
     [SerializeField] private Transform m_infoView;
+    [SerializeField] private CanvasGroup m_infoMask;
+    [SerializeField] private GameObject m_btnInfoAccept;
+    [SerializeField] private GameObject m_btnInfoCancel;
 
     [Space]
     [SerializeField] private GameObject m_runeStoneShow;
