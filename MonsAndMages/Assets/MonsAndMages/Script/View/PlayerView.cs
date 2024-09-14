@@ -16,17 +16,23 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnBack;
 
     [Space]
-    [SerializeField] private GameObject m_playerContent;
+    [SerializeField] private Transform m_playerContent;
+    [SerializeField] private Transform m_infoView;
 
     [Space]
     [SerializeField] private GameObject m_runeStoneShow;
     [SerializeField] private GameObject m_runeStoneSupply;
 
+    [Space]
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     private ViewType m_viewType = ViewType.None;
 
     private IPlayer m_playerBase;
+
+    public Transform InfoView => m_infoView;
+
+    //
 
     private void Awake()
     {
@@ -151,7 +157,7 @@ public class PlayerView : MonoBehaviour
             m_btnMediate.SetActive(false);
             m_btnCollect.SetActive(false);
             m_btnBack.SetActive(false);
-            m_playerContent.SetActive(false);
+            m_playerContent.gameObject.SetActive(false);
             return;
         }
         bool Field = m_viewType == ViewType.Field;
@@ -162,7 +168,7 @@ public class PlayerView : MonoBehaviour
         m_btnMediate.SetActive(Show && Choice && Field && Base);
         m_btnCollect.SetActive(Show && Choice && Field && Base);
         m_btnBack.SetActive(Show && Wild);
-        m_playerContent.SetActive(Show && Field && Base);
+        m_playerContent.gameObject.SetActive(Show && Field && Base);
     }
 
 

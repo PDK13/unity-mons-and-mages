@@ -117,6 +117,9 @@ public class WildView : MonoBehaviour
     {
         Card.SetParent(Point, true);
         Card.DOLocalMove(Vector3.zero, 1).SetEase(Ease.OutQuad);
-        Card.GetComponent<CardController>().Open(0.5f, null);
+
+        var Controller = Card.GetComponent<CardController>();
+        Controller.Open(0.5f, null);
+        Controller.Point(Point);
     }
 }
