@@ -16,7 +16,7 @@ public class CardController : MonoBehaviour
 
     private bool m_avaible = false;
     private bool m_flip = false;
-    private bool m_start = false;
+    private bool m_ready = false;
     private bool m_move = false;
     private bool m_top = false;
     private bool m_rumble = false;
@@ -28,23 +28,13 @@ public class CardController : MonoBehaviour
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
-    public bool Avaible => m_avaible && !m_flip && m_start && !m_move && !m_top && !m_effect;
+    public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effect;
 
     //
 
     private void Awake()
     {
         m_button = GetComponent<Button>();
-    }
-
-    private void OnEnable()
-    {
-        GameEvent.onPlayerStart += OnPlayerStart;
-    }
-
-    private void OnDisable()
-    {
-        GameEvent.onPlayerStart -= OnPlayerStart;
     }
 
     public void Start()
@@ -67,13 +57,6 @@ public class CardController : MonoBehaviour
 
     //
 
-    private void OnPlayerStart(IPlayer Player, Action OnComplete)
-    {
-        this.m_start = true;
-    }
-
-    //
-
     public void Init(CardData Card)
     {
         m_mask.SetActive(true);
@@ -89,10 +72,16 @@ public class CardController : MonoBehaviour
         m_avaible = false;
     }
 
+    public void Ready()
+    {
+        m_ready = true;
+    }
+
     public void Point(Transform Point)
     {
         m_point = Point;
     }
+
 
     public void Open(float Duration, Action OnComplete)
     {
@@ -149,6 +138,48 @@ public class CardController : MonoBehaviour
                         m_flip = false;
                     });
             });
+    }
+
+
+    public void MoveTop(float Duration, Action OnComplete)
+    {
+        if (m_top || this.m_move)
+            return;
+        this.m_top = true;
+        this.m_move = true;
+
+        this.transform.SetParent(PlayerView.instance.InfoView, true);
+
+        Sequence CardTween = DOTween.Sequence();
+        CardTween.Insert(0f, this.transform.DOScale(Vector3.one * 2.5f, Duration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
+        CardTween.OnComplete(() =>
+        {
+            OnComplete?.Invoke();
+            this.m_move = false;
+        });
+        CardTween.Play();
+    }
+
+    public void MoveBack(float Duration, Action OnComplete)
+    {
+        if (!m_top || this.m_move)
+            return;
+        this.m_top = false;
+        this.m_move = true;
+
+        var PointWorld = m_point.position;
+
+        Sequence CardTween = DOTween.Sequence();
+        CardTween.Insert(0f, this.transform.DOScale(Vector3.one, Duration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, this.transform.DOMove(PointWorld, Duration).SetEase(Ease.OutQuad));
+        CardTween.OnComplete(() =>
+        {
+            this.transform.SetParent(m_point, true);
+            OnComplete?.Invoke();
+            this.m_move = false;
+        });
+        CardTween.Play();
     }
 
 
@@ -223,47 +254,5 @@ public class CardController : MonoBehaviour
     public void InfoDamageUpdate(int Value, bool Effect = false)
     {
         m_tmpDamage.text = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
-    }
-
-
-    public void MoveTop(float Duration, Action OnComplete)
-    {
-        if (m_top || this.m_move)
-            return;
-        this.m_top = true;
-        this.m_move = true;
-
-        this.transform.SetParent(PlayerView.instance.InfoView, true);
-
-        Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, this.transform.DOScale(Vector3.one * 2.5f, Duration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, this.transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
-        CardTween.OnComplete(() =>
-        {
-            OnComplete?.Invoke();
-            this.m_move = false;
-        });
-        CardTween.Play();
-    }
-
-    public void MoveBack(float Duration, Action OnComplete)
-    {
-        if (!m_top || this.m_move)
-            return;
-        this.m_top = false;
-        this.m_move = true;
-
-        var PointWorld = m_point.position;
-
-        Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, this.transform.DOScale(Vector3.one, Duration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, this.transform.DOMove(PointWorld, Duration).SetEase(Ease.OutQuad));
-        CardTween.OnComplete(() =>
-        {
-            this.transform.SetParent(m_point, true);
-            OnComplete?.Invoke();
-            this.m_move = false;
-        });
-        CardTween.Play();
     }
 }

@@ -60,7 +60,10 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
 
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
+
         GameEvent.onCardTap += OnCardTap;
+
+        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
     }
 
     private void OnDisable()
@@ -78,7 +81,10 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
 
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
+
         GameEvent.onCardTap -= OnCardTap;
+
+        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
     }
 
     private void Start()
@@ -253,7 +259,7 @@ public class PlayerView : MonoBehaviour
         RuneStone.transform.Find("fx-glow").DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
         RuneStone.anchorMax = Vector3.one * 0.5f;
         RuneStone.anchorMin = Vector3.one * 0.5f;
-        RuneStone.DOAnchorPos(Vector3.up * 150, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        RuneStone.DOAnchorPos(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             RuneStone.DOMove(m_runeStoneShow.transform.position, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
             {
@@ -288,10 +294,33 @@ public class PlayerView : MonoBehaviour
         OnComplete?.Invoke();
     }
 
+
     private void OnCardTap(ICard Card)
     {
         if (m_cardView != null)
             return;
         m_cardView = Card;
+    }
+
+
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
+    {
+        GameEvent.ViewInfo(InfoType.CardCollect, false);
+        GameEvent.ViewUi(false);
+
+        Card.Controller.Renderer.maskable = false;
+        var Point = Player.DoCollectReady().transform;
+        GameEvent.View(ViewType.Field, () =>
+        {
+            Card.Controller.Point(Point);
+            Card.Controller.MoveBack(1f, () =>
+            {
+                Card.Controller.Rumble(() =>
+                {
+                    Card.Controller.Renderer.maskable = true;
+                    OnComplete?.Invoke();
+                });
+            });
+        });
     }
 }

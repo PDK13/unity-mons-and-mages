@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour
         });
     } //Choice Event
 
+
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
         m_playerChoice = false;
@@ -153,29 +154,11 @@ public class GameManager : MonoBehaviour
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = false;
-
-        GameEvent.ViewInfo(InfoType.CardCollect, false);
-        GameEvent.ViewUi(false);
-
-        Card.Controller.Renderer.maskable = false;
-        var Point = Player.DoCollectReady().transform;
-        GameEvent.View(ViewType.Field, () =>
+        Player.DoCollect(Card);
+        Card.DoCollectActive(Player);
+        GameEvent.PlayerDoCollect(Player, Card, () =>
         {
-            Card.Controller.Point(Point);
-            Card.Controller.MoveBack(1f, () =>
-            {
-                Card.Controller.Rumble(() =>
-                {
-                    Card.Controller.Renderer.maskable = true;
-
-                    Player.DoCollect(Card);
-                    Card.DoCollectActive(Player);
-                    GameEvent.PlayerDoCollect(Player, Card, () =>
-                    {
-                        CardOriginActive(Card);
-                    });
-                });
-            });
+            CardOriginActive(Card);
         });
     } //Collect Event
 

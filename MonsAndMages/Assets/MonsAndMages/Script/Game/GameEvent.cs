@@ -66,10 +66,11 @@ public class GameEvent
 
     public static Action<IPlayer, Action> onPlayerDoChoice;
 
-    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
-    public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
     public static Action<ICard> onCardTap;
     public static Action<InfoType, bool> onCardInfo;
+
+    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
+    public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
 
     public static Action<Action> onWildFill;
 
@@ -119,15 +120,6 @@ public class GameEvent
         onPlayerDoChoice?.Invoke(Player, OnComplete);
     } //Choice Event
 
-    public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, Action OnComplete)
-    {
-        onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, OnComplete);
-    } //Mediate Event
-
-    public static void PlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
-    {
-        onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
-    } //Collect Event
 
     public static void CardTap(ICard Card)
     {
@@ -138,6 +130,17 @@ public class GameEvent
     {
         onCardInfo?.Invoke(Type, Show);
     }
+
+
+    public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, Action OnComplete)
+    {
+        onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, OnComplete);
+    } //Mediate Event
+
+    public static void PlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
+    {
+        onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
+    } //Collect Event
 
 
     public static void WildCardFill(Action OnComplete)

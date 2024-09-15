@@ -15,12 +15,18 @@ public class WildView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
+
+        GameEvent.onPlayerStart += OnPlayerStart;
+
         GameEvent.onWildFill += OnWildFill;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
+
+        GameEvent.onPlayerStart -= OnPlayerStart;
+
         GameEvent.onWildFill -= OnWildFill;
     }
 
@@ -28,6 +34,8 @@ public class WildView : MonoBehaviour
     {
         m_cardSample.SetActive(false);
     }
+
+    //
 
     private void OnInit()
     {
@@ -72,6 +80,14 @@ public class WildView : MonoBehaviour
         for (int i = 0; i < m_cardDeck.childCount; i++)
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
+
+
+    private void OnPlayerStart(IPlayer Player, Action OnComplete)
+    {
+        for (int i = 0; i < m_cardContent.childCount; i++)
+            m_cardContent.GetChild(i).GetComponentInChildren<CardController>().Ready();
+    }
+
 
     private void OnWildFill(Action OnComplete)
     {
