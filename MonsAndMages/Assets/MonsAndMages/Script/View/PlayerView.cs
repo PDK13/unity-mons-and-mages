@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
@@ -31,9 +32,9 @@ public class PlayerView : MonoBehaviour
     [Space]
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
-    private ViewType m_viewType = ViewType.None;
-
     private IPlayer m_playerBase;
+    private ViewType m_viewType = ViewType.None;
+    private ICard m_cardView;
 
     public Transform InfoView => m_infoView;
 
@@ -51,7 +52,7 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.onView += OnView;
         GameEvent.onViewUI += OnViewUI;
-        GameEvent.onViewInfo += OnViewInfo;
+        GameEvent.onCardInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
@@ -59,6 +60,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
 
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
+        GameEvent.onCardTap += OnCardTap;
     }
 
     private void OnDisable()
@@ -68,7 +70,7 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.onView -= OnView;
         GameEvent.onViewUI -= OnViewUI;
-        GameEvent.onViewInfo -= OnViewInfo;
+        GameEvent.onCardInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
@@ -76,6 +78,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
 
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
+        GameEvent.onCardTap -= OnCardTap;
     }
 
     private void Start()
@@ -126,6 +129,19 @@ public class PlayerView : MonoBehaviour
             OnViewUI(true);
         });
         OnViewUI(false);
+    }
+
+    public void BtnCollectAccept()
+    {
+        GameManager.instance.PlayerDoCollect(m_playerBase, m_cardView);
+        m_cardView = null;
+    } //Player Collect Card
+
+    public void BtnCollectCancel()
+    {
+        GameEvent.ViewInfo(InfoType.CardCollect, false);
+        m_cardView.Controller.MoveBack(1f, null);
+        m_cardView = null;
     }
 
     //
@@ -188,32 +204,34 @@ public class PlayerView : MonoBehaviour
         m_playerContent.gameObject.SetActive(Show && Field && Base);
     }
 
-    private void OnViewInfo(bool Show, Action OnComplete)
+    private void OnViewInfo(InfoType Type, bool Show)
     {
         m_infoMask.gameObject.SetActive(true);
         if (Show)
         {
             m_infoMask.alpha = 0;
             m_infoMask
-                .DOFade(1f, 0.1f)
-                .SetEase(Ease.Linear)
-                .OnComplete(() => OnComplete?.Invoke());
+                .DOFade(1f, 1f)
+                .SetEase(Ease.Linear);
         }
         else
         {
             m_infoMask.alpha = 1;
             m_infoMask
-                .DOFade(0f, 0.1f)
+                .DOFade(0f, 1f)
                 .SetEase(Ease.Linear)
-                .OnComplete(() =>
-                {
-                    m_infoMask.gameObject.SetActive(false);
-                    OnComplete?.Invoke();
-                });
+                .OnComplete(() => m_infoMask.gameObject.SetActive(false));
         }
-        m_btnInfoAccept.SetActive(Show);
-        m_btnInfoCancel.SetActive(Show);
-        //OnComplete?.Invoke();
+
+        m_btnInfoAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(false);
+        switch (Type)
+        {
+            case InfoType.CardCollect:
+                m_btnInfoAccept.SetActive(Show);
+                m_btnInfoCancel.SetActive(Show);
+                break;
+        }
     }
 
 
@@ -268,5 +286,12 @@ public class PlayerView : MonoBehaviour
         m_btnMediate.SetActive(true);
         m_btnCollect.SetActive(true);
         OnComplete?.Invoke();
+    }
+
+    private void OnCardTap(ICard Card)
+    {
+        if (m_cardView != null)
+            return;
+        m_cardView = Card;
     }
 }

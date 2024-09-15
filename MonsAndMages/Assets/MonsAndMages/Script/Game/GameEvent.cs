@@ -25,7 +25,6 @@ public class GameEvent
     public static Action<ViewType, Action> onView;
     public static Action<bool> onViewUI;
     public static Action<IPlayer, Action> onViewPlayer;
-    public static Action<bool, Action> onViewInfo;
 
     public static Action<bool> onButtonInteractable;
     public static Action<Button> onButtonPress;
@@ -44,11 +43,6 @@ public class GameEvent
     {
         onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
-
-    public static void ViewInfo(bool Show, Action OnComplete)
-    {
-        onViewInfo?.Invoke(Show, OnComplete);
-    }
 
 
     public static void ButtonInteractable(bool Interactable)
@@ -71,10 +65,11 @@ public class GameEvent
     public static Action<IPlayer, Action> onPlayerStunnedCheck;
 
     public static Action<IPlayer, Action> onPlayerDoChoice;
-    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
 
-    public static Action<ICard, Action> onCardTap;
+    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
+    public static Action<ICard> onCardTap;
+    public static Action<InfoType, bool> onCardInfo;
 
     public static Action<Action> onWildFill;
 
@@ -129,16 +124,20 @@ public class GameEvent
         onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, OnComplete);
     } //Mediate Event
 
-
-    public static void CardTap(ICard Card, Action OnComplete)
-    {
-        onCardTap?.Invoke(Card, OnComplete);
-    }
-
     public static void PlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
+
+    public static void CardTap(ICard Card)
+    {
+        onCardTap?.Invoke(Card);
+    }
+
+    public static void ViewInfo(InfoType Type, bool Show)
+    {
+        onCardInfo?.Invoke(Type, Show);
+    }
 
 
     public static void WildCardFill(Action OnComplete)

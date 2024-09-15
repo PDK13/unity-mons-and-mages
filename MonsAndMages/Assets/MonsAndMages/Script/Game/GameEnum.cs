@@ -53,3 +53,8 @@ public enum ViewType
     Field,
     Wild,
 }
+
+public enum InfoType
+{
+    CardCollect,
+}

@@ -14,15 +14,21 @@ public class CardController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_tmpMana;
     [SerializeField] private TextMeshProUGUI m_tmpDamage;
 
+    private bool m_avaible = false;
+    private bool m_flip = false;
+    private bool m_start = false;
+    private bool m_move = false;
     private bool m_top = false;
+    private bool m_rumble = false;
     private bool m_effect = false;
-    private bool m_ready = false;
     private Button m_button;
     private Transform m_point;
 
     public ICard Card => GetComponent<ICard>();
 
-    private Image Renderer => m_renderer.GetComponent<Image>();
+    public Image Renderer => m_renderer.GetComponent<Image>();
+
+    public bool Avaible => m_avaible && !m_flip && m_start && !m_move && !m_top && !m_effect;
 
     //
 
@@ -33,14 +39,12 @@ public class CardController : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvent.onButtonPress += OnButtonPress;
-        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+        GameEvent.onPlayerStart += OnPlayerStart;
     }
 
     private void OnDisable()
     {
-        GameEvent.onButtonPress -= OnButtonPress;
-        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+        GameEvent.onPlayerStart -= OnPlayerStart;
     }
 
     public void Start()
@@ -52,90 +56,21 @@ public class CardController : MonoBehaviour
 
     public void BtnTap()
     {
+        if (!Avaible)
+            return;
+
         GameEvent.ButtonInteractable(false);
-
-        //EffectAlpha(1f, () =>
-        //{
-        //    switch (Card.Name)
-        //    {
-        //        case CardNameType.None:
-        //            Debug.LogError("Card controller found " + this.gameObject.name + " got name None");
-        //            break;
-        //        case CardNameType.Stage:
-        //            GameEvent.ButtonInteractable(true);
-        //            break;
-        //        default:
-        //            if (!m_ready)
-        //            {
-        //                m_ready = true;
-        //                GameEvent.ButtonInteractable(true);
-        //            }
-        //            else
-        //            {
-        //                GameEvent.CardTap(Card, null);
-
-        //                if (Card.Player == null)
-        //                {
-        //                    //Test
-        //                    var Player = GameManager.instance.PlayerCurrent;
-
-        //                    GameEvent.PlayerDoCollect(Player, Card, () =>
-        //                    {
-        //                        GameManager.instance.PlayerDoCollect(Player, Card);
-        //                        GameEvent.ButtonInteractable(true);
-        //                    });
-        //                }
-        //                else
-        //                {
-        //                    //...
-        //                    GameEvent.ButtonInteractable(true);
-        //                }
-
-        //                m_ready = false;
-        //            }
-        //            break;
-        //    }
-        //});
-
-        GameEvent.ViewInfo(m_top, () =>
-        {
-            if (!m_top) MoveTop(1f, () => GameEvent.ButtonInteractable(true));
-            else
-                MoveBack(1f, () => GameEvent.ButtonInteractable(true));
-            m_top = !m_top;
-        });
+        GameEvent.CardTap(Card);
+        GameEvent.ViewInfo(InfoType.CardCollect, true);
+        MoveTop(1f, () => GameEvent.ButtonInteractable(true));
     }
 
     //
 
-    private void OnButtonPress(Button Button)
+    private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
-        if (!Button.Equals(m_button))
-            m_ready = false;
+        this.m_start = true;
     }
-
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
-    {
-        if (!Card.Equals(this.Card))
-            return;
-
-        Renderer.maskable = false;
-        MoveTop(1f, () =>
-        {
-            m_point = Player.DoCollectReady().transform;
-            GameEvent.View(ViewType.Field, () =>
-            {
-                MoveBack(1f, () =>
-                {
-                    Rumble(() =>
-                    {
-                        Renderer.maskable = true;
-                        OnComplete?.Invoke();
-                    });
-                });
-            });
-        });
-    } //Card do collect tween here
 
     //
 
@@ -150,6 +85,8 @@ public class CardController : MonoBehaviour
         InfoGrowUpdate(Card.GrowCurrent);
         InfoManaUpdate(Card.ManaCurrent, Card.ManaPoint);
         InfoDamageUpdate(Card.AttackCombine);
+
+        m_avaible = false;
     }
 
     public void Point(Transform Point)
@@ -159,6 +96,10 @@ public class CardController : MonoBehaviour
 
     public void Open(float Duration, Action OnComplete)
     {
+        if (m_flip)
+            return;
+        m_flip = true;
+
         this.transform.eulerAngles = Vector3.zero;
         m_mask.SetActive(true);
         m_renderer.SetActive(false);
@@ -172,12 +113,23 @@ public class CardController : MonoBehaviour
                 this.transform
                     .DOLocalRotate(Vector3.zero, Duration / 2)
                     .SetEase(Ease.Linear)
-                    .OnComplete(() => OnComplete?.Invoke());
+                    .OnComplete(() =>
+                    {
+                        OnComplete?.Invoke();
+                        m_avaible = true;
+                        m_flip = false;
+                    });
             });
     }
 
     public void Close(float Duration, Action OnComplete)
     {
+        if (m_flip)
+            return;
+        m_flip = true;
+
+        m_avaible = false;
+
         this.transform.eulerAngles = Vector3.zero;
         m_mask.SetActive(false);
         m_renderer.SetActive(true);
@@ -191,13 +143,21 @@ public class CardController : MonoBehaviour
                 this.transform
                     .DOLocalRotate(Vector3.zero, Duration / 2)
                     .SetEase(Ease.Linear)
-                    .OnComplete(() => OnComplete?.Invoke());
+                    .OnComplete(() =>
+                    {
+                        OnComplete?.Invoke();
+                        m_flip = false;
+                    });
             });
     }
 
 
     public void Rumble(Action OnComplete)
     {
+        if (m_rumble)
+            return;
+
+        m_rumble = true;
         this.transform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             this.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
@@ -205,6 +165,7 @@ public class CardController : MonoBehaviour
                 GameEvent.CardRumble(Card, () =>
                 {
                     OnComplete?.Invoke();
+                    m_rumble = false;
                 });
             });
         });
@@ -213,6 +174,9 @@ public class CardController : MonoBehaviour
 
     public void Effect(CardEffectType Type, float Duration, Action OnComplete)
     {
+        if (m_effect)
+            return;
+
         switch (Type)
         {
             case CardEffectType.Alpha:
@@ -226,13 +190,14 @@ public class CardController : MonoBehaviour
         if (m_effect)
             return;
         m_effect = true;
+
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
         AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                m_effect = false;
                 OnComplete?.Invoke();
+                m_effect = false;
             });
         });
     }
@@ -263,17 +228,31 @@ public class CardController : MonoBehaviour
 
     public void MoveTop(float Duration, Action OnComplete)
     {
+        if (m_top || this.m_move)
+            return;
+        this.m_top = true;
+        this.m_move = true;
+
         this.transform.SetParent(PlayerView.instance.InfoView, true);
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, this.transform.DOScale(Vector3.one * 2.5f, Duration * 0.7f).SetEase(Ease.OutQuad));
         CardTween.Insert(0f, this.transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
-        CardTween.OnComplete(() => OnComplete?.Invoke());
+        CardTween.OnComplete(() =>
+        {
+            OnComplete?.Invoke();
+            this.m_move = false;
+        });
         CardTween.Play();
     }
 
     public void MoveBack(float Duration, Action OnComplete)
     {
+        if (!m_top || this.m_move)
+            return;
+        this.m_top = false;
+        this.m_move = true;
+
         var PointWorld = m_point.position;
 
         Sequence CardTween = DOTween.Sequence();
@@ -283,6 +262,7 @@ public class CardController : MonoBehaviour
         {
             this.transform.SetParent(m_point, true);
             OnComplete?.Invoke();
+            this.m_move = false;
         });
         CardTween.Play();
     }
