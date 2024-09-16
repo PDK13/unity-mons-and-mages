@@ -42,7 +42,6 @@ public class CardOneTail : MonoBehaviour, ICard
     public void Start()
     {
         m_button.onClick.AddListener(BtnTap);
-        m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     //
