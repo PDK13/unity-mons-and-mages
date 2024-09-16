@@ -308,25 +308,45 @@ public class CardOneTail : MonoBehaviour, ICard
 
     //
 
-    public void DoWandActive() { }
-
-    public void DoAttackActive() { }
-
-    public void DoEnergyFill(int Value)
+    public void DoWandActive(Action OnComplete)
     {
-        m_data.ManaCurrent += Value;
+        EffectAlpha(1f, () => OnComplete?.Invoke());
     }
 
-    public void DoEnergyCheck() { }
+    public void DoAttackActive(Action OnComplete)
+    {
+        EffectAlpha(1f, () => OnComplete?.Invoke());
+    }
+
+    public void DoEnergyFill(int Value, Action OnComplete)
+    {
+        m_data.ManaCurrent += Value;
+        EffectAlpha(1f, () => OnComplete?.Invoke());
+    }
+
+    public void DoEnergyCheck(Action<bool> OnComplete)
+    {
+        if (m_data.ManaFull)
+            EffectAlpha(1f, () => OnComplete?.Invoke(true));
+        else
+            OnComplete?.Invoke(false);
+    }
 
     //
 
-    public void DoEnergyActive()
+    public void DoEnergyActive(Action OnComplete)
     {
         m_data.ManaCurrent -= m_data.ManaPoint;
+        Rumble(() => OnComplete?.Invoke());
     }
 
-    public void DoClassActive() { }
+    public void DoClassActive(Action OnComplete)
+    {
+        Rumble(() => OnComplete?.Invoke());
+    }
 
-    public void DoSpellActive() { } //Update...!
+    public void DoSpellActive(Action OnComplete)
+    {
+        Rumble(() => OnComplete?.Invoke());
+    } //Update...!
 }

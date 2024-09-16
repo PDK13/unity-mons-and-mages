@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 {
     [SerializeField] private GameObject m_cardPointSample;
     [SerializeField] private Transform m_cardContent;
+    [SerializeField] private Transform m_wand;
 
     private PlayerData m_data;
 
@@ -112,14 +114,30 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoWandNext()
+    public void DoWandNext(Action OnComplete)
     {
-        m_data.WandStep = m_data.WandStepNext;
+        var WandIndexLast = m_data.WandStep;
+        var WandIndexNext = m_data.WandStepNext;
+
+        m_data.WandStep = WandIndexNext;
+
+        var PointLast = m_cardContent.GetChild(WandIndexLast);
+        var PointNext = m_cardContent.GetChild(WandIndexNext);
+
+        m_wand.SetParent(PointNext, this.transform);
+        m_wand
+            .DOLocalJump(Vector3.zero, 15f, 1, 1f)
+            .SetEase(Ease.InCubic)
+            .OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void DoWandActive()
+    public void DoWandActive(Action OnComplete)
     {
-        m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>().DoWandActive();
+        var Card = m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>();
+        Card.EffectAlpha(1f, () =>
+        {
+            Card.DoWandActive(() => OnComplete?.Invoke());
+        });
     }
 
 

@@ -76,18 +76,18 @@ public interface ICard
     void DoPassiveActive(); //Kích hoạt kĩ năng bị động
 
 
-    void DoWandActive(); //Kích hoạt khi đặt trượng phép
+    void DoWandActive(Action OnComplete); //Kích hoạt khi đặt trượng phép
 
-    void DoAttackActive(); //Tấn công thường khi đặt trượng phép
+    void DoAttackActive(Action OnComplete); //Tấn công thường khi đặt trượng phép
 
-    void DoEnergyFill(int Value); //Nhận năng lượng khi đặt trượng phép
+    void DoEnergyFill(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
 
-    void DoEnergyCheck();
+    void DoEnergyCheck(Action<bool> OnComplete);
 
 
-    void DoEnergyActive(); //Kích hoạt kĩ năng khi đủ năng lượng
+    void DoEnergyActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
 
-    void DoClassActive(); //Kích hoạt kĩ năng hệ khi đủ năng lượng
+    void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
 
-    void DoSpellActive(); //Kích hoạt kĩ năng phép khi đủ năng lượng
+    void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }

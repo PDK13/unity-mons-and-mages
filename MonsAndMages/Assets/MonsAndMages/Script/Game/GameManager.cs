@@ -141,10 +141,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
         m_playerChoice = false;
-        GameEvent.PlayerDoMediate(Player, RuneStoneAdd, () =>
-        {
-            PlayerDoWandNext(Player, true);
-        });
+        PlayerDoWandNext(Player, true);
     } //Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
@@ -163,18 +160,14 @@ public class GameManager : MonoBehaviour
     {
         Card.DoOriginActive(() =>
         {
-            GameEvent.CardOriginActive(Card, () =>
-            {
-                PlayerDoWandNext(Card.Player, true);
-            });
+            PlayerDoWandNext(Card.Player, true);
         });
     } //Origin Event
 
 
     private void PlayerDoWandNext(IPlayer Player, bool CardActive)
     {
-        Player.DoWandNext();
-        GameEvent.PlayerDoWandNext(Player, CardActive, () =>
+        Player.DoWandNext(() =>
         {
             if (CardActive)
                 PlayerDoWandActive(Player);
@@ -185,8 +178,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerDoWandActive(IPlayer Player)
     {
-        Player.DoWandActive();
-        GameEvent.PlayerDoWandActive(Player, () =>
+        Player.DoWandActive(() =>
         {
             CardAttack(Player.CardQueue[Player.WandStep]);
         });
@@ -195,8 +187,7 @@ public class GameManager : MonoBehaviour
 
     private void CardAttack(ICard Card)
     {
-        Card.DoAttackActive();
-        GameEvent.CardAttack(Card, () =>
+        Card.DoAttackActive(() =>
         {
             for (int i = 0; i < m_player.Count; i++)
             {
@@ -210,8 +201,7 @@ public class GameManager : MonoBehaviour
 
     private void CardEnergyFill(ICard Card)
     {
-        Card.DoEnergyFill(1);
-        GameEvent.CardEnergyFill(Card, () =>
+        Card.DoEnergyFill(1, () =>
         {
             CardEnergyCheck(Card);
         });
@@ -219,19 +209,18 @@ public class GameManager : MonoBehaviour
 
     private void CardEnergyCheck(ICard Card)
     {
-        Card.DoEnergyCheck();
-        GameEvent.CardEnergyCheck(Card, () =>
+        Card.DoEnergyCheck((ManaFull) =>
         {
             if (Card.EnergyFull)
                 CardEnergyActive(Card);
-            //else?
+            else
+                PlayerContinueCheck(Card.Player);
         });
     }
 
     private void CardEnergyActive(ICard Card)
     {
-        Card.DoEnergyActive();
-        GameEvent.CardEnergyActive(Card, () =>
+        Card.DoEnergyActive(() =>
         {
             CardClassActive(Card);
         });
@@ -239,8 +228,7 @@ public class GameManager : MonoBehaviour
 
     private void CardClassActive(ICard Card)
     {
-        Card.DoClassActive();
-        GameEvent.CardClassActive(Card, () =>
+        Card.DoClassActive(() =>
         {
             CardSpellActive(Card);
         });
@@ -248,8 +236,7 @@ public class GameManager : MonoBehaviour
 
     private void CardSpellActive(ICard Card)
     {
-        Card.DoSpellActive();
-        GameEvent.CardSpellActive(Card, () =>
+        Card.DoSpellActive(() =>
         {
             PlayerContinueCheck(Card.Player);
         });

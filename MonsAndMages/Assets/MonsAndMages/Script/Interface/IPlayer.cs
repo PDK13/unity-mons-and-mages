@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,9 +47,9 @@ public interface IPlayer
     void DoCollect(ICard Card);
 
 
-    void DoWandNext(); //Move Wand Next
+    void DoWandNext(Action OnComplete); //Move Wand Next
 
-    void DoWandActive(); //Active Card at Wand after moved if not stunned
+    void DoWandActive(Action OnComplete); //Active Card at Wand after moved if not stunned
 
 
     void DoContinueCheck(IPlayer Player);

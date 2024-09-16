@@ -55,6 +55,8 @@ public class CardData
     public ICard Card;
 
     public int AttackCombine => AttackPoint + GrowCurrent;
+
+    public bool ManaFull => ManaCurrent >= ManaPoint;
 }
 
 [Serializable]
