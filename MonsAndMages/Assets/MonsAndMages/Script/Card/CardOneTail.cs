@@ -136,9 +136,9 @@ public class CardOneTail : MonoBehaviour, ICard
                     .SetEase(Ease.Linear)
                     .OnComplete(() =>
                     {
-                        OnComplete?.Invoke();
                         m_avaible = true;
                         m_flip = false;
+                        OnComplete?.Invoke();
                     });
             });
     }
@@ -166,8 +166,8 @@ public class CardOneTail : MonoBehaviour, ICard
                     .SetEase(Ease.Linear)
                     .OnComplete(() =>
                     {
-                        OnComplete?.Invoke();
                         m_flip = false;
+                        OnComplete?.Invoke();
                     });
             });
     }
@@ -187,8 +187,8 @@ public class CardOneTail : MonoBehaviour, ICard
         CardTween.Insert(0f, transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
-            OnComplete?.Invoke();
             m_move = false;
+            OnComplete?.Invoke();
         });
         CardTween.Play();
     }
@@ -207,9 +207,9 @@ public class CardOneTail : MonoBehaviour, ICard
         CardTween.Insert(0f, transform.DOMove(PointWorld, Duration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
+            m_move = false;
             transform.SetParent(m_point, true);
             OnComplete?.Invoke();
-            m_move = false;
         });
         CardTween.Play();
     }
@@ -221,14 +221,16 @@ public class CardOneTail : MonoBehaviour, ICard
             return;
 
         m_rumble = true;
+        Renderer.maskable = false;
         transform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 GameEvent.CardRumble(() =>
                 {
-                    OnComplete?.Invoke();
                     m_rumble = false;
+                    Renderer.maskable = true;
+                    OnComplete?.Invoke();
                 });
             });
         });
@@ -259,8 +261,8 @@ public class CardOneTail : MonoBehaviour, ICard
         {
             AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                OnComplete?.Invoke();
                 m_effect = false;
+                OnComplete?.Invoke();
             });
         });
     }
@@ -297,7 +299,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void DoOriginActive(Action OnComplete)
     {
-        Rumble(OnComplete);
+        EffectAlpha(1f, () => Rumble(() => OnComplete?.Invoke()));
     }
 
     public void DoEnterActive() { }
