@@ -1,4 +1,8 @@
-﻿public interface ICard
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public interface ICard
 {
     CardNameType Name { get; } //Tên bài
 
@@ -22,9 +26,44 @@
 
     IPlayer Player { get; }
 
-    CardController Controller { get; }
+    Image Renderer { get; }
+
+    bool Avaible { get; }
+
 
     void Init(CardData Data); //Khởi tạo bài
+
+
+    void Ready();
+
+    void Point(Transform Point);
+
+
+    void Open(float Duration, Action OnComplete);
+
+    void Close(float Duration, Action OnComplete);
+
+
+    void MoveTop(float Duration, Action OnComplete);
+
+    void MoveBack(float Duration, Action OnComplete);
+
+
+    void Rumble(Action OnComplete);
+
+
+    void Effect(CardEffectType Type, float Duration, Action OnComplete);
+
+    void EffectAlpha(float Duration, Action OnComplete);
+
+
+    void InfoShow(bool Show);
+
+    void InfoGrowUpdate(int Value, bool Effect = false);
+
+    void InfoManaUpdate(int Value, int Max, bool Effect = false);
+
+    void InfoDamageUpdate(int Value, bool Effect = false);
 
 
     void DoCollectActive(IPlayer Player); //Kích hoạt khi lên sân

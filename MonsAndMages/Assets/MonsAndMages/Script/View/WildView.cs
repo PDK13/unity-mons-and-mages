@@ -42,11 +42,13 @@ public class WildView : MonoBehaviour
         //Generate
         foreach (var CardCheck in GameManager.instance.CardConfig.Card)
         {
+            var CardClone = Instantiate(m_cardSample, m_cardDeck);
+            CardClone.SetActive(true);
+            CardClone.name = "card-" + CardCheck.Name.ToString();
+            CardClone.transform.localPosition = Vector3.zero;
+
             switch (CardCheck.Name)
             {
-                case CardNameType.Stage:
-                    Debug.LogWarning("Not init Stage card in wild");
-                    continue;
                 case CardNameType.Cornibus:
                 case CardNameType.Duchess:
                 case CardNameType.DragonEgg:
@@ -57,18 +59,15 @@ public class WildView : MonoBehaviour
                 case CardNameType.OneTail:
                 case CardNameType.Pott:
                 case CardNameType.Umbella:
-                    var CardClone = Instantiate(m_cardSample, m_cardDeck);
-                    CardClone.SetActive(true);
-                    CardClone.name = "card-" + CardCheck.Name.ToString();
-                    CardClone.transform.localPosition = Vector3.zero;
-                    CardClone.GetComponent<CardController>().Init(CardCheck);
                     CardClone.AddComponent<CardOneTail>();
-                    CardClone.GetComponent<ICard>().Init(CardCheck);
                     break;
                 default:
+                    Destroy(CardClone);
                     Debug.LogError("Not found card to init in wild");
-                    break;
+                    continue;
             }
+
+            CardClone.GetComponent<ICard>().Init(CardCheck);
         }
         //Suffle
         for (int i = 0; i < m_cardDeck.childCount; i++)
@@ -85,7 +84,7 @@ public class WildView : MonoBehaviour
     private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
         for (int i = 0; i < m_cardContent.childCount; i++)
-            m_cardContent.GetChild(i).GetComponentInChildren<CardController>().Ready();
+            m_cardContent.GetChild(i).GetComponentInChildren<ICard>().Ready();
     }
 
 
@@ -134,7 +133,7 @@ public class WildView : MonoBehaviour
         Card.SetParent(Point, true);
         Card.DOLocalMove(Vector3.zero, 1).SetEase(Ease.OutQuad);
 
-        var Controller = Card.GetComponent<CardController>();
+        var Controller = Card.GetComponent<ICard>();
         Controller.Open(0.5f, null);
         Controller.Point(Point);
     }

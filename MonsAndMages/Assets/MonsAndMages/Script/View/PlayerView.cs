@@ -146,7 +146,7 @@ public class PlayerView : MonoBehaviour
     public void BtnCollectCancel()
     {
         GameEvent.ViewInfo(InfoType.CardCollect, false);
-        m_cardView.Controller.MoveBack(1f, null);
+        m_cardView.MoveBack(1f, null);
         m_cardView = null;
     }
 
@@ -308,16 +308,16 @@ public class PlayerView : MonoBehaviour
         GameEvent.ViewInfo(InfoType.CardCollect, false);
         GameEvent.ViewUi(false);
 
-        Card.Controller.Renderer.maskable = false;
+        Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
         GameEvent.View(ViewType.Field, () =>
         {
-            Card.Controller.Point(Point);
-            Card.Controller.MoveBack(1f, () =>
+            Card.Point(Point);
+            Card.MoveBack(1f, () =>
             {
-                Card.Controller.Rumble(() =>
+                Card.Rumble(() =>
                 {
-                    Card.Controller.Renderer.maskable = true;
+                    Card.Renderer.maskable = true;
                     OnComplete?.Invoke();
                 });
             });
