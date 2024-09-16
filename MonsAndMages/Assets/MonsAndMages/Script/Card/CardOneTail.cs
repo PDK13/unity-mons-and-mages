@@ -225,7 +225,7 @@ public class CardOneTail : MonoBehaviour, ICard
         {
             transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                GameEvent.CardRumble(this, () =>
+                GameEvent.CardRumble(() =>
                 {
                     OnComplete?.Invoke();
                     m_rumble = false;
@@ -295,7 +295,10 @@ public class CardOneTail : MonoBehaviour, ICard
         m_data.Player = Player;
     }
 
-    public void DoOriginActive() { }
+    public void DoOriginActive(Action OnComplete)
+    {
+        Rumble(OnComplete);
+    }
 
     public void DoEnterActive() { }
 

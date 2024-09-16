@@ -81,7 +81,7 @@ public class GameView : MonoBehaviour
     }
 
 
-    private void OnCardRumble(ICard Card, Action OnComplete)
+    private void OnCardRumble(Action OnComplete)
     {
         var PosCurrent = this.GetComponent<RectTransform>().localPosition;
         this.transform.DOShakePosition(0.5f, 10, 50).OnComplete(() =>

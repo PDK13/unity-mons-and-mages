@@ -74,7 +74,7 @@ public class GameEvent
 
     public static Action<Action> onWildFill;
 
-    public static Action<ICard, Action> onCardRumble; //Make another card around it shake
+    public static Action<Action> onCardRumble; //Make another card around it shake
 
     public static Action<ICard, Action> onCardOriginActive; //Origin Event
 
@@ -149,9 +149,9 @@ public class GameEvent
     }
 
 
-    public static void CardRumble(ICard Card, Action OnComplete)
+    public static void CardRumble(Action OnComplete)
     {
-        onCardRumble?.Invoke(Card, OnComplete);
+        onCardRumble?.Invoke(OnComplete);
     }
 
 

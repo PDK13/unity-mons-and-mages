@@ -161,10 +161,12 @@ public class GameManager : MonoBehaviour
 
     private void CardOriginActive(ICard Card)
     {
-        Card.DoOriginActive();
-        GameEvent.CardOriginActive(Card, () =>
+        Card.DoOriginActive(() =>
         {
-            PlayerDoWandNext(Card.Player, true);
+            GameEvent.CardOriginActive(Card, () =>
+            {
+                PlayerDoWandNext(Card.Player, true);
+            });
         });
     } //Origin Event
 

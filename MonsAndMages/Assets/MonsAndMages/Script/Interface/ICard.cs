@@ -68,7 +68,7 @@ public interface ICard
 
     void DoCollectActive(IPlayer Player); //Kích hoạt khi lên sân
 
-    void DoOriginActive(); //Kích hoạt kĩ năng tộc khi lên sân
+    void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
     void DoEnterActive(); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
