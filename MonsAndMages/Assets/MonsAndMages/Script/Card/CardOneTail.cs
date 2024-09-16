@@ -53,7 +53,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
         GameEvent.ButtonInteractable(false);
         GameEvent.CardTap(this);
-        GameEvent.ViewInfo(InfoType.CardCollect, true);
+        GameEvent.CardViewInfo(InfoType.CardCollect, true);
         MoveTop(1f, () => GameEvent.ButtonInteractable(true));
     }
 
@@ -292,9 +292,10 @@ public class CardOneTail : MonoBehaviour, ICard
 
     //
 
-    public void DoCollectActive(IPlayer Player)
+    public void DoCollectActive(IPlayer Player, Action OnComplete)
     {
         m_data.Player = Player;
+        EffectAlpha(1f, () => OnComplete?.Invoke());
     }
 
     public void DoOriginActive(Action OnComplete)

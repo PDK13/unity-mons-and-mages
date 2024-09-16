@@ -52,39 +52,37 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.onView += OnView;
         GameEvent.onViewUI += OnViewUI;
-        GameEvent.onCardInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
-
+        GameEvent.OnPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
+        GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
+        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+        GameEvent.onPlayerEnd += OnPlayerEnd;
 
         GameEvent.onCardTap += OnCardTap;
-
-        GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+        GameEvent.onCardInfo += OnViewInfo;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
-        GameEvent.onInitPlayer -= OnInitPlayer;
+        GameEvent.onInitPlayer += OnInitPlayer;
 
         GameEvent.onView -= OnView;
         GameEvent.onViewUI -= OnViewUI;
-        GameEvent.onCardInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
-        GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
-
+        GameEvent.OnPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
+        GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
+        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+        GameEvent.onPlayerEnd -= OnPlayerEnd;
 
         GameEvent.onCardTap -= OnCardTap;
-
-        GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+        GameEvent.onCardInfo -= OnViewInfo;
     }
 
     private void Start()
@@ -145,7 +143,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectCancel()
     {
-        GameEvent.ViewInfo(InfoType.CardCollect, false);
+        GameEvent.CardViewInfo(InfoType.CardCollect, false);
         m_cardView.MoveBack(1f, null);
         m_cardView = null;
     }
@@ -245,10 +243,8 @@ public class PlayerView : MonoBehaviour
     {
         m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
-            m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one, 0.2f).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
+            OnComplete?.Invoke();
+
         });
     }
 
@@ -270,9 +266,22 @@ public class PlayerView : MonoBehaviour
         });
     }
 
-    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player, Action OnComplete)
+    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player, int Value, Action OnComplete)
     {
-        //...
+        RectTransform RuneStone = Instantiate(m_runeStoneSupply, this.transform).GetComponent<RectTransform>();
+        RuneStone.gameObject.SetActive(true);
+        RuneStone.transform.Find("fx-glow").DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
+        RuneStone.anchorMax = Vector3.one * 0.5f;
+        RuneStone.anchorMin = Vector3.one * 0.5f;
+        RuneStone.DOAnchorPos(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            RuneStone.DOMove(m_runeStoneShow.transform.position, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+            {
+                m_runeStoneShow.GetComponentInChildren<TextMeshProUGUI>().text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+                Destroy(RuneStone.gameObject, 0.2f);
+                OnComplete?.Invoke();
+            });
+        });
     }
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
@@ -303,9 +312,14 @@ public class PlayerView : MonoBehaviour
     }
 
 
+    private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete)
+    {
+        //...
+    }
+
     private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
-        GameEvent.ViewInfo(InfoType.CardCollect, false);
+        GameEvent.CardViewInfo(InfoType.CardCollect, false);
         GameEvent.ViewUi(false);
 
         Card.Renderer.maskable = false;
@@ -321,6 +335,15 @@ public class PlayerView : MonoBehaviour
                     OnComplete?.Invoke();
                 });
             });
+        });
+    }
+
+
+    private void OnPlayerEnd(IPlayer Player, Action OnComplete)
+    {
+        m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one, 0.2f).OnComplete(() =>
+        {
+            OnComplete?.Invoke();
         });
     }
 }

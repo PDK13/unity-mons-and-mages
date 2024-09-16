@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class GameEvent
 {
-    //Init-Event
+    //Init
 
     public static Action onInit;
     public static Action<PlayerData[]> onInitPlayer;
@@ -19,15 +19,20 @@ public class GameEvent
         onInitPlayer?.Invoke(Player);
     }
 
+    //Wild
 
-    //Ui-Event
+    public static Action<Action> onWildFill;
+
+    public static void WildCardFill(Action OnComplete)
+    {
+        onWildFill?.Invoke(OnComplete);
+    }
+
+    //View
 
     public static Action<ViewType, Action> onView;
     public static Action<bool> onViewUI;
     public static Action<IPlayer, Action> onViewPlayer;
-
-    public static Action<bool> onButtonInteractable;
-    public static Action<Button> onButtonPress;
 
     public static void View(ViewType Type, Action OnComplete)
     {
@@ -44,6 +49,10 @@ public class GameEvent
         onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
 
+    //Button
+
+    public static Action<bool> onButtonInteractable;
+    public static Action<Button> onButtonPress;
 
     public static void ButtonInteractable(bool Interactable)
     {
@@ -55,42 +64,15 @@ public class GameEvent
         onButtonPress?.Invoke(Button);
     }
 
+    //Player
 
-    //Match-Event
-
-    public static Action<IPlayer, Action> onPlayerStart; //Start player turn after done any next turn progess
-
-    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply;
-    public static Action<IPlayer, Action> onPlayerTakeRuneStoneFromMediation;
-    public static Action<IPlayer, Action> onPlayerStunnedCheck;
-
-    public static Action<IPlayer, Action> onPlayerDoChoice;
-
-    public static Action<ICard> onCardTap;
-    public static Action<InfoType, bool> onCardInfo;
-
-    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Mediate Event
-    public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Collect Event
-
-    public static Action<Action> onWildFill;
-
-    public static Action<Action> onCardRumble; //Make another card around it shake
-
-    public static Action<ICard, Action> onCardOriginActive; //Origin Event
-
-    public static Action<IPlayer, bool, Action> onPlayerDoWandNext;
-    public static Action<IPlayer, Action> onPlayerDoWandActive;
-
-    public static Action<ICard, Action> onCardAttack; //Attack Event
-    public static Action<ICard, Action> onCardEnergyFill; //Energy Event
-    public static Action<ICard, Action> onCardEnergyCheck;
-    public static Action<ICard, Action> onCardEnergyActive;
-    public static Action<ICard, Action> onCardClassActive; //Class Event
-    public static Action<ICard, Action> onCardSpellActive; //Spell Event
-
-    public static Action<IPlayer, Action> onPlayerContinueCheck;
-    public static Action<IPlayer, Action> onPlayerContinue;
-
+    public static Action<IPlayer, Action> onPlayerStart; //Player start turn
+    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply; //Player take rune stone from supply
+    public static Action<IPlayer, int, Action> OnPlayerTakeRuneStoneFromMediation; //Player take rune stone from mediation
+    public static Action<IPlayer, Action> onPlayerStunnedCheck; //Player start turn
+    public static Action<IPlayer, Action> onPlayerDoChoice; //Player choice Mediate or Collect
+    public static Action<IPlayer, int, Action> onPlayerDoMediate; //Player Mediate Event
+    public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Player Collect Event
     public static Action<IPlayer, Action> onPlayerEnd;
 
     public static void PlayerStart(IPlayer Player, Action OnComplete)
@@ -98,15 +80,14 @@ public class GameEvent
         onPlayerStart?.Invoke(Player, OnComplete);
     }
 
-
     public static void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, Action OnComplete)
     {
         onPlayerTakeRuneStoneFromSupply?.Invoke(Player, Value, OnComplete);
     }
 
-    public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, Action OnComplete)
+    public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, int Value, Action OnComplete)
     {
-        onPlayerTakeRuneStoneFromMediation?.Invoke(Player, OnComplete);
+        OnPlayerTakeRuneStoneFromMediation?.Invoke(Player, Value, OnComplete);
     }
 
     public static void PlayerStunnedCheck(IPlayer Player, Action OnComplete)
@@ -114,23 +95,10 @@ public class GameEvent
         onPlayerStunnedCheck?.Invoke(Player, OnComplete);
     }
 
-
     public static void PlayerDoChoice(IPlayer Player, Action OnComplete)
     {
         onPlayerDoChoice?.Invoke(Player, OnComplete);
-    } //Choice Event
-
-
-    public static void CardTap(ICard Card)
-    {
-        onCardTap?.Invoke(Card);
     }
-
-    public static void ViewInfo(InfoType Type, bool Show)
-    {
-        onCardInfo?.Invoke(Type, Show);
-    }
-
 
     public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, Action OnComplete)
     {
@@ -142,80 +110,29 @@ public class GameEvent
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
 
-
-    public static void WildCardFill(Action OnComplete)
+    public static void PlayerEnd(IPlayer Player, Action OnComplete)
     {
-        onWildFill?.Invoke(OnComplete);
+        onPlayerEnd?.Invoke(Player, OnComplete);
     }
 
+    //Card
+
+    public static Action<ICard> onCardTap;
+    public static Action<InfoType, bool> onCardInfo;
+    public static Action<Action> onCardRumble;
+
+    public static void CardTap(ICard Card)
+    {
+        onCardTap?.Invoke(Card);
+    }
+
+    public static void CardViewInfo(InfoType Type, bool Show)
+    {
+        onCardInfo?.Invoke(Type, Show);
+    }
 
     public static void CardRumble(Action OnComplete)
     {
         onCardRumble?.Invoke(OnComplete);
-    }
-
-
-    public static void CardOriginActive(ICard Card, Action OnComplete)
-    {
-        onCardOriginActive?.Invoke(Card, OnComplete);
-    } //Origin Event
-
-
-    public static void PlayerDoWandNext(IPlayer Player, bool CardActive, Action OnComplete)
-    {
-        onPlayerDoWandNext?.Invoke(Player, CardActive, OnComplete);
-    }
-
-    public static void PlayerDoWandActive(IPlayer Player, Action OnComplete)
-    {
-        onPlayerDoWandActive?.Invoke(Player, OnComplete);
-    }
-
-
-    public static void CardAttack(ICard Card, Action OnComplete)
-    {
-        onCardAttack?.Invoke(Card, OnComplete);
-    } //Attack Event
-
-    public static void CardEnergyFill(ICard Card, Action OnComplete)
-    {
-        onCardEnergyFill?.Invoke(Card, OnComplete);
-    } //Energy Event
-
-    public static void CardEnergyCheck(ICard Card, Action OnComplete)
-    {
-        onCardEnergyCheck?.Invoke(Card, OnComplete);
-    }
-
-    public static void CardEnergyActive(ICard Card, Action OnComplete)
-    {
-        onCardEnergyActive?.Invoke(Card, OnComplete);
-    }
-
-    public static void CardClassActive(ICard Card, Action OnComplete)
-    {
-        onCardClassActive?.Invoke(Card, OnComplete);
-    } //Class Event
-
-    public static void CardSpellActive(ICard Card, Action OnComplete)
-    {
-        onCardSpellActive?.Invoke(Card, OnComplete);
-    } //Spell Event
-
-
-    public static void PlayerContinueCheck(IPlayer Player, Action OnComplete)
-    {
-        onPlayerContinueCheck?.Invoke(Player, OnComplete);
-    }
-
-    public static void PlayerContinue(IPlayer Player, Action OnComplete)
-    {
-        onPlayerContinue?.Invoke(Player, OnComplete);
-    } //Continue Event
-
-
-    public static void PlayerEnd(IPlayer Player, Action OnComplete)
-    {
-        onPlayerEnd?.Invoke(Player, OnComplete);
     }
 }

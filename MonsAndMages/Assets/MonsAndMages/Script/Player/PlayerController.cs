@@ -6,11 +6,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
+    private PlayerData m_data;
+
     [SerializeField] private GameObject m_cardPointSample;
     [SerializeField] private Transform m_cardContent;
+
+    [Space][SerializeField] private CardMediate[] m_cardMediation = new CardMediate[2];
+
+    [Space]
     [SerializeField] private Transform m_wand;
 
-    private PlayerData m_data;
+    private bool m_choice = false;
+    private bool m_turn = false;
 
     private void Start()
     {
@@ -57,39 +64,87 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoTakeRuneStoneFromSupply(int Value)
+    public void DoStart(Action OnComplete)
     {
-        if (Value <= 0)
-        {
-            Debug.LogErrorFormat("{0} Rune Stone get from supply set to 1", Value);
-            Value = 1;
-        }
-        m_data.RuneStone += 1;
+        m_turn = true;
+        OnComplete?.Invoke();
     }
 
-    public void DoTakeRuneStoneFromMediation()
+
+    public void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
     {
+        m_data.RuneStone += Value;
+        if (m_data.Base)
+            GameEvent.PlayerTakeRuneStoneFromSupply(this, Value, () => OnComplete?.Invoke());
+        else
+            OnComplete?.Invoke();
+    }
+
+    public void DoTakeRuneStoneFromMediation(Action OnComplete)
+    {
+        var EventInvoke = false;
+        var RuneStoneSum = 0;
         for (int i = 0; i < m_data.Mediation.Length; i++)
         {
             if (m_data.Mediation[i] > 0)
             {
-                m_data.RuneStone += 2;
-                m_data.Mediation[i] -= 2;
+                m_data.RuneStone += 1;
+                m_data.Mediation[i] -= 1;
+                RuneStoneSum += 1;
+                if (!EventInvoke)
+                {
+                    EventInvoke = true;
+                    m_cardMediation[i].EffectAlpha(1f, () =>
+                    {
+                        if (m_data.Base)
+                            GameEvent.PlayerTakeRuneStoneFromMediation(this, RuneStoneSum, () => OnComplete?.Invoke());
+                        else
+                            OnComplete?.Invoke();
+                    });
+                }
+                else
+                    m_cardMediation[i].EffectAlpha(1f, null);
             }
         }
+        if (!EventInvoke)
+            OnComplete?.Invoke();
     }
 
-    public void DoStunnedCheck() { }
-
-
-    public void DoChoice() { }
-
-    public void DoMediate(int RuneStoneAdd)
+    public void DoStunnedCheck(Action<bool> OnComplete)
     {
+        if (m_data.Base)
+            GameEvent.PlayerStunnedCheck(this, () => OnComplete?.Invoke(m_data.Stuned));
+        else
+            OnComplete?.Invoke(m_data.Stuned);
+    }
+
+
+    public void DoChoice(Action OnComplete)
+    {
+        GameEvent.PlayerDoChoice(this, () =>
+        {
+            m_choice = true;
+            GameEvent.ViewUi(true);
+            OnComplete?.Invoke();
+        });
+    }
+
+    public void DoMediate(int RuneStoneAdd, Action OnComplete)
+    {
+        m_choice = false;
         if (m_data.Mediation[0] == 0)
+        {
             m_data.Mediation[0] = RuneStoneAdd * 2;
+            m_cardMediation[0].EffectAlpha(1f, () => OnComplete?.Invoke());
+        }
+        else
         if (m_data.Mediation[1] == 0)
+        {
             m_data.Mediation[1] = RuneStoneAdd * 2;
+            m_cardMediation[1].EffectAlpha(1f, () => OnComplete?.Invoke());
+        }
+        else
+            OnComplete?.Invoke();
     }
 
     public Transform DoCollectReady()
@@ -107,10 +162,12 @@ public class PlayerController : MonoBehaviour, IPlayer
         return CardPoint.transform;
     }
 
-    public void DoCollect(ICard Card)
+    public void DoCollect(ICard Card, Action OnComplete)
     {
+        m_choice = false;
         m_data.RuneStone -= Card.RuneStoneCost;
         m_data.CardQueue.Add(Card);
+        Card.DoCollectActive(this, () => GameEvent.PlayerDoCollect(this, Card, () => OnComplete?.Invoke()));
     }
 
 
@@ -141,12 +198,26 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoContinueCheck(IPlayer Player) { }
+    public bool DoContinueCheck()
+    {
+        return m_data.CardQueue.Exists(t => t.EnergyFull);
+    }
 
-    public void DoContinue(IPlayer Player) { }
+    public void DoContinue(Action OnComplete)
+    {
+        m_turn = true;
+        OnComplete?.Invoke();
+    }
 
 
-    public void DoEnd(IPlayer Player) { }
+    public void DoEnd(Action OnComplete)
+    {
+        m_turn = false;
+
+        m_data.StunCurrent = 0;
+
+        OnComplete?.Invoke();
+    }
 
 
     public void StunChange(int Value)

@@ -66,7 +66,7 @@ public interface ICard
     void InfoDamageUpdate(int Value, bool Effect = false);
 
 
-    void DoCollectActive(IPlayer Player); //Kích hoạt khi lên sân
+    void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 

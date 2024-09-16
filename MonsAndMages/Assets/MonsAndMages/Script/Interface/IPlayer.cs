@@ -28,23 +28,24 @@ public interface IPlayer
 
     PlayerController Controller { get; }
 
+
     void Init(PlayerData Data);
 
 
-    void DoTakeRuneStoneFromSupply(int Value); //Take 1 rune stone from supply
+    void DoTakeRuneStoneFromSupply(int Value, Action OnComplete); //Take 1 rune stone from supply
 
-    void DoTakeRuneStoneFromMediation(); //Take rune stone from mediation
+    void DoTakeRuneStoneFromMediation(Action OnComplete); //Take rune stone from mediation
 
-    void DoStunnedCheck(); //Check stun stage
+    void DoStunnedCheck(Action<bool> OnComplete); //Check stun stage
 
 
-    void DoChoice();
+    void DoChoice(Action OnComplete);
 
-    void DoMediate(int RuneStoneAdd);
+    void DoMediate(int RuneStoneAdd, Action OnComplete);
 
     Transform DoCollectReady();
 
-    void DoCollect(ICard Card);
+    void DoCollect(ICard Card, Action OnComplete);
 
 
     void DoWandNext(Action OnComplete); //Move Wand Next
@@ -52,11 +53,11 @@ public interface IPlayer
     void DoWandActive(Action OnComplete); //Active Card at Wand after moved if not stunned
 
 
-    void DoContinueCheck(IPlayer Player);
+    bool DoContinueCheck();
 
-    void DoContinue(IPlayer Player);
+    void DoContinue(Action OnComplete);
 
-    void DoEnd(IPlayer Player);
+    void DoEnd(Action OnComplete);
 
 
     void StunChange(int Value);

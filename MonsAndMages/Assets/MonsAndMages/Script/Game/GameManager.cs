@@ -97,8 +97,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
     {
-        Player.DoTakeRuneStoneFromSupply(Value);
-        GameEvent.PlayerTakeRuneStoneFromSupply(Player, 1, () =>
+        Player.DoTakeRuneStoneFromSupply(Value, () =>
         {
             PlayerTakeRuneStoneFromMediation(Player);
         });
@@ -106,8 +105,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerTakeRuneStoneFromMediation(IPlayer Player)
     {
-        Player.DoTakeRuneStoneFromMediation();
-        GameEvent.PlayerTakeRuneStoneFromMediation(Player, () =>
+        Player.DoTakeRuneStoneFromMediation(() =>
         {
             PlayerStunnedCheck(Player);
         });
@@ -115,10 +113,9 @@ public class GameManager : MonoBehaviour
 
     private void PlayerStunnedCheck(IPlayer Player)
     {
-        Player.DoStunnedCheck();
-        GameEvent.PlayerStunnedCheck(Player, () =>
+        Player.DoStunnedCheck((Stunned) =>
         {
-            if (Player.Stuned)
+            if (Stunned)
                 PlayerDoWandNext(Player, false);
             else
                 PlayerDoChoice(Player);
@@ -128,9 +125,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerDoChoice(IPlayer Player)
     {
-        GameEvent.ViewUi(true);
-        Player.DoChoice();
-        GameEvent.PlayerDoChoice(Player, () =>
+        Player.DoChoice(() =>
         {
             if (Player.Base)
                 m_playerChoice = true;
@@ -140,16 +135,17 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
-        m_playerChoice = false;
-        PlayerDoWandNext(Player, true);
+        Player.DoMediate(RuneStoneAdd , () =>
+        {
+            m_playerChoice = false;
+            PlayerDoWandNext(Player, true);
+        });
     } //Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = false;
-        Player.DoCollect(Card);
-        Card.DoCollectActive(Player);
-        GameEvent.PlayerDoCollect(Player, Card, () =>
+        Player.DoCollect(Card, () =>
         {
             CardOriginActive(Card);
         });
@@ -245,20 +241,15 @@ public class GameManager : MonoBehaviour
 
     private void PlayerContinueCheck(IPlayer Player)
     {
-        Player.DoContinueCheck(Player);
-        GameEvent.PlayerContinueCheck(Player, () =>
-        {
-            if (Player.CardQueue.Exists(t => t.EnergyFull))
-                PlayerContinue(Player);
-            else
-                PlayerEnd(Player);
-        });
+        if (Player.DoContinueCheck())
+            PlayerContinue(Player);
+        else
+            PlayerEnd(Player);
     }
 
     private void PlayerContinue(IPlayer Player)
     {
-        Player.DoContinue(Player);
-        GameEvent.PlayerContinue(Player, () =>
+        Player.DoContinue(() =>
         {
             //...
         });
@@ -266,13 +257,15 @@ public class GameManager : MonoBehaviour
 
     private void PlayerEnd(IPlayer Player)
     {
-        Player.DoEnd(Player);
-        m_playerIndex++;
-        if (m_playerIndex > m_player.Count - 1)
-            m_playerIndex = 0;
-        GameEvent.PlayerEnd(Player, () =>
+        Player.DoEnd(() =>
         {
-            PlayerCurrentStart();
+            m_playerIndex++;
+            if (m_playerIndex > m_player.Count - 1)
+                m_playerIndex = 0;
+            GameEvent.PlayerEnd(Player, () =>
+            {
+                PlayerCurrentStart();
+            });
         });
     }
 }
