@@ -31,7 +31,8 @@ public class GameEvent
     //View
 
     public static Action<ViewType, Action> onView;
-    public static Action<bool> onViewUI;
+    public static Action onViewUIHide;
+    public static Action<ViewType> onViewUIShow;
     public static Action<IPlayer, Action> onViewPlayer;
 
     public static void View(ViewType Type, Action OnComplete)
@@ -39,9 +40,14 @@ public class GameEvent
         onView?.Invoke(Type, OnComplete);
     }
 
-    public static void ViewUi(bool Show)
+    public static void ViewUiHide()
     {
-        onViewUI?.Invoke(Show);
+        onViewUIHide?.Invoke();
+    }
+
+    public static void ViewUiShow(ViewType Type)
+    {
+        onViewUIShow?.Invoke(Type);
     }
 
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
@@ -68,7 +74,7 @@ public class GameEvent
 
     public static Action<IPlayer, Action> onPlayerStart; //Player start turn
     public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply; //Player take rune stone from supply
-    public static Action<IPlayer, int, Action> OnPlayerTakeRuneStoneFromMediation; //Player take rune stone from mediation
+    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromMediation; //Player take rune stone from mediation
     public static Action<IPlayer, Action> onPlayerStunnedCheck; //Player start turn
     public static Action<IPlayer, Action> onPlayerDoChoice; //Player choice Mediate or Collect
     public static Action<IPlayer, int, Action> onPlayerDoMediate; //Player Mediate Event
@@ -87,7 +93,7 @@ public class GameEvent
 
     public static void PlayerTakeRuneStoneFromMediation(IPlayer Player, int Value, Action OnComplete)
     {
-        OnPlayerTakeRuneStoneFromMediation?.Invoke(Player, Value, OnComplete);
+        onPlayerTakeRuneStoneFromMediation?.Invoke(Player, Value, OnComplete);
     }
 
     public static void PlayerStunnedCheck(IPlayer Player, Action OnComplete)

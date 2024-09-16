@@ -51,11 +51,13 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInitPlayer += OnInitPlayer;
 
         GameEvent.onView += OnView;
-        GameEvent.onViewUI += OnViewUI;
+        GameEvent.onViewUIHide += OnViewUIHide;
+        GameEvent.onViewUIShow += OnViewUIShow;
 
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.OnPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
+        GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
+        GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
@@ -71,11 +73,13 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInitPlayer += OnInitPlayer;
 
         GameEvent.onView -= OnView;
-        GameEvent.onViewUI -= OnViewUI;
+        GameEvent.onViewUIHide -= OnViewUIHide;
+        GameEvent.onViewUIShow -= OnViewUIShow;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.OnPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
+        GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
+        GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
@@ -105,11 +109,8 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewPlayer(int PlayerIndex)
     {
-        GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), () =>
-        {
-            OnViewUI(true);
-        });
-        OnViewUI(false);
+        GameEvent.View(ViewType.Field, () => GameEvent.ViewUiShow(ViewType.Field));
+        GameEvent.ViewUiHide();
     }
 
     public void BtnViewMediate()
@@ -119,20 +120,14 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewCollect()
     {
-        GameEvent.View(ViewType.Wild, () =>
-        {
-            OnViewUI(true);
-        });
-        OnViewUI(false);
+        GameEvent.ViewUiHide();
+        GameEvent.View(ViewType.Wild, () => GameEvent.ViewUiShow(ViewType.Wild));
     }
 
     public void BtnViewBack()
     {
-        GameEvent.View(ViewType.Field, () =>
-        {
-            OnViewUI(true);
-        });
-        OnViewUI(false);
+        GameEvent.ViewUiHide();
+        GameEvent.View(ViewType.Field, () => GameEvent.ViewUiShow(ViewType.Field));
     }
 
     public void BtnCollectAccept()
@@ -157,6 +152,8 @@ public class PlayerView : MonoBehaviour
 
     private void OnInitPlayer(PlayerData[] Player)
     {
+        GameEvent.ViewUiShow(ViewType.Field);
+
         for (int i = 0; i < m_playerContent.transform.childCount; i++)
         {
             if (i >= Player.Length)
@@ -186,26 +183,34 @@ public class PlayerView : MonoBehaviour
         m_viewType = Type;
     }
 
-    private void OnViewUI(bool Show)
+    private void OnViewUIHide()
     {
-        if (!Show)
+        m_runeStoneShow.SetActive(false);
+        m_btnMediate.SetActive(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.gameObject.SetActive(false);
+    }
+
+    private void OnViewUIShow(ViewType Type)
+    {
+        m_runeStoneShow.SetActive(true);
+
+        switch (Type)
         {
-            m_runeStoneShow.SetActive(false);
-            m_btnMediate.SetActive(false);
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(false);
-            m_playerContent.gameObject.SetActive(false);
-            return;
+            case ViewType.Field:
+                m_btnMediate.SetActive(true);
+                m_btnCollect.SetActive(true);
+                m_btnBack.SetActive(false);
+                m_playerContent.gameObject.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnMediate.SetActive(false);
+                m_btnCollect.SetActive(false);
+                m_btnBack.SetActive(true);
+                m_playerContent.gameObject.SetActive(false);
+                break;
         }
-        bool Field = m_viewType == ViewType.Field;
-        bool Wild = m_viewType == ViewType.Wild;
-        bool Base = GameManager.instance.PlayerCurrent.Base;
-        bool Choice = GameManager.instance.PlayerChoice;
-        m_runeStoneShow.SetActive(Show && Base);
-        m_btnMediate.SetActive(Show && Choice && Field && Base);
-        m_btnCollect.SetActive(Show && Choice && Field && Base);
-        m_btnBack.SetActive(Show && Wild);
-        m_playerContent.gameObject.SetActive(Show && Field && Base);
     }
 
     private void OnViewInfo(InfoType Type, bool Show)
@@ -244,7 +249,6 @@ public class PlayerView : MonoBehaviour
         m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
             OnComplete?.Invoke();
-
         });
     }
 
@@ -320,12 +324,13 @@ public class PlayerView : MonoBehaviour
     private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
         GameEvent.CardViewInfo(InfoType.CardCollect, false);
-        GameEvent.ViewUi(false);
 
         Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
+        GameEvent.ViewUiHide();
         GameEvent.View(ViewType.Field, () =>
         {
+            GameEvent.ViewUiShow(ViewType.Field);
             Card.Point(Point);
             Card.MoveBack(1f, () =>
             {

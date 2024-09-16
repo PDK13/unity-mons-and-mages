@@ -78,7 +78,6 @@ public class GameManager : MonoBehaviour
     {
         GameEvent.View(ViewType.Field, () =>
         {
-            GameEvent.ViewUi(true);
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
                 PlayerStart(PlayerCurrent);
@@ -121,7 +120,7 @@ public class GameManager : MonoBehaviour
             if (Player.Base)
             {
                 m_playerChoice = true;
-                GameEvent.ViewUi(true);
+                GameEvent.ViewUiShow(ViewType.Field);
             }
         });
     } //Choice Event
