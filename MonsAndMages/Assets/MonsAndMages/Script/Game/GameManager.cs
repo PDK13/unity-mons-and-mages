@@ -88,27 +88,18 @@ public class GameManager : MonoBehaviour
 
     private void PlayerStart(IPlayer Player)
     {
-        GameEvent.PlayerStart(PlayerCurrent, () =>
-        {
-            PlayerTakeRuneStoneFromSupply(Player, 1);
-        });
+        Player.DoStart(() => PlayerTakeRuneStoneFromSupply(Player, 1));
     }
 
 
     private void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
     {
-        Player.DoTakeRuneStoneFromSupply(Value, () =>
-        {
-            PlayerTakeRuneStoneFromMediation(Player);
-        });
+        Player.DoTakeRuneStoneFromSupply(Value, () => PlayerTakeRuneStoneFromMediation(Player));
     }
 
     private void PlayerTakeRuneStoneFromMediation(IPlayer Player)
     {
-        Player.DoTakeRuneStoneFromMediation(() =>
-        {
-            PlayerStunnedCheck(Player);
-        });
+        Player.DoTakeRuneStoneFromMediation(() => PlayerStunnedCheck(Player));
     }
 
     private void PlayerStunnedCheck(IPlayer Player)
@@ -128,36 +119,30 @@ public class GameManager : MonoBehaviour
         Player.DoChoice(() =>
         {
             if (Player.Base)
+            {
                 m_playerChoice = true;
+                GameEvent.ViewUi(true);
+            }
         });
     } //Choice Event
 
 
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
-        Player.DoMediate(RuneStoneAdd , () =>
-        {
-            m_playerChoice = false;
-            PlayerDoWandNext(Player, true);
-        });
+        m_playerChoice = false;
+        Player.DoMediate(RuneStoneAdd, () => PlayerDoWandNext(Player, true));
     } //Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = false;
-        Player.DoCollect(Card, () =>
-        {
-            CardOriginActive(Card);
-        });
+        Player.DoCollect(Card, () => CardOriginActive(Card));
     } //Collect Event
 
 
     private void CardOriginActive(ICard Card)
     {
-        Card.DoOriginActive(() =>
-        {
-            PlayerDoWandNext(Card.Player, true);
-        });
+        Card.DoOriginActive(() => PlayerDoWandNext(Card.Player, true));
     } //Origin Event
 
 
@@ -174,10 +159,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerDoWandActive(IPlayer Player)
     {
-        Player.DoWandActive(() =>
-        {
-            CardAttack(Player.CardQueue[Player.WandStep]);
-        });
+        Player.DoWandActive(() => CardAttack(Player.CardQueue[Player.WandStep]));
     }
 
 
@@ -197,10 +179,7 @@ public class GameManager : MonoBehaviour
 
     private void CardEnergyFill(ICard Card)
     {
-        Card.DoEnergyFill(1, () =>
-        {
-            CardEnergyCheck(Card);
-        });
+        Card.DoEnergyFill(1, () => CardEnergyCheck(Card));
     } //Energy Event
 
     private void CardEnergyCheck(ICard Card)
@@ -216,26 +195,17 @@ public class GameManager : MonoBehaviour
 
     private void CardEnergyActive(ICard Card)
     {
-        Card.DoEnergyActive(() =>
-        {
-            CardClassActive(Card);
-        });
+        Card.DoEnergyActive(() => CardClassActive(Card));
     }
 
     private void CardClassActive(ICard Card)
     {
-        Card.DoClassActive(() =>
-        {
-            CardSpellActive(Card);
-        });
+        Card.DoClassActive(() => CardSpellActive(Card));
     } //Class Event
 
     private void CardSpellActive(ICard Card)
     {
-        Card.DoSpellActive(() =>
-        {
-            PlayerContinueCheck(Card.Player);
-        });
+        Card.DoSpellActive(() => PlayerContinueCheck(Card.Player));
     } //Spell Event
 
 
@@ -262,10 +232,7 @@ public class GameManager : MonoBehaviour
             m_playerIndex++;
             if (m_playerIndex > m_player.Count - 1)
                 m_playerIndex = 0;
-            GameEvent.PlayerEnd(Player, () =>
-            {
-                PlayerCurrentStart();
-            });
+            GameEvent.PlayerEnd(Player, () => PlayerCurrentStart());
         });
     }
 }

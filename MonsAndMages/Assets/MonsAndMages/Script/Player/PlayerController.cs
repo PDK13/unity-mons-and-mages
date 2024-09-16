@@ -67,7 +67,8 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoStart(Action OnComplete)
     {
         m_turn = true;
-        OnComplete?.Invoke();
+        GameEvent.PlayerStart(this, () => OnComplete?.Invoke());
+
     }
 
 
@@ -124,7 +125,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         GameEvent.PlayerDoChoice(this, () =>
         {
             m_choice = true;
-            GameEvent.ViewUi(true);
             OnComplete?.Invoke();
         });
     }

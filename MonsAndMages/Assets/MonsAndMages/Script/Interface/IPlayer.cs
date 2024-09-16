@@ -32,6 +32,9 @@ public interface IPlayer
     void Init(PlayerData Data);
 
 
+    void DoStart(Action OnComplete); //Start turn
+
+
     void DoTakeRuneStoneFromSupply(int Value, Action OnComplete); //Take 1 rune stone from supply
 
     void DoTakeRuneStoneFromMediation(Action OnComplete); //Take rune stone from mediation
