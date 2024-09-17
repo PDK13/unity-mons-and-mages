@@ -8,11 +8,6 @@ public class GameManager : MonoBehaviour
 
     //
 
-    [SerializeField][Min(0)] private int m_startIndex = 0;
-    [SerializeField][Min(0)] private int m_baseIndex = 0;
-    [SerializeField] private bool m_sameDevice = true;
-
-    [Space]
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private Transform m_playerContent;
 
@@ -21,13 +16,22 @@ public class GameManager : MonoBehaviour
     private int m_playerIndex = 0;
     private bool m_playerChoice = false;
 
-    //
-
     public CardConfig CardConfig => m_cardConfig;
 
     public IPlayer PlayerCurrent => m_player[m_playerIndex];
 
-    public bool PlayerChoice => m_playerChoice;
+    public bool PlayerChoice => m_playerChoice || m_sameDevice;
+
+    //
+
+    [Space]
+    [SerializeField][Min(0)] private int m_startIndex = 0;
+    [SerializeField][Min(0)] private int m_baseIndex = 0;
+    [SerializeField] private bool m_sameDevice = true;
+
+    public bool SameDevice => m_sameDevice;
+
+    //
 
     private void Awake()
     {
@@ -170,7 +174,7 @@ public class GameManager : MonoBehaviour
             {
                 if (m_player[i] == Card.Player)
                     continue;
-                m_player[i].HealthChange(-Card.AttackCombine);
+                m_player[i].HealthChange(-Card.AttackCombine, null);
             }
             CardEnergyFill(Card);
         });

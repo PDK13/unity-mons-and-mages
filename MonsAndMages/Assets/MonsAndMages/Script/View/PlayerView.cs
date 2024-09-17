@@ -53,6 +53,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onView += OnView;
         GameEvent.onViewUIHide += OnViewUIHide;
         GameEvent.onViewUIShow += OnViewUIShow;
+        GameEvent.onViewInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
@@ -62,9 +63,10 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
         GameEvent.onPlayerEnd += OnPlayerEnd;
+        GameEvent.onPlayerHealthChange += OnPlayerHealthChange;
+        GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
 
         GameEvent.onCardTap += OnCardTap;
-        GameEvent.onCardInfo += OnViewInfo;
     }
 
     private void OnDisable()
@@ -75,6 +77,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onView -= OnView;
         GameEvent.onViewUIHide -= OnViewUIHide;
         GameEvent.onViewUIShow -= OnViewUIShow;
+        GameEvent.onViewInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
@@ -86,7 +89,6 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerEnd -= OnPlayerEnd;
 
         GameEvent.onCardTap -= OnCardTap;
-        GameEvent.onCardInfo -= OnViewInfo;
     }
 
     private void Start()
@@ -138,7 +140,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectCancel()
     {
-        GameEvent.CardViewInfo(InfoType.CardCollect, false);
+        GameEvent.ViewInfo(InfoType.CardCollect, false);
         m_cardView.MoveBack(1f, null);
         m_cardView = null;
     }
@@ -196,11 +198,14 @@ public class PlayerView : MonoBehaviour
     {
         m_runeStoneShow.SetActive(true);
 
+        bool Base = GameManager.instance.PlayerCurrent.Base || GameManager.instance.SameDevice;
+        bool Choice = GameManager.instance.PlayerChoice;
+
         switch (Type)
         {
             case ViewType.Field:
-                m_btnMediate.SetActive(true);
-                m_btnCollect.SetActive(true);
+                m_btnMediate.SetActive(Base && Choice);
+                m_btnCollect.SetActive(Base && Choice);
                 m_btnBack.SetActive(false);
                 m_playerContent.gameObject.SetActive(true);
                 break;
@@ -290,15 +295,16 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
     {
-        m_playerContent.transform.GetChild(Player.Index).Find("stun").DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
+        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerStun = PlayerCurrent.Find("stun");
+        PlayerStun.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
-            m_playerContent.transform.GetChild(Player.Index).Find("stun").DOScale(Vector2.one, 0.2f).OnComplete(() =>
+            PlayerStun.DOScale(Vector2.one, 0.2f).OnComplete(() =>
             {
                 OnComplete?.Invoke();
             });
         });
     }
-
 
     private void OnPlayerDoChoice(IPlayer Player, Action OnComplete)
     {
@@ -307,15 +313,6 @@ public class PlayerView : MonoBehaviour
         OnComplete?.Invoke();
     }
 
-
-    private void OnCardTap(ICard Card)
-    {
-        if (m_cardView != null)
-            return;
-        m_cardView = Card;
-    }
-
-
     private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete)
     {
         //...
@@ -323,7 +320,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
-        GameEvent.CardViewInfo(InfoType.CardCollect, false);
+        GameEvent.ViewInfo(InfoType.CardCollect, false);
 
         Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
@@ -343,12 +340,50 @@ public class PlayerView : MonoBehaviour
         });
     }
 
-
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
         m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one, 0.2f).OnComplete(() =>
         {
             OnComplete?.Invoke();
         });
+    }
+
+    private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerHealth = PlayerCurrent.Find("health");
+        var PlayerHealthTmp = PlayerHealth.Find("tmp-health").GetComponent<TextMeshProUGUI>();
+        PlayerHealth.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
+        {
+            PlayerHealthTmp.text = Player.HealthCurrent.ToString();
+            PlayerHealth.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+            });
+        });
+    }
+
+    private void OnPlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerStun = PlayerCurrent.Find("stun");
+        var PlayerStunTmp = PlayerStun.Find("tmp-stun").GetComponent<TextMeshProUGUI>();
+        PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
+        {
+            PlayerStunTmp.text = Player.HealthCurrent.ToString();
+            PlayerStun.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+            });
+        });
+    }
+
+
+    private void OnCardTap(ICard Card, Action OnComplete)
+    {
+        if (m_cardView != null)
+            return;
+        m_cardView = Card;
+        OnComplete?.Invoke();
     }
 }

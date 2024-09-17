@@ -10,6 +10,8 @@ public interface IPlayer
 
     int HealthPoint { get; }
 
+    int HealthCurrent { get; }
+
     int RuneStone { get; }
 
     int StunPoint { get; }
@@ -63,7 +65,7 @@ public interface IPlayer
     void DoEnd(Action OnComplete);
 
 
-    void StunChange(int Value);
+    void StunChange(int Value, Action OnComplete);
 
-    void HealthChange(int Value);
+    void HealthChange(int Value, Action OnComplete);
 }

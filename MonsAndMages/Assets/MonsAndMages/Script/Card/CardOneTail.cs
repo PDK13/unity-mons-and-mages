@@ -51,10 +51,20 @@ public class CardOneTail : MonoBehaviour, ICard
         if (!Avaible)
             return;
 
-        GameEvent.ButtonInteractable(false);
-        GameEvent.CardTap(this);
-        GameEvent.CardViewInfo(InfoType.CardCollect, true);
-        MoveTop(1f, () => GameEvent.ButtonInteractable(true));
+        bool Base = GameManager.instance.PlayerCurrent.Base || GameManager.instance.SameDevice;
+        bool Choice = GameManager.instance.PlayerChoice;
+
+        if (Base && Choice)
+        {
+            GameEvent.ButtonInteractable(false);
+            GameEvent.CardTap(this, null);
+            GameEvent.ViewInfo(InfoType.CardCollect, true);
+            MoveTop(1f, () => GameEvent.ButtonInteractable(true));
+        }
+        else
+        {
+            Debug.LogWarning("Card Tap by another Player clone");
+        }
     }
 
     //ICard
@@ -226,7 +236,7 @@ public class CardOneTail : MonoBehaviour, ICard
         {
             transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                GameEvent.CardRumble(() =>
+                GameEvent.CardRumble(this, () =>
                 {
                     m_rumble = false;
                     Renderer.maskable = true;

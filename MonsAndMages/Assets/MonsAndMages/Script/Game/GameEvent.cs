@@ -34,6 +34,7 @@ public class GameEvent
     public static Action onViewUIHide;
     public static Action<ViewType> onViewUIShow;
     public static Action<IPlayer, Action> onViewPlayer;
+    public static Action<InfoType, bool> onViewInfo;
 
     public static void View(ViewType Type, Action OnComplete)
     {
@@ -54,6 +55,11 @@ public class GameEvent
     {
         onViewPlayer?.Invoke(Player, OnComplete);
     } //View Player field
+
+    public static void ViewInfo(InfoType Type, bool Show)
+    {
+        onViewInfo?.Invoke(Type, Show);
+    }
 
     //Button
 
@@ -80,6 +86,8 @@ public class GameEvent
     public static Action<IPlayer, int, Action> onPlayerDoMediate; //Player Mediate Event
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Player Collect Event
     public static Action<IPlayer, Action> onPlayerEnd;
+    public static Action<IPlayer, int, Action> onPlayerHealthChange;
+    public static Action<IPlayer, int, Action> onPlayerStunnedChange;
 
     public static void PlayerStart(IPlayer Player, Action OnComplete)
     {
@@ -121,24 +129,34 @@ public class GameEvent
         onPlayerEnd?.Invoke(Player, OnComplete);
     }
 
+    public static void PlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        onPlayerHealthChange?.Invoke(Player, Value, OnComplete);
+    }
+
+    public static void PlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        onPlayerStunnedChange?.Invoke(Player, Value, OnComplete);
+    }
+
     //Card
 
-    public static Action<ICard> onCardTap;
-    public static Action<InfoType, bool> onCardInfo;
-    public static Action<Action> onCardRumble;
+    public static Action<ICard, Action> onCardTap;
+    public static Action<ICard, Action> onCardRumble;
+    public static Action<ICard, Action> onCardAttack;
 
-    public static void CardTap(ICard Card)
+    public static void CardTap(ICard Card, Action OnComplete)
     {
-        onCardTap?.Invoke(Card);
+        onCardTap?.Invoke(Card, OnComplete);
     }
 
-    public static void CardViewInfo(InfoType Type, bool Show)
+    public static void CardRumble(ICard Card, Action OnComplete)
     {
-        onCardInfo?.Invoke(Type, Show);
+        onCardRumble?.Invoke(Card, OnComplete);
     }
 
-    public static void CardRumble(Action OnComplete)
+    public static void CardAttack(ICard Card, Action OnComplete)
     {
-        onCardRumble?.Invoke(OnComplete);
+        onCardAttack?.Invoke(Card, OnComplete);
     }
 }

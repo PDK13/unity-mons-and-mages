@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public int HealthPoint => m_data.HealthPoint;
 
+    public int HealthCurrent => m_data.HealthCurrent;
+
     public int RuneStone => m_data.RuneStone;
 
     public int StunPoint => m_data.StunPoint;
@@ -220,15 +222,17 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void StunChange(int Value)
+    public void StunChange(int Value, Action OnComplete)
     {
         m_data.StunCurrent += Value;
         m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
+        GameEvent.PlayerStunnedChange(this, Value, () => OnComplete?.Invoke());
     }
 
-    public void HealthChange(int Value)
+    public void HealthChange(int Value, Action OnComplete)
     {
         m_data.HealthCurrent += Value;
         m_data.HealthCurrent = Mathf.Clamp(m_data.HealthCurrent, 0, m_data.HealthPoint);
+        GameEvent.PlayerHealthChange(this, Value, () => OnComplete?.Invoke());
     }
 }
