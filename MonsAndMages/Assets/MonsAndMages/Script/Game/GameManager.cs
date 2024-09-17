@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
     public IPlayer PlayerCurrent => m_player[m_playerIndex];
 
-    public bool PlayerChoice => m_playerChoice || m_sameDevice;
+    public bool PlayerChoice => m_playerChoice;
 
     //
 
@@ -156,7 +156,7 @@ public class GameManager : MonoBehaviour
             if (CardActive)
                 PlayerDoWandActive(Player);
             else
-                GameEvent.PlayerEnd(Player, () => PlayerEnd(Player));
+                PlayerEnd(Player);
         });
     }
 
@@ -168,16 +168,21 @@ public class GameManager : MonoBehaviour
 
     private void CardAttack(ICard Card)
     {
-        Card.DoAttackActive(() =>
+        if (Card != null)
         {
-            for (int i = 0; i < m_player.Count; i++)
+            Card.DoAttackActive(() =>
             {
-                if (m_player[i] == Card.Player)
-                    continue;
-                m_player[i].HealthChange(-Card.AttackCombine, null);
-            }
-            CardEnergyFill(Card);
-        });
+                for (int i = 0; i < m_player.Count; i++)
+                {
+                    if (m_player[i] == Card.Player)
+                        continue;
+                    m_player[i].HealthChange(-Card.AttackCombine, null);
+                }
+                CardEnergyFill(Card);
+            });
+        }
+        else
+            PlayerEnd(PlayerCurrent);
     } //Attack Event
 
     private void CardEnergyFill(ICard Card)

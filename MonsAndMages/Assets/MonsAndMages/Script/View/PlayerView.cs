@@ -111,8 +111,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewPlayer(int PlayerIndex)
     {
-        GameEvent.View(ViewType.Field, () => GameEvent.ViewUiShow(ViewType.Field));
-        GameEvent.ViewUiHide();
+        GameEvent.View(ViewType.Field, null);
     }
 
     public void BtnViewMediate()
@@ -122,14 +121,12 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewCollect()
     {
-        GameEvent.ViewUiHide();
-        GameEvent.View(ViewType.Wild, () => GameEvent.ViewUiShow(ViewType.Wild));
+        GameEvent.View(ViewType.Wild, null);
     }
 
     public void BtnViewBack()
     {
-        GameEvent.ViewUiHide();
-        GameEvent.View(ViewType.Field, () => GameEvent.ViewUiShow(ViewType.Field));
+        GameEvent.View(ViewType.Field, null);
     }
 
     public void BtnCollectAccept()
@@ -198,21 +195,20 @@ public class PlayerView : MonoBehaviour
     {
         m_runeStoneShow.SetActive(true);
 
-        bool Base = GameManager.instance.PlayerCurrent.Base || GameManager.instance.SameDevice;
         bool Choice = GameManager.instance.PlayerChoice;
 
         switch (Type)
         {
             case ViewType.Field:
-                m_btnMediate.SetActive(Base && Choice);
-                m_btnCollect.SetActive(Base && Choice);
+                m_btnMediate.SetActive(Choice);
+                m_btnCollect.SetActive(Choice);
                 m_btnBack.SetActive(false);
                 m_playerContent.gameObject.SetActive(true);
                 break;
             case ViewType.Wild:
                 m_btnMediate.SetActive(false);
                 m_btnCollect.SetActive(false);
-                m_btnBack.SetActive(true);
+                m_btnBack.SetActive(Choice);
                 m_playerContent.gameObject.SetActive(false);
                 break;
         }
@@ -324,10 +320,8 @@ public class PlayerView : MonoBehaviour
 
         Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
-        GameEvent.ViewUiHide();
         GameEvent.View(ViewType.Field, () =>
         {
-            GameEvent.ViewUiShow(ViewType.Field);
             Card.Point(Point);
             Card.MoveBack(1f, () =>
             {

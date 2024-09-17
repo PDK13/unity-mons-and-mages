@@ -55,19 +55,28 @@ public class GameView : MonoBehaviour
 
         m_viewType = Type;
 
+        GameEvent.ViewUiHide();
         switch (Type)
         {
             case ViewType.Field:
                 m_gameContent
                     .DOLocalMoveY(0f, 1f)
                     .SetEase(Ease.OutQuad)
-                    .OnComplete(() => OnComplete?.Invoke());
+                    .OnComplete(() =>
+                    {
+                        GameEvent.ViewUiShow(ViewType.Field);
+                        OnComplete?.Invoke();
+                    });
                 break;
             case ViewType.Wild:
                 m_gameContent
                     .DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f)
                     .SetEase(Ease.OutQuad)
-                    .OnComplete(() => OnComplete?.Invoke());
+                    .OnComplete(() =>
+                    {
+                        GameEvent.ViewUiShow(ViewType.Wild);
+                        OnComplete?.Invoke();
+                    });
                 break;
         }
     }

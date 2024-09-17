@@ -70,7 +70,6 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         m_turn = true;
         GameEvent.PlayerStart(this, () => OnComplete?.Invoke());
-
     }
 
 
@@ -193,10 +192,10 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoWandActive(Action OnComplete)
     {
         var Card = m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>();
-        Card.EffectAlpha(1f, () =>
-        {
-            Card.DoWandActive(() => OnComplete?.Invoke());
-        });
+        if (Card != null)
+            Card.EffectAlpha(1f, () => Card.DoWandActive(() => OnComplete?.Invoke()));
+        else
+            OnComplete?.Invoke();
     }
 
 
