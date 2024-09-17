@@ -6,7 +6,9 @@ using System.Drawing;
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 public class PlayerView : MonoBehaviour
 {
@@ -37,6 +39,8 @@ public class PlayerView : MonoBehaviour
     private ICard m_cardView;
 
     public Transform InfoView => m_infoView;
+
+    public IPlayer PlayerCurrent => GameManager.instance.PlayerCurrent;
 
     //
 
@@ -131,14 +135,16 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectAccept()
     {
-        GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
+        GameEvent.ViewUiHide();
+        GameManager.instance.PlayerDoCollect(PlayerCurrent, m_cardView);
         m_cardView = null;
     } //Player Collect Card
 
     public void BtnCollectCancel()
     {
+        GameEvent.ViewUiHide();
         GameEvent.ViewInfo(InfoType.CardCollect, false);
-        m_cardView.MoveBack(1f, null);
+        m_cardView.MoveBack(1f, () => GameEvent.ViewUiShow(ViewType.Wild));
         m_cardView = null;
     }
 
@@ -201,6 +207,7 @@ public class PlayerView : MonoBehaviour
         {
             case ViewType.Field:
                 m_btnMediate.SetActive(Choice);
+                m_btnMediate.GetComponent<Button>().interactable = PlayerCurrent.MediationEmty;
                 m_btnCollect.SetActive(Choice);
                 m_btnBack.SetActive(false);
                 m_playerContent.gameObject.SetActive(true);
@@ -239,6 +246,7 @@ public class PlayerView : MonoBehaviour
         {
             case InfoType.CardCollect:
                 m_btnInfoAccept.SetActive(Show);
+                m_btnInfoAccept.GetComponent<Button>().interactable = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
                 m_btnInfoCancel.SetActive(Show);
                 break;
         }

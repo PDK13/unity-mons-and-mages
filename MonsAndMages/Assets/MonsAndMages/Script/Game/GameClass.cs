@@ -22,7 +22,7 @@ public class PlayerData
 
     public int WandStepNext => WandStep + 1 > CardQueue.Count - 1 ? 0 : WandStep + 1;
 
-    public bool MediationEmty => Mediation[0] > 0 && Mediation[1] > 0;
+    public bool MediationEmty => Mediation[0] == 0 || Mediation[1] == 0;
 
     public PlayerData(int Index, bool Base, int HealthPoint, int RuneStone)
     {
