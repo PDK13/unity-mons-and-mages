@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     public IPlayer PlayerCurrent => m_player[m_playerIndex];
 
+    public int PlayerIndex => m_playerIndex;
+
     public bool PlayerChoice => m_playerChoice;
 
     //
@@ -121,11 +123,8 @@ public class GameManager : MonoBehaviour
     {
         Player.DoChoice(() =>
         {
-            if (Player.Base)
-            {
-                m_playerChoice = true;
-                GameEvent.ViewUiShow(ViewType.Field);
-            }
+            m_playerChoice = Player.Base || SameDevice;
+            GameEvent.ViewUiShow(ViewType.Field);
         });
     } //Choice Event
 
@@ -240,7 +239,7 @@ public class GameManager : MonoBehaviour
             m_playerIndex++;
             if (m_playerIndex > m_player.Count - 1)
                 m_playerIndex = 0;
-            GameEvent.PlayerEnd(Player, () => PlayerCurrentStart());
+            PlayerCurrentStart();
         });
     }
 }

@@ -11,6 +11,7 @@ public class GameView : MonoBehaviour
     [SerializeField] private RectTransform m_gameContent;
 
     private ViewType m_viewType = ViewType.None;
+    private bool m_viewChange = false;
 
     private void OnEnable()
     {
@@ -49,11 +50,12 @@ public class GameView : MonoBehaviour
     {
         if (m_viewType == Type)
         {
-            OnComplete?.Invoke();
+            if (!m_viewChange)
+                OnComplete?.Invoke();
             return;
         }
-
         m_viewType = Type;
+        m_viewChange = true;
 
         GameEvent.ViewUiHide();
         switch (Type)
@@ -65,6 +67,7 @@ public class GameView : MonoBehaviour
                     .OnComplete(() =>
                     {
                         GameEvent.ViewUiShow(ViewType.Field);
+                        m_viewChange = false;
                         OnComplete?.Invoke();
                     });
                 break;
@@ -75,6 +78,7 @@ public class GameView : MonoBehaviour
                     .OnComplete(() =>
                     {
                         GameEvent.ViewUiShow(ViewType.Wild);
+                        m_viewChange = false;
                         OnComplete?.Invoke();
                     });
                 break;

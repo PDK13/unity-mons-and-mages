@@ -131,7 +131,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectAccept()
     {
-        GameManager.instance.PlayerDoCollect(m_playerBase, m_cardView);
+        GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
         m_cardView = null;
     } //Player Collect Card
 
@@ -247,9 +247,13 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
-        m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
+        var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+        PlayerView.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
-            OnComplete?.Invoke();
+            PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+            });
         });
     }
 
@@ -291,7 +295,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
         var PlayerStun = PlayerCurrent.Find("stun");
         PlayerStun.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
@@ -320,6 +324,7 @@ public class PlayerView : MonoBehaviour
 
         Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
+        GameEvent.WildCardFill(null);
         GameEvent.View(ViewType.Field, () =>
         {
             Card.Point(Point);
@@ -336,15 +341,12 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
-        m_playerContent.transform.GetChild(Player.Index).DOScale(Vector2.one, 0.2f).OnComplete(() =>
-        {
-            OnComplete?.Invoke();
-        });
+        OnComplete?.Invoke();
     }
 
     private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
         var PlayerHealth = PlayerCurrent.Find("health");
         var PlayerHealthTmp = PlayerHealth.Find("tmp-health").GetComponent<TextMeshProUGUI>();
         PlayerHealth.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
@@ -359,7 +361,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
+        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
         var PlayerStun = PlayerCurrent.Find("stun");
         var PlayerStunTmp = PlayerStun.Find("tmp-stun").GetComponent<TextMeshProUGUI>();
         PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>

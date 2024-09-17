@@ -84,7 +84,11 @@ public class WildView : MonoBehaviour
     private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
         for (int i = 0; i < m_cardContent.childCount; i++)
-            m_cardContent.GetChild(i).GetComponentInChildren<ICard>().Ready();
+        {
+            var Card = m_cardContent.GetChild(i).GetComponentInChildren<ICard>();
+            if (Card != null)
+                Card.Ready();
+        }
     }
 
 

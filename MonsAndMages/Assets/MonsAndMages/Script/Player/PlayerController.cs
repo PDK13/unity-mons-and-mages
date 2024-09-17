@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public Transform DoCollectReady()
     {
-        if (m_data.CardQueue.Count >= 5 && CardQueue[0].Name == CardNameType.Stage)
+        if (m_data.CardQueue.Count >= 5 && CardQueue[0] == null)
         {
             Destroy(m_cardContent.GetChild(0).gameObject);
             m_data.CardQueue.RemoveAt(0);
@@ -214,10 +214,8 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoEnd(Action OnComplete)
     {
         m_turn = false;
-
         m_data.StunCurrent = 0;
-
-        OnComplete?.Invoke();
+        GameEvent.PlayerEnd(this, () => OnComplete?.Invoke());
     }
 
 
