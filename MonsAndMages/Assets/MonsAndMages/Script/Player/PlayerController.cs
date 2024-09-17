@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public List<ICard> CardQueue => m_data.CardQueue;
 
-    public int WandStep => m_data.Index;
+    public int WandStep => m_data.WandStep;
 
     public int[] Mediation => m_data.Mediation;
 
@@ -90,9 +90,9 @@ public class PlayerController : MonoBehaviour, IPlayer
         {
             if (m_data.Mediation[i] > 0)
             {
-                m_data.RuneStone += 1;
-                m_data.Mediation[i] -= 1;
-                RuneStoneSum += 1;
+                m_data.RuneStone += 2;
+                m_data.Mediation[i] -= 2;
+                RuneStoneSum += 2;
                 if (!EventInvoke)
                 {
                     EventInvoke = true;
@@ -152,8 +152,9 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         if (m_data.CardQueue.Count >= 5 && CardQueue[0] == null)
         {
-            Destroy(m_cardContent.GetChild(0).gameObject);
-            m_data.CardQueue.RemoveAt(0);
+            //Wand still stay at emty position after remove stage card
+            //Destroy(m_cardContent.GetChild(0).gameObject);
+            //m_data.CardQueue.RemoveAt(0);
         }
 
         var CardPoint = Instantiate(m_cardPointSample, m_cardContent);
@@ -184,7 +185,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
         m_wand.SetParent(PointNext, this.transform);
         m_wand
-            .DOLocalJump(Vector3.zero, 15f, 1, 1f)
+            .DOLocalJump(Vector3.zero, 45f, 1, 1f)
             .SetEase(Ease.InCubic)
             .OnComplete(() => OnComplete?.Invoke());
     }

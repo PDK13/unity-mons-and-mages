@@ -324,9 +324,9 @@ public class PlayerView : MonoBehaviour
 
         Card.Renderer.maskable = false;
         var Point = Player.DoCollectReady().transform;
-        GameEvent.WildCardFill(null);
         GameEvent.View(ViewType.Field, () =>
         {
+            GameEvent.WildCardFill(null);
             Card.Point(Point);
             Card.MoveBack(1f, () =>
             {
@@ -346,7 +346,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
         var PlayerHealth = PlayerCurrent.Find("health");
         var PlayerHealthTmp = PlayerHealth.Find("tmp-health").GetComponent<TextMeshProUGUI>();
         PlayerHealth.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
@@ -361,7 +361,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
         var PlayerStun = PlayerCurrent.Find("stun");
         var PlayerStunTmp = PlayerStun.Find("tmp-stun").GetComponent<TextMeshProUGUI>();
         PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
