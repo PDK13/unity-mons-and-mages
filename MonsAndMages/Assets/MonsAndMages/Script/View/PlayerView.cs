@@ -116,6 +116,9 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewPlayer(int PlayerIndex)
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
     }
 
@@ -126,16 +129,25 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewCollect()
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         GameEvent.View(ViewType.Wild, null);
     }
 
     public void BtnViewBack()
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         GameEvent.View(ViewType.Field, null);
     }
 
     public void BtnCollectAccept()
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         GameEvent.ViewUiHide();
         GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
         m_cardView = null;
@@ -143,6 +155,9 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectCancel()
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         GameEvent.ViewUiHide();
         GameEvent.ViewInfo(InfoType.CardCollect, false);
         m_cardView.MoveBack(1f, () => GameEvent.ViewUiShow(ViewType.Wild));
@@ -367,13 +382,16 @@ public class PlayerView : MonoBehaviour
         GameEvent.View(ViewType.Field, () =>
         {
             GameEvent.WildCardFill(null);
-            Card.Pointer(Point);
-            Card.MoveBack(1f, () =>
+            GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
-                Card.Rumble(() =>
+                Card.Pointer(Point);
+                Card.MoveBack(1f, () =>
                 {
-                    Card.Renderer.maskable = true;
-                    OnComplete?.Invoke();
+                    Card.Rumble(() =>
+                    {
+                        Card.Renderer.maskable = true;
+                        OnComplete?.Invoke();
+                    });
                 });
             });
         });
