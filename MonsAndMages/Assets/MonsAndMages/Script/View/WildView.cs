@@ -110,19 +110,13 @@ public class WildView : MonoBehaviour
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
             var CardPoint = m_cardContent.GetChild(i);
-            switch (CardPoint.childCount)
-            {
-                case 0:
-                    var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
-                    CardFill(CardTop, CardPoint);
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-                case 1:
-                    continue;
-                default:
-                    Debug.LogError("Wild fill found 2 game object in card point " + i);
-                    break;
-            }
+            if (CardPoint.childCount != 0)
+                continue;
+
+            var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
+            CardFill(CardTop, CardPoint);
+
+            yield return new WaitForSeconds(0.5f);
         }
         if (m_wildFillFirstTime)
             yield return new WaitForSeconds(2f);
