@@ -2974,7 +2974,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3467,7 +3467,7 @@ MonoBehaviour:
   m_fontSizeMin: 25
   m_fontSizeMax: 70
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -4645,8 +4645,8 @@ RectTransform:
   m_GameObject: {fileID: 1493769799}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1891134788}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5193,8 +5193,8 @@ RectTransform:
   - {fileID: 1522470581}
   - {fileID: 1901593817}
   - {fileID: 484968639}
-  - {fileID: 1891134788}
   - {fileID: 1144427967}
+  - {fileID: 1891134788}
   - {fileID: 318060510}
   m_Father: {fileID: 645634885}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5225,6 +5225,7 @@ MonoBehaviour:
   m_btnInfoCancel: {fileID: 576555306}
   m_runeStoneShow: {fileID: 318060509}
   m_runeStoneSupply: {fileID: 1891134787}
+  m_runeStoneBox: {fileID: 318060510}
   m_tmpRuneStone: {fileID: 1037699695}
 --- !u!1 &1702362458
 GameObject:
@@ -5598,7 +5599,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1891134788}
   m_Layer: 5
-  m_Name: rune-stone-supply
+  m_Name: rune-stone-icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

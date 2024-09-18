@@ -87,6 +87,7 @@ public class GameEvent
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect; //Player Collect Event
     public static Action<IPlayer, Action> onPlayerCardEnergyActiveDoChoice;
     public static Action<IPlayer, Action> onPlayerEnd;
+    public static Action<IPlayer, int, Action> onPlayerRuneStoneChange;
     public static Action<IPlayer, int, Action> onPlayerHealthChange;
     public static Action<IPlayer, int, Action> onPlayerStunnedChange;
 
@@ -133,6 +134,11 @@ public class GameEvent
     public static void PlayerEnd(IPlayer Player, Action OnComplete)
     {
         onPlayerEnd?.Invoke(Player, OnComplete);
+    }
+
+    public static void PlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        onPlayerRuneStoneChange?.Invoke(Player, Value, OnComplete);
     }
 
     public static void PlayerHealthChange(IPlayer Player, int Value, Action OnComplete)

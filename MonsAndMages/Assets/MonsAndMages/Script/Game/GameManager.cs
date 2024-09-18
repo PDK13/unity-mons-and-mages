@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
         if (Card != null)
         {
             if (Card.Name == CardNameType.Stage)
-                Card.DoAttackActive(() => PlayerEnd(PlayerCurrent));
+                PlayerEnd(PlayerCurrent);
             else
             {
                 Card.DoAttackActive(() =>

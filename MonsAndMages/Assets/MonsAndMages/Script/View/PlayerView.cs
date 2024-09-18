@@ -32,6 +32,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_runeStoneSupply;
 
     [Space]
+    [SerializeField] private Transform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     private IPlayer m_playerBase;
@@ -67,6 +68,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
         GameEvent.onPlayerEnd += OnPlayerEnd;
+        GameEvent.onPlayerRuneStoneChange += OnPlayerRuneStoneChange;
         GameEvent.onPlayerHealthChange += OnPlayerHealthChange;
         GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
 
@@ -91,6 +93,9 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
+        GameEvent.onPlayerRuneStoneChange -= OnPlayerRuneStoneChange;
+        GameEvent.onPlayerHealthChange -= OnPlayerHealthChange;
+        GameEvent.onPlayerStunnedChange -= OnPlayerStunnedChange;
 
         GameEvent.onCardTap -= OnCardTap;
     }
@@ -115,7 +120,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnViewPlayer(int PlayerIndex)
     {
-        GameEvent.View(ViewType.Field, null);
+        GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
     }
 
     public void BtnViewMediate()
@@ -136,8 +141,11 @@ public class PlayerView : MonoBehaviour
     public void BtnCollectAccept()
     {
         GameEvent.ViewUiHide();
-        GameManager.instance.PlayerDoCollect(PlayerCurrent, m_cardView);
-        m_cardView = null;
+        PlayerCurrent.RuneStoneChange(-m_cardView.RuneStoneCost, () =>
+        {
+            GameManager.instance.PlayerDoCollect(PlayerCurrent, m_cardView);
+            m_cardView = null;
+        });
     } //Player Collect Card
 
     public void BtnCollectCancel()
@@ -190,7 +198,8 @@ public class PlayerView : MonoBehaviour
 
     private void OnViewUIHide()
     {
-        m_runeStoneShow.SetActive(false);
+        m_runeStoneShow.SetActive(true);
+
         m_btnMediate.SetActive(false);
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
@@ -206,8 +215,8 @@ public class PlayerView : MonoBehaviour
         switch (Type)
         {
             case ViewType.Field:
-                m_btnMediate.SetActive(Choice);
                 m_btnMediate.GetComponent<Button>().interactable = PlayerCurrent.MediationEmty;
+                m_btnMediate.SetActive(Choice);
                 m_btnCollect.SetActive(Choice);
                 m_btnBack.SetActive(false);
                 m_playerContent.gameObject.SetActive(true);
@@ -245,8 +254,8 @@ public class PlayerView : MonoBehaviour
         switch (Type)
         {
             case InfoType.CardCollect:
-                m_btnInfoAccept.SetActive(Show);
                 m_btnInfoAccept.GetComponent<Button>().interactable = Show && m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                m_btnInfoAccept.SetActive(Show);
                 m_btnInfoCancel.SetActive(Show);
                 break;
         }
@@ -350,6 +359,24 @@ public class PlayerView : MonoBehaviour
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
         OnComplete?.Invoke();
+    }
+
+
+    private void OnPlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
+    {
+        if (Player.Base)
+        {
+            m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+            {
+                m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+                m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+                {
+                    OnComplete?.Invoke();
+                });
+            });
+        }
+        else
+            OnComplete?.Invoke();
     }
 
     private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1042eb4b1dbe5174aad0d7ed21ccfaaf, type: 3}
   m_Name: card-config
   m_EditorClassIdentifier: 
+  TrickImage: {fileID: 0}
   Card:
   - Named: Cornibus
     Name: 2
@@ -116,7 +117,7 @@ MonoBehaviour:
     Name: 11
     Origin: 2
     Class: 0
-    RuneStoneCost: 4
+    RuneStoneCost: 3
     ManaPoint: 2
     ManaCurrent: 0
     AttackPoint: 0

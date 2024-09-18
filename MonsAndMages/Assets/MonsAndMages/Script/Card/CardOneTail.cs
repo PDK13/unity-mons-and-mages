@@ -49,22 +49,15 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void BtnTap()
     {
-        if (!Avaible)
-            return;
-
-        bool Base = GameManager.instance.PlayerCurrent.Base || GameManager.instance.SameDevice;
-        bool Choice = GameManager.instance.PlayerChoice;
-
-        if (Base && Choice)
+        if (Player == null)
         {
+            if (!Avaible)
+                return;
+
             GameEvent.ButtonInteractable(false);
             GameEvent.CardTap(this, null);
             GameEvent.ViewInfo(InfoType.CardCollect, true);
             MoveTop(1f, () => GameEvent.ButtonInteractable(true));
-        }
-        else
-        {
-            Debug.Log("Card Tap by another Player clone");
         }
     }
 

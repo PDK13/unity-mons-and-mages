@@ -64,6 +64,8 @@ public interface IPlayer
     void DoEnd(Action OnComplete);
 
 
+    void RuneStoneChange(int Value, Action OnComplete);
+
     void StunChange(int Value, Action OnComplete);
 
     void HealthChange(int Value, Action OnComplete);
