@@ -335,7 +335,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.View(ViewType.Field, () =>
         {
             GameEvent.WildCardFill(null);
-            Card.Point(Point);
+            Card.Pointer(Point);
             Card.MoveBack(1f, () =>
             {
                 Card.Rumble(() =>

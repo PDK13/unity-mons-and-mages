@@ -1,8 +1,5 @@
 using DG.Tweening;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class GameView : MonoBehaviour
@@ -57,13 +54,16 @@ public class GameView : MonoBehaviour
         m_viewType = Type;
         m_viewChange = true;
 
+        var MoveYDuration = GameManager.instance.TweenConfig.GameView.MoveYDuration;
+        var MoveYEase = GameManager.instance.TweenConfig.GameView.MoveYEase;
+
         GameEvent.ViewUiHide();
         switch (Type)
         {
             case ViewType.Field:
                 m_gameContent
-                    .DOLocalMoveY(0f, 1f)
-                    .SetEase(Ease.OutQuad)
+                    .DOLocalMoveY(0f, MoveYDuration)
+                    .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
                         GameEvent.ViewUiShow(ViewType.Field);
@@ -73,8 +73,8 @@ public class GameView : MonoBehaviour
                 break;
             case ViewType.Wild:
                 m_gameContent
-                    .DOLocalMoveY(-m_gameContent.sizeDelta.y, 1f)
-                    .SetEase(Ease.OutQuad)
+                    .DOLocalMoveY(-m_gameContent.sizeDelta.y, MoveYDuration)
+                    .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
                         GameEvent.ViewUiShow(ViewType.Wild);
@@ -87,9 +87,12 @@ public class GameView : MonoBehaviour
 
     private void OnViewPlayer(IPlayer Player, Action OnComplete)
     {
+        var MoveXDuration = GameManager.instance.TweenConfig.GameView.MoveXDuration;
+        var MoveXEase = GameManager.instance.TweenConfig.GameView.MoveXEase;
+
         m_playerContent
-            .DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, 1f)
-            .SetEase(Ease.OutQuad)
+            .DOLocalMoveX(Player.Index * -m_playerContent.sizeDelta.x, MoveXDuration)
+            .SetEase(MoveXEase)
             .OnComplete(() => OnComplete?.Invoke());
     }
 
@@ -97,7 +100,7 @@ public class GameView : MonoBehaviour
     private void OnCardRumble(ICard Card, Action OnComplete)
     {
         var PosCurrent = this.GetComponent<RectTransform>().localPosition;
-        this.transform.DOShakePosition(0.5f, 10, 50).OnComplete(() =>
+        this.transform.DOShakePosition(0.5f, 10f, 50).OnComplete(() =>
         {
             this.transform.localPosition = PosCurrent;
             OnComplete?.Invoke();

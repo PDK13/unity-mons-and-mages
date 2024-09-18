@@ -113,8 +113,10 @@ public class WildView : MonoBehaviour
             if (CardPoint.childCount != 0)
                 continue;
 
-            var CardTop = m_cardDeck.GetChild(m_cardDeck.childCount - 1);
-            CardFill(CardTop, CardPoint);
+            m_cardDeck.GetChild(m_cardDeck.childCount - 1).GetComponent<ICard>().Fill(CardPoint);
+
+            if (m_cardDeck.childCount == 0)
+                break;
 
             yield return new WaitForSeconds(0.5f);
         }
@@ -124,15 +126,5 @@ public class WildView : MonoBehaviour
         OnComplete?.Invoke();
 
         m_wildFillFirstTime = false;
-    }
-
-    private void CardFill(Transform Card, Transform Point)
-    {
-        Card.SetParent(Point, true);
-        Card.DOLocalMove(Vector3.zero, 1).SetEase(Ease.OutQuad);
-
-        var Controller = Card.GetComponent<ICard>();
-        Controller.Open(0.5f, null);
-        Controller.Point(Point);
     }
 }

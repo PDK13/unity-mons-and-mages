@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     //
 
     [SerializeField] private CardConfig m_cardConfig;
+    [SerializeField] private TweenConfig m_tweenConfig;
     [SerializeField] private Transform m_playerContent;
 
     private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
     private bool m_playerChoice = false;
 
     public CardConfig CardConfig => m_cardConfig;
+
+    public TweenConfig TweenConfig => m_tweenConfig;
 
     public IPlayer PlayerCurrent => m_player[m_playerIndex];
 

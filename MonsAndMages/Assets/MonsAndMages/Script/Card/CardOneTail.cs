@@ -2,8 +2,7 @@ using DG.Tweening;
 using System;
 using TMPro;
 using UnityEngine;
-using Button = UnityEngine.UI.Button;
-using Image = UnityEngine.UI.Image;
+using UnityEngine.UI;
 
 public class CardOneTail : MonoBehaviour, ICard
 {
@@ -24,7 +23,7 @@ public class CardOneTail : MonoBehaviour, ICard
     private bool m_top = false;
     private bool m_rumble = false;
     private bool m_effect = false;
-    private Transform m_point;
+    private Transform m_pointer;
 
     //
 
@@ -113,15 +112,29 @@ public class CardOneTail : MonoBehaviour, ICard
         m_avaible = false;
     }
 
+    public void Fill(Transform Point)
+    {
+        this.Pointer(Point);
+
+        var DurationMove = GameManager.instance.TweenConfig.CardFill.MoveDuration;
+        var EaseMove = GameManager.instance.TweenConfig.CardFill.MoveEase;
+        var DurationOpen = GameManager.instance.TweenConfig.CardFill.OpenDuration;
+
+        transform.SetParent(Point, true);
+        transform.DOLocalMove(Vector3.zero, DurationMove).SetEase(EaseMove);
+
+        Open(DurationOpen, null);
+    }
+
 
     public void Ready()
     {
         m_ready = true;
     }
 
-    public void Point(Transform Point)
+    public void Pointer(Transform Point)
     {
-        m_point = Point;
+        m_pointer = Point;
     }
 
 
@@ -210,7 +223,7 @@ public class CardOneTail : MonoBehaviour, ICard
         m_top = false;
         m_move = true;
 
-        var PointWorld = m_point.position;
+        var PointWorld = m_pointer.position;
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one, Duration * 0.7f).SetEase(Ease.OutQuad));
@@ -218,7 +231,7 @@ public class CardOneTail : MonoBehaviour, ICard
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            transform.SetParent(m_point, true);
+            transform.SetParent(m_pointer, true);
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -232,7 +245,7 @@ public class CardOneTail : MonoBehaviour, ICard
 
         m_rumble = true;
         Renderer.maskable = false;
-        transform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        transform.DOScale(Vector3.one * 1.35f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
             {
