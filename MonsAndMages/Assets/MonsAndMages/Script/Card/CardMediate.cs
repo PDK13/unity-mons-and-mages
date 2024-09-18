@@ -44,20 +44,10 @@ public class CardMediate : MonoBehaviour, ICard
         if (!Avaible)
             return;
 
-        bool Base = GameManager.instance.PlayerCurrent.Base || GameManager.instance.SameDevice;
-        bool Choice = GameManager.instance.PlayerChoice;
-
-        if (Base && Choice)
-        {
-            GameEvent.ButtonInteractable(false);
-            GameEvent.CardTap(this, null);
-            GameEvent.ViewInfo(InfoType.CardCollect, true);
-            MoveTop(1f, () => GameEvent.ButtonInteractable(true));
-        }
-        else
-        {
-            Debug.Log("Card Tap by another Player clone");
-        }
+        GameEvent.ButtonInteractable(false);
+        GameEvent.CardTap(this, null);
+        GameEvent.ViewInfo(InfoType.CardCollect, true);
+        MoveTop(1f, () => GameEvent.ButtonInteractable(true));
     }
 
     //ICard

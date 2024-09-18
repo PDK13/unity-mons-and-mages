@@ -153,10 +153,7 @@ public class PlayerView : MonoBehaviour
 
     private void RuneStoneShowUpdate()
     {
-        if (GameManager.instance.SameDevice)
-            m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-        else
-            m_tmpRuneStone.text = m_playerBase.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+        m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
     //

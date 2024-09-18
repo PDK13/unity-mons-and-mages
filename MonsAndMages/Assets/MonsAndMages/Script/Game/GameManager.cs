@@ -32,9 +32,6 @@ public class GameManager : MonoBehaviour
     [Space]
     [SerializeField][Min(0)] private int m_startIndex = 0;
     [SerializeField][Min(0)] private int m_baseIndex = 0;
-    [SerializeField] private bool m_sameDevice = true;
-
-    public bool SameDevice => m_sameDevice;
 
     //
 
@@ -131,7 +128,7 @@ public class GameManager : MonoBehaviour
     {
         Player.DoChoice(() =>
         {
-            m_playerChoice = Player.Base || SameDevice;
+            m_playerChoice = true;
             GameEvent.ViewUiShow(ViewType.Field);
         });
     } //Choice Event
@@ -229,7 +226,7 @@ public class GameManager : MonoBehaviour
     {
         Player.CardEnergyActiveDoChoice(() =>
         {
-            m_playerChoice = Player.Base || SameDevice;
+            m_playerChoice = true;
         });
     }
 
