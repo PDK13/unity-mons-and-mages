@@ -75,15 +75,10 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
     {
-        if (m_data.Base)
+        GameEvent.PlayerTakeRuneStoneFromSupply(this, Value, () =>
         {
-            GameEvent.PlayerTakeRuneStoneFromSupply(this, Value, () =>
-            {
-                RuneStoneChange(Value, () => OnComplete?.Invoke());
-            });
-        }
-        else
-            OnComplete?.Invoke();
+            RuneStoneChange(Value, () => OnComplete?.Invoke());
+        });
     }
 
     public void DoTakeRuneStoneFromMediation(Action OnComplete)
@@ -101,15 +96,10 @@ public class PlayerController : MonoBehaviour, IPlayer
                     EventInvoke = true;
                     m_cardMediation[i].EffectAlpha(1f, () =>
                     {
-                        if (m_data.Base)
+                        GameEvent.PlayerTakeRuneStoneFromMediation(this, RuneStoneSum, () =>
                         {
-                            GameEvent.PlayerTakeRuneStoneFromMediation(this, RuneStoneSum, () =>
-                            {
-                                RuneStoneChange(2, () => OnComplete?.Invoke());
-                            });
-                        }
-                        else
-                            OnComplete?.Invoke();
+                            RuneStoneChange(2, () => OnComplete?.Invoke());
+                        });
                     });
                 }
                 else
@@ -179,7 +169,10 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_choice = false;
         RuneStoneChange(-Card.RuneStoneCost, () =>
         {
-            Card.DoCollectActive(this, () => GameEvent.PlayerDoCollect(this, Card, () => OnComplete?.Invoke()));
+            Card.DoCollectActive(this, () =>
+            {
+                GameEvent.PlayerDoCollect(this, Card, () => OnComplete?.Invoke());
+            });
         });
         m_data.CardQueue.Add(Card);
     }
@@ -260,11 +253,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
         m_data.RuneStone += Value;
-        m_data.RuneStone = Mathf.Max(0, m_data.RuneStone);
-        if (m_data.Base)
-            GameEvent.PlayerRuneStoneChange(this, Value, () => OnComplete?.Invoke());
-        else
-            OnComplete?.Invoke();
+        GameEvent.PlayerRuneStoneChange(this, Value, () => OnComplete?.Invoke());
     }
 
     public void StunChange(int Value, Action OnComplete)

@@ -137,11 +137,8 @@ public class PlayerView : MonoBehaviour
     public void BtnCollectAccept()
     {
         GameEvent.ViewUiHide();
-        PlayerCurrent.RuneStoneChange(-m_cardView.RuneStoneCost, () =>
-        {
-            GameManager.instance.PlayerDoCollect(PlayerCurrent, m_cardView);
-            m_cardView = null;
-        });
+        GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
+        m_cardView = null;
     } //Player Collect Card
 
     public void BtnCollectCancel()
@@ -150,6 +147,16 @@ public class PlayerView : MonoBehaviour
         GameEvent.ViewInfo(InfoType.CardCollect, false);
         m_cardView.MoveBack(1f, () => GameEvent.ViewUiShow(ViewType.Wild));
         m_cardView = null;
+    }
+
+    //
+
+    private void RuneStoneShowUpdate()
+    {
+        if (GameManager.instance.SameDevice)
+            m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+        else
+            m_tmpRuneStone.text = m_playerBase.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
     //
@@ -182,8 +189,9 @@ public class PlayerView : MonoBehaviour
                 continue;
 
             m_playerBase = Player[i].Player;
-            m_tmpRuneStone.text = Player[i].Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
         }
+
+        RuneStoneShowUpdate();
     }
 
 
@@ -244,7 +252,7 @@ public class PlayerView : MonoBehaviour
                 PlayerButton.GetComponent<Outline>().effectColor = Color.black;
             }
         }
-        m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+        //m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
     private void OnViewInfo(InfoType Type, bool Show)
@@ -289,6 +297,7 @@ public class PlayerView : MonoBehaviour
             OnComplete?.Invoke();
             //});
         });
+        RuneStoneShowUpdate();
     }
 
     private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, Action OnComplete)
@@ -385,19 +394,14 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
     {
-        if (Player.Base)
+        m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+            RuneStoneShowUpdate();
+            m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
-                m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-                m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() =>
-                {
-                    OnComplete?.Invoke();
-                });
+                OnComplete?.Invoke();
             });
-        }
-        else
-            OnComplete?.Invoke();
+        });
     }
 
     private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
