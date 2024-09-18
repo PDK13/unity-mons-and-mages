@@ -172,16 +172,21 @@ public class GameManager : MonoBehaviour
     {
         if (Card != null)
         {
-            Card.DoAttackActive(() =>
+            if (Card.Name == CardNameType.Stage)
+                Card.DoAttackActive(() => PlayerEnd(PlayerCurrent));
+            else
             {
-                for (int i = 0; i < m_player.Count; i++)
+                Card.DoAttackActive(() =>
                 {
-                    if (m_player[i] == Card.Player)
-                        continue;
-                    m_player[i].HealthChange(-Card.AttackCombine, null);
-                }
-                CardEnergyFill(Card);
-            });
+                    for (int i = 0; i < m_player.Count; i++)
+                    {
+                        if (m_player[i] == Card.Player)
+                            continue;
+                        m_player[i].HealthChange(-Card.AttackCombine, null);
+                    }
+                    CardEnergyFill(Card);
+                });
+            }
         }
         else
             PlayerEnd(PlayerCurrent);
@@ -189,21 +194,42 @@ public class GameManager : MonoBehaviour
 
     private void CardEnergyFill(ICard Card)
     {
-        Card.DoEnergyFill(1, () => CardEnergyCheck(Card));
+        Card.DoEnergyFill(1, () => CardEnergyCheck(Card.Player));
     } //Energy Event
 
-    private void CardEnergyCheck(ICard Card)
+    private void CardEnergyCheck(IPlayer Player)
     {
-        Card.DoEnergyCheck((ManaFull) =>
+        bool CardEnergyActive = false;
+        foreach (var Card in Player.CardQueue)
         {
-            if (Card.EnergyFull)
-                CardEnergyActive(Card);
+            if (Card == null)
+                continue;
+
+            if (!Card.EnergyFull)
+                continue;
+
+            if (!CardEnergyActive)
+            {
+                Card.EffectOutlineEnergy(0.1f, () => PlayerDoCardEnergyActiveChoice(Player));
+                CardEnergyActive = true;
+            }
             else
-                PlayerContinueCheck(Card.Player);
+                Card.EffectOutlineEnergy(0.1f, null);
+        }
+        if (!CardEnergyActive)
+            PlayerEnd(Player);
+    }
+
+    private void PlayerDoCardEnergyActiveChoice(IPlayer Player)
+    {
+        Player.CardEnergyActiveDoChoice(() =>
+        {
+            m_playerChoice = Player.Base || SameDevice;
         });
     }
 
-    private void CardEnergyActive(ICard Card)
+
+    public void CardEnergyActive(ICard Card)
     {
         Card.DoEnergyActive(() => CardClassActive(Card));
     }
@@ -215,25 +241,9 @@ public class GameManager : MonoBehaviour
 
     private void CardSpellActive(ICard Card)
     {
-        Card.DoSpellActive(() => PlayerContinueCheck(Card.Player));
+        Card.DoSpellActive(() => CardEnergyCheck(Card.Player));
     } //Spell Event
 
-
-    private void PlayerContinueCheck(IPlayer Player)
-    {
-        if (Player.DoContinueCheck())
-            PlayerContinue(Player);
-        else
-            PlayerEnd(Player);
-    }
-
-    private void PlayerContinue(IPlayer Player)
-    {
-        Player.DoContinue(() =>
-        {
-            //...
-        });
-    } //Continue Event
 
     private void PlayerEnd(IPlayer Player)
     {

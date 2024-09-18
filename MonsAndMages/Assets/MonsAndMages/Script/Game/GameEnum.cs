@@ -22,18 +22,21 @@ public enum CardClassType
 
 public enum CardNameType
 {
-    None,
-    Stage,
-    Cornibus,
-    Duchess,
-    DragonEgg,
-    Eversor,
-    FlowOfTheEssential,
-    Forestwing,
-    PixieSGrove,
-    OneTail,
-    Pott,
-    Umbella,
+    None = 0,
+    //
+    Cornibus = 2,
+    Duchess = 3,
+    DragonEgg = 4,
+    Eversor = 5,
+    FlowOfTheEssential = 6,
+    Forestwing = 7,
+    PixieSGrove = 8,
+    OneTail = 9,
+    Pott = 10,
+    Umbella = 11,
+    //
+    Mediate = int.MaxValue - 1,
+    Stage = int.MaxValue,
 }
 
 public enum CardTrickType

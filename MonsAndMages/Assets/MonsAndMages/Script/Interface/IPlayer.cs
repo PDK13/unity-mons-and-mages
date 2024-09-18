@@ -44,7 +44,7 @@ public interface IPlayer
     void DoStunnedCheck(Action<bool> OnComplete); //Check stun stage
 
 
-    void DoChoice(Action OnComplete);
+    void DoChoice(Action OnComplete); //Start choice Mediate or Collect
 
     void DoMediate(int RuneStoneAdd, Action OnComplete);
 
@@ -58,9 +58,8 @@ public interface IPlayer
     void DoWandActive(Action OnComplete); //Active Card at Wand after moved if not stunned
 
 
-    bool DoContinueCheck();
+    void CardEnergyActiveDoChoice(Action OnComplete); //Start choice Card full Energy to active
 
-    void DoContinue(Action OnComplete);
 
     void DoEnd(Action OnComplete);
 

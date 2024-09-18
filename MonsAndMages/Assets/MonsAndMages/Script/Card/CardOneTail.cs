@@ -15,6 +15,7 @@ public class CardOneTail : MonoBehaviour, ICard
     private TextMeshProUGUI m_tmpGrow;
     private TextMeshProUGUI m_tmpMana;
     private TextMeshProUGUI m_tmpDamage;
+    private Outline m_outline;
 
     private bool m_avaible = false;
     private bool m_flip = false;
@@ -36,6 +37,7 @@ public class CardOneTail : MonoBehaviour, ICard
         m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
         m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
         m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
+        m_outline = m_renderer.GetComponent<Outline>();
     }
 
     public void Start()
@@ -62,7 +64,7 @@ public class CardOneTail : MonoBehaviour, ICard
         }
         else
         {
-            Debug.LogWarning("Card Tap by another Player clone");
+            Debug.Log("Card Tap by another Player clone");
         }
     }
 
@@ -141,7 +143,7 @@ public class CardOneTail : MonoBehaviour, ICard
     public void Open(float Duration, Action OnComplete)
     {
         if (m_flip)
-            return;
+            Debug.Log("Card open not done yet");
         m_flip = true;
 
         transform.eulerAngles = Vector3.zero;
@@ -169,7 +171,7 @@ public class CardOneTail : MonoBehaviour, ICard
     public void Close(float Duration, Action OnComplete)
     {
         if (m_flip)
-            return;
+            Debug.Log("Card close not done yet");
         m_flip = true;
 
         m_avaible = false;
@@ -199,7 +201,7 @@ public class CardOneTail : MonoBehaviour, ICard
     public void MoveTop(float Duration, Action OnComplete)
     {
         if (m_top || m_move)
-            return;
+            Debug.Log("Card move (top) not done yet");
         m_top = true;
         m_move = true;
 
@@ -219,7 +221,7 @@ public class CardOneTail : MonoBehaviour, ICard
     public void MoveBack(float Duration, Action OnComplete)
     {
         if (!m_top || m_move)
-            return;
+            Debug.Log("Card move (back) not done yet");
         m_top = false;
         m_move = true;
 
@@ -241,7 +243,7 @@ public class CardOneTail : MonoBehaviour, ICard
     public void Rumble(Action OnComplete)
     {
         if (m_rumble)
-            return;
+            Debug.Log("Card rumble not done yet");
 
         m_rumble = true;
         Renderer.maskable = false;
@@ -260,23 +262,10 @@ public class CardOneTail : MonoBehaviour, ICard
     }
 
 
-    public void Effect(CardEffectType Type, float Duration, Action OnComplete)
-    {
-        if (m_effect)
-            return;
-
-        switch (Type)
-        {
-            case CardEffectType.Alpha:
-                EffectAlpha(Duration, OnComplete);
-                break;
-        }
-    }
-
     public void EffectAlpha(float Duration, Action OnComplete)
     {
         if (m_effect)
-            return;
+            Debug.Log("Card effect alpha not done yet");
         m_effect = true;
 
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
@@ -288,6 +277,16 @@ public class CardOneTail : MonoBehaviour, ICard
                 OnComplete?.Invoke();
             });
         });
+    }
+
+    public void EffectOutlineNormal(float Duration, Action OnComplete)
+    {
+        m_outline.DOColor(Color.black, Duration).OnComplete(() => OnComplete?.Invoke());
+    }
+
+    public void EffectOutlineEnergy(float Duration, Action OnComplete)
+    {
+        m_outline.DOColor(Color.cyan, Duration).OnComplete(() => OnComplete?.Invoke());
     }
 
 
@@ -313,7 +312,6 @@ public class CardOneTail : MonoBehaviour, ICard
         m_tmpDamage.text = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
     }
 
-    //
 
     public void DoCollectActive(IPlayer Player, Action OnComplete)
     {
@@ -330,7 +328,6 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void DoPassiveActive() { }
 
-    //
 
     public void DoWandActive(Action OnComplete)
     {
@@ -339,24 +336,15 @@ public class CardOneTail : MonoBehaviour, ICard
 
     public void DoAttackActive(Action OnComplete)
     {
-        EffectAlpha(1f, () => OnComplete?.Invoke());
+        Rumble(() => OnComplete?.Invoke());
     }
 
     public void DoEnergyFill(int Value, Action OnComplete)
     {
         m_data.ManaCurrent += Value;
-        EffectAlpha(1f, () => OnComplete?.Invoke());
+        EffectOutlineEnergy(0.2f, () => EffectOutlineNormal(0.1f, () => OnComplete?.Invoke()));
     }
 
-    public void DoEnergyCheck(Action<bool> OnComplete)
-    {
-        if (m_data.ManaFull)
-            EffectAlpha(1f, () => OnComplete?.Invoke(true));
-        else
-            OnComplete?.Invoke(false);
-    }
-
-    //
 
     public void DoEnergyActive(Action OnComplete)
     {

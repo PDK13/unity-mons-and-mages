@@ -12,9 +12,7 @@ public class CardStage : MonoBehaviour, ICard
     private GameObject m_mask;
     private GameObject m_renderer;
     private GameObject m_rendererAlpha;
-    private TextMeshProUGUI m_tmpGrow;
-    private TextMeshProUGUI m_tmpMana;
-    private TextMeshProUGUI m_tmpDamage;
+    private Outline m_outline;
 
     private bool m_avaible = false;
     private bool m_flip = false;
@@ -59,31 +57,31 @@ public class CardStage : MonoBehaviour, ICard
         }
         else
         {
-            Debug.LogWarning("Card Tap by another Player clone");
+            Debug.Log("Card Tap by another Player clone");
         }
     }
 
     //ICard
 
-    public CardNameType Name => m_data.Name;
+    public CardNameType Name => CardNameType.Stage;
 
-    public CardOriginType Origin => m_data.Origin;
+    public CardOriginType Origin => CardOriginType.None;
 
-    public CardClassType Class => m_data.Class;
+    public CardClassType Class => CardClassType.None;
 
-    public int RuneStoneCost => m_data.RuneStoneCost;
+    public int RuneStoneCost => 0;
 
-    public int Energy => m_data.ManaPoint;
+    public int Energy => 0;
 
-    public int EnergyCurrent => m_data.ManaCurrent;
+    public int EnergyCurrent => 0;
 
-    public bool EnergyFull => m_data.ManaCurrent >= m_data.ManaPoint;
+    public bool EnergyFull => false;
 
-    public int Attack => m_data.AttackPoint;
+    public int Attack => 0;
 
-    public int Grow => m_data.GrowCurrent;
+    public int Grow => 0;
 
-    public int AttackCombine => m_data.AttackCombine;
+    public int AttackCombine => 0;
 
     public IPlayer Player => m_data.Player;
 
@@ -138,7 +136,7 @@ public class CardStage : MonoBehaviour, ICard
     public void Open(float Duration, Action OnComplete)
     {
         if (m_flip)
-            return;
+            Debug.Log("Card open not done yet");
         m_flip = true;
 
         transform.eulerAngles = Vector3.zero;
@@ -166,7 +164,7 @@ public class CardStage : MonoBehaviour, ICard
     public void Close(float Duration, Action OnComplete)
     {
         if (m_flip)
-            return;
+            Debug.Log("Card close not done yet");
         m_flip = true;
 
         m_avaible = false;
@@ -196,7 +194,7 @@ public class CardStage : MonoBehaviour, ICard
     public void MoveTop(float Duration, Action OnComplete)
     {
         if (m_top || m_move)
-            return;
+            Debug.Log("Card move (top) not done yet");
         m_top = true;
         m_move = true;
 
@@ -216,7 +214,7 @@ public class CardStage : MonoBehaviour, ICard
     public void MoveBack(float Duration, Action OnComplete)
     {
         if (!m_top || m_move)
-            return;
+            Debug.Log("Card move (back) not done yet");
         m_top = false;
         m_move = true;
 
@@ -238,7 +236,7 @@ public class CardStage : MonoBehaviour, ICard
     public void Rumble(Action OnComplete)
     {
         if (m_rumble)
-            return;
+            Debug.Log("Card rumble not done yet");
 
         m_rumble = true;
         Renderer.maskable = false;
@@ -257,23 +255,10 @@ public class CardStage : MonoBehaviour, ICard
     }
 
 
-    public void Effect(CardEffectType Type, float Duration, Action OnComplete)
-    {
-        if (m_effect)
-            return;
-
-        switch (Type)
-        {
-            case CardEffectType.Alpha:
-                EffectAlpha(Duration, OnComplete);
-                break;
-        }
-    }
-
     public void EffectAlpha(float Duration, Action OnComplete)
     {
         if (m_effect)
-            return;
+            Debug.Log("Card effect alpha not done yet");
         m_effect = true;
 
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
@@ -287,41 +272,30 @@ public class CardStage : MonoBehaviour, ICard
         });
     }
 
-
-    public void InfoShow(bool Show)
+    public void EffectOutlineNormal(float Duration, Action OnComplete)
     {
-        m_tmpGrow.gameObject.SetActive(Show);
-        m_tmpMana.gameObject.SetActive(Show);
-        m_tmpDamage.gameObject.SetActive(Show);
+        m_outline.DOColor(Color.black, Duration).OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void InfoGrowUpdate(int Value, bool Effect = false)
+    public void EffectOutlineEnergy(float Duration, Action OnComplete)
     {
-        m_tmpGrow.text = Value.ToString() + GameConstant.TMP_ICON_GROW;
+        m_outline.DOColor(Color.cyan, Duration).OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void InfoManaUpdate(int Value, int Max, bool Effect = false)
-    {
-        m_tmpMana.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_MANA;
-    }
 
-    public void InfoDamageUpdate(int Value, bool Effect = false)
-    {
-        m_tmpDamage.text = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
-    }
+    public void InfoShow(bool Show) { }
+
+    public void InfoGrowUpdate(int Value, bool Effect = false) { }
+
+    public void InfoManaUpdate(int Value, int Max, bool Effect = false) { }
+
+    public void InfoDamageUpdate(int Value, bool Effect = false) { }
 
     //
 
-    public void DoCollectActive(IPlayer Player, Action OnComplete)
-    {
-        m_data.Player = Player;
-        EffectAlpha(1f, () => OnComplete?.Invoke());
-    }
+    public void DoCollectActive(IPlayer Player, Action OnComplete) { }
 
-    public void DoOriginActive(Action OnComplete)
-    {
-        EffectAlpha(1f, () => Rumble(() => OnComplete?.Invoke()));
-    }
+    public void DoOriginActive(Action OnComplete) { }
 
     public void DoEnterActive() { }
 
@@ -334,40 +308,15 @@ public class CardStage : MonoBehaviour, ICard
         EffectAlpha(1f, () => OnComplete?.Invoke());
     }
 
-    public void DoAttackActive(Action OnComplete)
-    {
-        EffectAlpha(1f, () => OnComplete?.Invoke());
-    }
+    public void DoAttackActive(Action OnComplete) { }
 
-    public void DoEnergyFill(int Value, Action OnComplete)
-    {
-        m_data.ManaCurrent += Value;
-        EffectAlpha(1f, () => OnComplete?.Invoke());
-    }
-
-    public void DoEnergyCheck(Action<bool> OnComplete)
-    {
-        if (m_data.ManaFull)
-            EffectAlpha(1f, () => OnComplete?.Invoke(true));
-        else
-            OnComplete?.Invoke(false);
-    }
+    public void DoEnergyFill(int Value, Action OnComplete) { }
 
     //
 
-    public void DoEnergyActive(Action OnComplete)
-    {
-        m_data.ManaCurrent -= m_data.ManaPoint;
-        Rumble(() => OnComplete?.Invoke());
-    }
+    public void DoEnergyActive(Action OnComplete) { }
 
-    public void DoClassActive(Action OnComplete)
-    {
-        Rumble(() => OnComplete?.Invoke());
-    }
+    public void DoClassActive(Action OnComplete) { }
 
-    public void DoSpellActive(Action OnComplete)
-    {
-        Rumble(() => OnComplete?.Invoke());
-    } //Update...!
+    public void DoSpellActive(Action OnComplete) { } //Update...!
 }

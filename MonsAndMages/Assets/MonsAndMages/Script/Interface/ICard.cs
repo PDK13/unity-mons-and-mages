@@ -54,9 +54,11 @@ public interface ICard
     void Rumble(Action OnComplete);
 
 
-    void Effect(CardEffectType Type, float Duration, Action OnComplete);
-
     void EffectAlpha(float Duration, Action OnComplete);
+
+    void EffectOutlineNormal(float Duration, Action OnComplete);
+
+    void EffectOutlineEnergy(float Duration, Action OnComplete);
 
 
     void InfoShow(bool Show);
@@ -83,8 +85,6 @@ public interface ICard
     void DoAttackActive(Action OnComplete); //Tấn công thường khi đặt trượng phép
 
     void DoEnergyFill(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
-
-    void DoEnergyCheck(Action<bool> OnComplete);
 
 
     void DoEnergyActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng

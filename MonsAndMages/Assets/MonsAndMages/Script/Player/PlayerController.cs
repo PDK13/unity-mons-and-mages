@@ -193,10 +193,14 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoWandActive(Action OnComplete)
     {
         var Card = m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>();
-        if (Card != null)
-            Card.EffectAlpha(1f, () => Card.DoWandActive(() => OnComplete?.Invoke()));
-        else
+
+        if (Card == null)
+        {
             OnComplete?.Invoke();
+            return;
+        }
+
+        Card.DoWandActive(() => OnComplete?.Invoke());
     }
 
 
@@ -212,6 +216,22 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
+    public void CardEnergyActiveDoChoice(Action OnComplete)
+    {
+        foreach (var Card in m_data.CardQueue)
+        {
+            if (Card == null)
+                continue;
+        }
+
+        GameEvent.PlayerCardEnergyActiveDoChoice(this, () =>
+        {
+            m_choice = true;
+            OnComplete?.Invoke();
+        });
+    }
+
+
     public void DoEnd(Action OnComplete)
     {
         m_turn = false;
@@ -222,6 +242,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void StunChange(int Value, Action OnComplete)
     {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         m_data.StunCurrent += Value;
         m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
         GameEvent.PlayerStunnedChange(this, Value, () => OnComplete?.Invoke());
@@ -229,6 +254,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void HealthChange(int Value, Action OnComplete)
     {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         m_data.HealthCurrent += Value;
         m_data.HealthCurrent = Mathf.Clamp(m_data.HealthCurrent, 0, m_data.HealthPoint);
         GameEvent.PlayerHealthChange(this, Value, () => OnComplete?.Invoke());
