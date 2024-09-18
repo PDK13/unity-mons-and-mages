@@ -1,14 +1,8 @@
 using DG.Tweening;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Button = UnityEngine.UI.Button;
 
 public class PlayerView : MonoBehaviour
 {
@@ -58,6 +52,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onView += OnView;
         GameEvent.onViewUIHide += OnViewUIHide;
         GameEvent.onViewUIShow += OnViewUIShow;
+        GameEvent.onViewPlayer += OnViewPlayer;
         GameEvent.onViewInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
@@ -83,6 +78,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onView -= OnView;
         GameEvent.onViewUIHide -= OnViewUIHide;
         GameEvent.onViewUIShow -= OnViewUIShow;
+        GameEvent.onViewPlayer -= OnViewPlayer;
         GameEvent.onViewInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
@@ -230,6 +226,27 @@ public class PlayerView : MonoBehaviour
         }
     }
 
+    private void OnViewPlayer(IPlayer Player, Action OnComplete)
+    {
+        for (int i = 0; i < m_playerContent.childCount; i++)
+        {
+            var PlayerButton = m_playerContent.GetChild(i);
+
+            if (!PlayerButton.gameObject.activeInHierarchy)
+                continue;
+
+            if (i == Player.Index)
+            {
+                PlayerButton.GetComponent<Outline>().effectColor = Color.green;
+            }
+            else
+            {
+                PlayerButton.GetComponent<Outline>().effectColor = Color.black;
+            }
+        }
+        m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+    }
+
     private void OnViewInfo(InfoType Type, bool Show)
     {
         m_infoMask.gameObject.SetActive(true);
@@ -267,10 +284,10 @@ public class PlayerView : MonoBehaviour
         var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
         PlayerView.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
         {
-            PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
+            //PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
+            //{
+            OnComplete?.Invoke();
+            //});
         });
     }
 
@@ -358,7 +375,11 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
-        OnComplete?.Invoke();
+        var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+        PlayerView.DOScale(Vector2.one, 0.05f).OnComplete(() =>
+        {
+            OnComplete?.Invoke();
+        });
     }
 
 

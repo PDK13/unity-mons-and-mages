@@ -81,6 +81,11 @@ public class GameManager : MonoBehaviour
         return m_player[PlayerIndex];
     }
 
+    public int GetPlayerIndex(IPlayer Player)
+    {
+        return m_player.FindIndex(t => t.Equals(Player));
+    }
+
     //
 
     private void PlayerCurrentStart()
