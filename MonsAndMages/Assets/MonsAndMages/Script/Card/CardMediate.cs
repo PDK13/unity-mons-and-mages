@@ -1,6 +1,5 @@
 using DG.Tweening;
 using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,9 +11,6 @@ public class CardMediate : MonoBehaviour, ICard
     private GameObject m_mask;
     private GameObject m_renderer;
     private GameObject m_rendererAlpha;
-    private TextMeshProUGUI m_tmpGrow;
-    private TextMeshProUGUI m_tmpMana;
-    private TextMeshProUGUI m_tmpDamage;
 
     private bool m_avaible = false;
     private bool m_flip = false;
@@ -33,9 +29,6 @@ public class CardMediate : MonoBehaviour, ICard
         m_mask = transform.Find("mask").gameObject;
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
-        m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
-        m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
-        m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
     }
 
     public void Start()
@@ -291,27 +284,13 @@ public class CardMediate : MonoBehaviour, ICard
     }
 
 
-    public void InfoShow(bool Show)
-    {
-        m_tmpGrow.gameObject.SetActive(Show);
-        m_tmpMana.gameObject.SetActive(Show);
-        m_tmpDamage.gameObject.SetActive(Show);
-    }
+    public void InfoShow(bool Show) { }
 
-    public void InfoGrowUpdate(int Value, bool Effect = false)
-    {
-        m_tmpGrow.text = Value.ToString() + GameConstant.TMP_ICON_GROW;
-    }
+    public void InfoGrowUpdate(int Value, bool Effect = false) { }
 
-    public void InfoManaUpdate(int Value, int Max, bool Effect = false)
-    {
-        m_tmpMana.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_MANA;
-    }
+    public void InfoManaUpdate(int Value, int Max, bool Effect = false) { }
 
-    public void InfoDamageUpdate(int Value, bool Effect = false)
-    {
-        m_tmpDamage.text = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
-    }
+    public void InfoDamageUpdate(int Value, bool Effect = false) { }
 
     //
 

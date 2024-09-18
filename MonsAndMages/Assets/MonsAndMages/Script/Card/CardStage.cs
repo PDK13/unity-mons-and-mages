@@ -33,9 +33,6 @@ public class CardStage : MonoBehaviour, ICard
         m_mask = transform.Find("mask").gameObject;
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
-        m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
-        m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
-        m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
     }
 
     public void Start()

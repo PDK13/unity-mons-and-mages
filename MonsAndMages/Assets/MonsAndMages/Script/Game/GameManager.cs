@@ -51,8 +51,8 @@ public class GameManager : MonoBehaviour
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
-            new PlayerData(0, m_baseIndex == 0, 40, 5),
-            new PlayerData(1, m_baseIndex == 1, 40, 5),
+            new PlayerData(0, m_baseIndex == 0, 40, 3),
+            new PlayerData(1, m_baseIndex == 1, 40, 3),
         };
         GameEvent.InitPlayer(PlayerJoin);
 

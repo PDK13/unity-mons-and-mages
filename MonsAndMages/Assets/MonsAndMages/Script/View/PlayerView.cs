@@ -246,7 +246,7 @@ public class PlayerView : MonoBehaviour
         {
             case InfoType.CardCollect:
                 m_btnInfoAccept.SetActive(Show);
-                m_btnInfoAccept.GetComponent<Button>().interactable = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                m_btnInfoAccept.GetComponent<Button>().interactable = Show && m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
                 m_btnInfoCancel.SetActive(Show);
                 break;
         }
