@@ -171,7 +171,6 @@ MonoBehaviour:
   m_playerContent: {fileID: 214207494}
   m_startIndex: 0
   m_baseIndex: 0
-  m_sameDevice: 1
 --- !u!1 &88371672
 GameObject:
   m_ObjectHideFlags: 0
