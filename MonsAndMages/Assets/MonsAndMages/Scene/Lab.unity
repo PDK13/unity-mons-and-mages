@@ -3387,7 +3387,7 @@ GameObject:
   - component: {fileID: 1037699696}
   - component: {fileID: 1037699695}
   m_Layer: 5
-  m_Name: tmp-coin
+  m_Name: tmp-rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

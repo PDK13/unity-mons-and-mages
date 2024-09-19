@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 4752358099738589754}
   - component: {fileID: 4178259391175649969}
   m_Layer: 5
-  m_Name: tmp-coin
+  m_Name: tmp-rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -637,7 +637,7 @@ GameObject:
   - component: {fileID: 8899305669077625475}
   - component: {fileID: 5190043962867558396}
   m_Layer: 5
-  m_Name: coin
+  m_Name: rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1631,7 +1631,7 @@ GameObject:
   - component: {fileID: 7146797886863366670}
   - component: {fileID: 4315747639755265126}
   m_Layer: 5
-  m_Name: tmp-coin
+  m_Name: tmp-rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1928,7 +1928,7 @@ GameObject:
   - component: {fileID: 4526119532571530505}
   - component: {fileID: 1910102404761633876}
   m_Layer: 5
-  m_Name: coin
+  m_Name: rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2215,8 +2215,16 @@ MonoBehaviour:
   m_cardPointSample: {fileID: 4387718475101243984}
   m_cardContent: {fileID: 8251891717430459947}
   m_cardMediation:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 7760762296148073712}
+  - {fileID: 263434556888504416}
+  m_runeStoneMediationBox:
+  - {fileID: 3328864705861560694}
+  - {fileID: 2554005910158571823}
+  m_tmpRuneStoneMediation:
+  - {fileID: 4178259391175649969}
+  - {fileID: 4315747639755265126}
+  m_runeStoneBox: {fileID: 0}
+  m_tmpRuneStone: {fileID: 0}
   m_wand: {fileID: 7607550422064173687}
 --- !u!1 &7163252748347950870
 GameObject:
@@ -2321,7 +2329,7 @@ GameObject:
   - component: {fileID: 6793049990651362896}
   - component: {fileID: 1361043064727695298}
   m_Layer: 5
-  m_Name: tmp-coin
+  m_Name: tmp-rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2584,7 +2592,7 @@ GameObject:
   - component: {fileID: 2004344832990009417}
   - component: {fileID: 1144206405139583759}
   m_Layer: 5
-  m_Name: coin
+  m_Name: rune-stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

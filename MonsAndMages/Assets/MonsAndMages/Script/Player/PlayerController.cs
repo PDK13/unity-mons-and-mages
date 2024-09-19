@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IPlayer
@@ -11,7 +12,14 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private GameObject m_cardPointSample;
     [SerializeField] private Transform m_cardContent;
 
-    [Space][SerializeField] private CardMediate[] m_cardMediation = new CardMediate[2];
+    [Space]
+    [SerializeField] private CardMediate[] m_cardMediation = new CardMediate[2];
+    [SerializeField] private Transform[] m_runeStoneMediationBox = new Transform[2];
+    [SerializeField] private TextMeshProUGUI[] m_tmpRuneStoneMediation = new TextMeshProUGUI[2];
+
+    [Space]
+    [SerializeField] private Transform m_runeStoneBox;
+    [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
     [SerializeField] private Transform m_wand;
