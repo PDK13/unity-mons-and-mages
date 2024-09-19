@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 
@@ -9,27 +10,38 @@ public class PlayerController : MonoBehaviour, IPlayer
 {
     private PlayerData m_data;
 
-    [SerializeField] private GameObject m_cardPointSample;
-    [SerializeField] private Transform m_cardContent;
+    [SerializeField] private GameObject m_cardPoint;
+    [SerializeField] private RectTransform m_cardContent;
 
     [Space]
     [SerializeField] private CardMediate[] m_cardMediation = new CardMediate[2];
-    [SerializeField] private Transform[] m_runeStoneMediationBox = new Transform[2];
+    [SerializeField] private RectTransform[] m_runeStoneMediationBox = new RectTransform[2];
     [SerializeField] private TextMeshProUGUI[] m_tmpRuneStoneMediation = new TextMeshProUGUI[2];
 
     [Space]
-    [SerializeField] private Transform m_runeStoneBox;
+    [SerializeField] private RectTransform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
-    [SerializeField] private Transform m_wand;
+    [SerializeField] private GameObject m_runeStoneIcon;
+
+    [Space]
+    [SerializeField] private RectTransform m_wand;
 
     private bool m_choice = false;
     private bool m_turn = false;
 
     private void Start()
     {
-        m_cardPointSample.SetActive(false);
+        m_cardPoint.SetActive(false);
+        m_runeStoneIcon.SetActive(false);
+    }
+
+    //
+
+    private void RuneStoneShowUpdate()
+    {
+        m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
     //IPlayer
@@ -60,7 +72,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public PlayerController Controller => this;
 
-    //
 
     public void Init(PlayerData Data)
     {
@@ -83,10 +94,28 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
     {
-        GameEvent.PlayerTakeRuneStoneFromSupply(this, Value, () =>
+        var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
+        var RuneStoneFx = RuneStone.Find("fx-glow");
+        var RuneStoneIcon = RuneStone.Find("icon");
+        var RuneStoneIconScale = RuneStoneIcon.localScale;
+
+        RuneStone.gameObject.SetActive(true);
+
+        RuneStoneFx
+            .DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1, LoopType.Restart);
+
+        Sequence RuneStoneIconTween = DOTween.Sequence();
+        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
+        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
+        RuneStoneIconTween.Append(RuneStone.DOAnchorPos(m_runeStoneBox.anchoredPosition, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            RuneStoneChange(Value, () => OnComplete?.Invoke());
-        });
+            m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+            Destroy(RuneStone.gameObject, 0.2f);
+            OnComplete?.Invoke();
+        }).SetDelay(0.25f));
+        RuneStoneIconTween.Play();
     }
 
     public void DoTakeRuneStoneFromMediation(Action OnComplete)
@@ -104,10 +133,28 @@ public class PlayerController : MonoBehaviour, IPlayer
                     EventInvoke = true;
                     m_cardMediation[i].EffectAlpha(1f, () =>
                     {
-                        GameEvent.PlayerTakeRuneStoneFromMediation(this, RuneStoneSum, () =>
+                        var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
+                        var RuneStoneFx = RuneStone.Find("fx-glow");
+                        var RuneStoneIcon = RuneStone.Find("icon");
+                        var RuneStoneIconScale = RuneStoneIcon.localScale;
+
+                        RuneStone.gameObject.SetActive(true);
+
+                        RuneStoneFx
+                            .DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360)
+                            .SetEase(Ease.Linear)
+                            .SetLoops(-1, LoopType.Restart);
+
+                        Sequence RuneStoneIconTween = DOTween.Sequence();
+                        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
+                        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
+                        RuneStoneIconTween.Append(RuneStone.DOAnchorPos(m_runeStoneBox.anchoredPosition, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
                         {
-                            RuneStoneChange(2, () => OnComplete?.Invoke());
-                        });
+                            m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+                            Destroy(RuneStone.gameObject, 0.2f);
+                            OnComplete?.Invoke();
+                        }).SetDelay(0.25f));
+                        RuneStoneIconTween.Play();
                     });
                 }
                 else
@@ -122,10 +169,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStunnedCheck(Action<bool> OnComplete)
     {
-        if (m_data.Base)
-            GameEvent.PlayerStunnedCheck(this, () => OnComplete?.Invoke(m_data.Stuned));
-        else
-            OnComplete?.Invoke(m_data.Stuned);
+        GameEvent.PlayerStunnedCheck(this, () => OnComplete?.Invoke(m_data.Stuned));
     }
 
 
@@ -165,7 +209,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             //m_data.CardQueue.RemoveAt(0);
         }
 
-        var CardPoint = Instantiate(m_cardPointSample, m_cardContent);
+        var CardPoint = Instantiate(m_cardPoint, m_cardContent);
         CardPoint.SetActive(true);
         CardPoint.name = "card-point";
 
@@ -261,7 +305,15 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
         m_data.RuneStone += Value;
-        GameEvent.PlayerRuneStoneChange(this, Value, () => OnComplete?.Invoke());
+        m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        {
+            RuneStoneShowUpdate();
+            m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            {
+                GameEvent.PlayerRuneStoneChange(this, Value, () => OnComplete?.Invoke());
+            });
+        });
+
     }
 
     public void StunChange(int Value, Action OnComplete)
