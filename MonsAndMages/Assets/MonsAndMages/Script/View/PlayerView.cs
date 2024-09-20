@@ -21,16 +21,6 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnInfoAccept;
     [SerializeField] private GameObject m_btnInfoCancel;
 
-    [Space]
-    [SerializeField] private GameObject m_runeStoneShow;
-    [SerializeField] private GameObject m_runeStoneSupply;
-
-    [Space]
-    [SerializeField] private Transform m_runeStoneBox;
-    [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
-
-    private IPlayer m_playerBase;
-    private ViewType m_viewType = ViewType.None;
     private ICard m_cardView;
 
     public Transform InfoView => m_infoView;
@@ -49,21 +39,17 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInit += OnInit;
         GameEvent.onInitPlayer += OnInitPlayer;
 
-        GameEvent.onView += OnView;
         GameEvent.onViewUIHide += OnViewUIHide;
         GameEvent.onViewUIShow += OnViewUIShow;
         GameEvent.onViewPlayer += OnViewPlayer;
         GameEvent.onViewInfo += OnViewInfo;
 
         GameEvent.onPlayerStart += OnPlayerStart;
-        GameEvent.onPlayerTakeRuneStoneFromSupply += OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation += OnPlayerTakeRuneStoneFromMediation;
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
         GameEvent.onPlayerEnd += OnPlayerEnd;
-        GameEvent.onPlayerRuneStoneChange += OnPlayerRuneStoneChange;
         GameEvent.onPlayerHealthChange += OnPlayerHealthChange;
         GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
 
@@ -75,21 +61,17 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInit -= OnInit;
         GameEvent.onInitPlayer += OnInitPlayer;
 
-        GameEvent.onView -= OnView;
         GameEvent.onViewUIHide -= OnViewUIHide;
         GameEvent.onViewUIShow -= OnViewUIShow;
         GameEvent.onViewPlayer -= OnViewPlayer;
         GameEvent.onViewInfo -= OnViewInfo;
 
         GameEvent.onPlayerStart -= OnPlayerStart;
-        GameEvent.onPlayerTakeRuneStoneFromSupply -= OnPlayerTakeRuneStoneFromSupply;
-        GameEvent.onPlayerTakeRuneStoneFromMediation -= OnPlayerTakeRuneStoneFromMediation;
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
-        GameEvent.onPlayerRuneStoneChange -= OnPlayerRuneStoneChange;
         GameEvent.onPlayerHealthChange -= OnPlayerHealthChange;
         GameEvent.onPlayerStunnedChange -= OnPlayerStunnedChange;
 
@@ -107,9 +89,6 @@ public class PlayerView : MonoBehaviour
         m_infoMask.gameObject.SetActive(false);
         m_btnInfoAccept.SetActive(false);
         m_btnInfoCancel.SetActive(false);
-
-        m_runeStoneSupply.SetActive(false);
-        m_runeStoneShow.SetActive(false);
     }
 
     //
@@ -166,13 +145,6 @@ public class PlayerView : MonoBehaviour
 
     //
 
-    private void RuneStoneShowUpdate()
-    {
-        m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-    }
-
-    //
-
     private void OnInit()
     {
         //...
@@ -196,26 +168,12 @@ public class PlayerView : MonoBehaviour
             ViewButton.Base = Player[i].Base;
             ViewButton.Health = Player[i].HealthCurrent;
             ViewButton.Stun = Player[i].StunCurrent;
-
-            if (!Player[i].Base)
-                continue;
-
-            m_playerBase = Player[i].Player;
         }
-
-        RuneStoneShowUpdate();
     }
 
-
-    private void OnView(ViewType Type, Action OnComplete)
-    {
-        m_viewType = Type;
-    }
 
     private void OnViewUIHide()
     {
-        m_runeStoneShow.SetActive(true);
-
         m_btnMediate.SetActive(false);
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
@@ -224,8 +182,6 @@ public class PlayerView : MonoBehaviour
 
     private void OnViewUIShow(ViewType Type)
     {
-        m_runeStoneShow.SetActive(true);
-
         bool Choice = GameManager.instance.PlayerChoice;
 
         switch (Type)
@@ -309,43 +265,6 @@ public class PlayerView : MonoBehaviour
             OnComplete?.Invoke();
             //});
         });
-        RuneStoneShowUpdate();
-    }
-
-    private void OnPlayerTakeRuneStoneFromSupply(IPlayer Player, int Value, Action OnComplete)
-    {
-        RectTransform RuneStone = Instantiate(m_runeStoneSupply, this.transform).GetComponent<RectTransform>();
-        RuneStone.gameObject.SetActive(true);
-        RuneStone.transform.Find("fx-glow").DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
-        RuneStone.anchorMax = Vector3.one * 0.5f;
-        RuneStone.anchorMin = Vector3.one * 0.5f;
-        RuneStone.DOAnchorPos(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-        {
-            RuneStone.DOMove(m_runeStoneShow.transform.position, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-            {
-                m_runeStoneShow.GetComponentInChildren<TextMeshProUGUI>().text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-                Destroy(RuneStone.gameObject, 0.2f);
-                OnComplete?.Invoke();
-            });
-        });
-    }
-
-    private void OnPlayerTakeRuneStoneFromMediation(IPlayer Player, int Value, Action OnComplete)
-    {
-        RectTransform RuneStone = Instantiate(m_runeStoneSupply, this.transform).GetComponent<RectTransform>();
-        RuneStone.gameObject.SetActive(true);
-        RuneStone.transform.Find("fx-glow").DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
-        RuneStone.anchorMax = Vector3.one * 0.5f;
-        RuneStone.anchorMin = Vector3.one * 0.5f;
-        RuneStone.DOAnchorPos(Vector3.zero, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-        {
-            RuneStone.DOMove(m_runeStoneShow.transform.position, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
-            {
-                m_runeStoneShow.GetComponentInChildren<TextMeshProUGUI>().text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-                Destroy(RuneStone.gameObject, 0.2f);
-                OnComplete?.Invoke();
-            });
-        });
     }
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
@@ -406,18 +325,6 @@ public class PlayerView : MonoBehaviour
         });
     }
 
-
-    private void OnPlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
-    {
-        m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
-        {
-            RuneStoneShowUpdate();
-            m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
-        });
-    }
 
     private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
     {
