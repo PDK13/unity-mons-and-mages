@@ -113,12 +113,16 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         m_data = Data;
         m_data.Player = this;
-        //
+
         m_playerName.text = "P" + Index.ToString();
-        //
+
+        InfoRuneStoneUpdate(null);
+        InfoStunUpdate(null);
+        InfoHealthUpdate(null);
+
         for (int i = 0; i < m_cardContent.childCount; i++)
             m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
-        //
+
         GameManager.instance.PlayerJoin(this);
     }
 

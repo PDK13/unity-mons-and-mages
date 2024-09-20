@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a50452ec6d35a489c055b4d2ca3ec2, type: 3}
   m_Name: tween-config
   m_EditorClassIdentifier: 
-  CardFill:
+  WildFill:
     MoveDuration: 1
     MoveEase: 6
-    OpenDuration: 0.5
   GameView:
-    MoveYDuration: 1
+    MoveYDuration: 0
     MoveYEase: 6
-    MoveXDuration: 1
+    MoveXDuration: 0
     MoveXEase: 6
+  CardAction:
+    FlipDuration: 1
+    MoveDuration: 1
+    RumbleDuration: 0.5
+    AlphaDuration: 1
+    OutlineDuration: 1
