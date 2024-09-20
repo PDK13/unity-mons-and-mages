@@ -59,7 +59,7 @@ public class WildView : MonoBehaviour
                 case CardNameType.OneTail:
                 case CardNameType.Pott:
                 case CardNameType.Umbella:
-                    CardClone.AddComponent<CardOneTail>();
+                    CardClone.AddComponent<CardController>();
                     break;
                 default:
                     Destroy(CardClone);
