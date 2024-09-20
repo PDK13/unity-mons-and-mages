@@ -325,14 +325,14 @@ public class CardController : MonoBehaviour, ICard
         EffectAlpha(() => OnComplete?.Invoke());
     }
 
-    public void DoOriginActive(Action OnComplete)
+    public virtual void DoOriginActive(Action OnComplete)
     {
         EffectAlpha(() => Rumble(() => OnComplete?.Invoke()));
-    }
+    } //Virtal
 
-    public void DoEnterActive() { }
+    public virtual void DoEnterActive() { } //Virtal
 
-    public void DoPassiveActive() { }
+    public virtual void DoPassiveActive() { } //Virtal
 
 
     public void DoWandActive(Action OnComplete)
@@ -354,17 +354,17 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoEnergyActive(Action OnComplete)
     {
-        m_data.ManaCurrent -= m_data.ManaPoint;
+        m_data.ManaCurrent = 0;
         Rumble(() => OnComplete?.Invoke());
     }
 
-    public void DoClassActive(Action OnComplete)
+    public virtual void DoClassActive(Action OnComplete)
     {
         Rumble(() => OnComplete?.Invoke());
-    }
+    } //Virtal
 
-    public void DoSpellActive(Action OnComplete)
+    public virtual void DoSpellActive(Action OnComplete)
     {
         Rumble(() => OnComplete?.Invoke());
-    } //Update...!
+    } //Virtal
 }

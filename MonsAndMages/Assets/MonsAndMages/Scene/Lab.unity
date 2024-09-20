@@ -4844,10 +4844,6 @@ MonoBehaviour:
   m_infoMask: {fileID: 88371676}
   m_btnInfoAccept: {fileID: 1755156610}
   m_btnInfoCancel: {fileID: 576555306}
-  m_runeStoneShow: {fileID: 0}
-  m_runeStoneSupply: {fileID: 0}
-  m_runeStoneBox: {fileID: 0}
-  m_tmpRuneStone: {fileID: 0}
 --- !u!1 &1702362458
 GameObject:
   m_ObjectHideFlags: 0
