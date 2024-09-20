@@ -48,7 +48,7 @@ public class CardStage : MonoBehaviour, ICard
         GameEvent.ButtonInteractable(false);
         GameEvent.CardTap(this, null);
         GameEvent.ViewInfo(InfoType.CardCollect, true);
-        MoveTop(1f, () => GameEvent.ButtonInteractable(true));
+        MoveTop(() => GameEvent.ButtonInteractable(true));
     }
 
     //ICard
@@ -101,14 +101,13 @@ public class CardStage : MonoBehaviour, ICard
     {
         this.Pointer(Point);
 
-        var DurationMove = GameManager.instance.TweenConfig.CardFill.MoveDuration;
-        var EaseMove = GameManager.instance.TweenConfig.CardFill.MoveEase;
-        var DurationOpen = GameManager.instance.TweenConfig.CardFill.OpenDuration;
+        var DurationMove = GameManager.instance.TweenConfig.WildFill.MoveDuration;
+        var EaseMove = GameManager.instance.TweenConfig.WildFill.MoveEase;
 
         transform.SetParent(Point, true);
         transform.DOLocalMove(Vector3.zero, DurationMove).SetEase(EaseMove);
 
-        Open(DurationOpen, null);
+        FlipOpen(null);
     }
 
 
@@ -123,24 +122,26 @@ public class CardStage : MonoBehaviour, ICard
     }
 
 
-    public void Open(float Duration, Action OnComplete)
+    public void FlipOpen(Action OnComplete)
     {
         if (m_flip)
             Debug.Log("Card open not done yet");
         m_flip = true;
 
+        var FlipDuration = GameManager.instance.TweenConfig.CardAction.FlipDuration;
+
         transform.eulerAngles = Vector3.zero;
         m_mask.SetActive(true);
         m_renderer.SetActive(false);
         transform
-            .DOLocalRotate(Vector3.up * 90f, Duration / 2)
+            .DOLocalRotate(Vector3.up * 90f, FlipDuration * 0.5f)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
                 m_mask.SetActive(false);
                 m_renderer.SetActive(true);
                 transform
-                    .DOLocalRotate(Vector3.zero, Duration / 2)
+                    .DOLocalRotate(Vector3.zero, FlipDuration * 0.5f)
                     .SetEase(Ease.Linear)
                     .OnComplete(() =>
                     {
@@ -151,11 +152,13 @@ public class CardStage : MonoBehaviour, ICard
             });
     }
 
-    public void Close(float Duration, Action OnComplete)
+    public void FlipClose(Action OnComplete)
     {
         if (m_flip)
             Debug.Log("Card close not done yet");
         m_flip = true;
+
+        var FlipDuration = GameManager.instance.TweenConfig.CardAction.FlipDuration;
 
         m_avaible = false;
 
@@ -163,14 +166,14 @@ public class CardStage : MonoBehaviour, ICard
         m_mask.SetActive(false);
         m_renderer.SetActive(true);
         transform
-            .DOLocalRotate(Vector3.up * 90f, Duration / 2)
+            .DOLocalRotate(Vector3.up * 90f, FlipDuration * 0.5f)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
                 m_mask.SetActive(true);
                 m_renderer.SetActive(false);
                 transform
-                    .DOLocalRotate(Vector3.zero, Duration / 2)
+                    .DOLocalRotate(Vector3.zero, FlipDuration * 0.5f)
                     .SetEase(Ease.Linear)
                     .OnComplete(() =>
                     {
@@ -181,18 +184,20 @@ public class CardStage : MonoBehaviour, ICard
     }
 
 
-    public void MoveTop(float Duration, Action OnComplete)
+    public void MoveTop(Action OnComplete)
     {
         if (m_top || m_move)
             Debug.Log("Card move (top) not done yet");
         m_top = true;
         m_move = true;
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
         transform.SetParent(PlayerView.instance.InfoView, true);
 
         Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.5f, Duration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, transform.DOLocalMove(Vector3.zero, Duration).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.5f, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOLocalMove(Vector3.zero, MoveDuration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
             m_move = false;
@@ -201,18 +206,20 @@ public class CardStage : MonoBehaviour, ICard
         CardTween.Play();
     }
 
-    public void MoveBack(float Duration, Action OnComplete)
+    public void MoveBack(Action OnComplete)
     {
         if (!m_top || m_move)
             Debug.Log("Card move (back) not done yet");
         m_top = false;
         m_move = true;
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
         var PointWorld = m_pointer.position;
 
         Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, transform.DOScale(Vector3.one, Duration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, transform.DOMove(PointWorld, Duration).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOScale(Vector3.one, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOMove(PointWorld, MoveDuration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
             m_move = false;
@@ -228,11 +235,13 @@ public class CardStage : MonoBehaviour, ICard
         if (m_rumble)
             Debug.Log("Card rumble not done yet");
 
+        var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
+
         m_rumble = true;
         Renderer.maskable = false;
-        transform.DOScale(Vector3.one * 1.35f, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).OnComplete(() =>
+            transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 GameEvent.CardRumble(this, () =>
                 {
@@ -245,16 +254,18 @@ public class CardStage : MonoBehaviour, ICard
     }
 
 
-    public void EffectAlpha(float Duration, Action OnComplete)
+    public void EffectAlpha(Action OnComplete)
     {
         if (m_effect)
             Debug.Log("Card effect alpha not done yet");
         m_effect = true;
 
+        var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
+
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
-        AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        AlphaGroup.DOFade(0.25f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 m_effect = false;
                 OnComplete?.Invoke();
@@ -262,14 +273,16 @@ public class CardStage : MonoBehaviour, ICard
         });
     }
 
-    public void EffectOutlineNormal(float Duration, Action OnComplete)
+    public void EffectOutlineNormal(Action OnComplete)
     {
-        m_outline.DOColor(Color.black, Duration).OnComplete(() => OnComplete?.Invoke());
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void EffectOutlineEnergy(float Duration, Action OnComplete)
+    public void EffectOutlineEnergy(Action OnComplete)
     {
-        m_outline.DOColor(Color.cyan, Duration).OnComplete(() => OnComplete?.Invoke());
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
 
@@ -295,7 +308,7 @@ public class CardStage : MonoBehaviour, ICard
 
     public void DoWandActive(Action OnComplete)
     {
-        EffectAlpha(1f, () => OnComplete?.Invoke());
+        EffectAlpha(() => OnComplete?.Invoke());
     }
 
     public void DoAttackActive(Action OnComplete) { }

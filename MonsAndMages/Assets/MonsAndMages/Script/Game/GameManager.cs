@@ -212,11 +212,11 @@ public class GameManager : MonoBehaviour
 
             if (!CardEnergyActive)
             {
-                Card.EffectOutlineEnergy(0.1f, () => PlayerDoCardEnergyActiveChoice(Player));
+                Card.EffectOutlineEnergy(() => PlayerDoCardEnergyActiveChoice(Player));
                 CardEnergyActive = true;
             }
             else
-                Card.EffectOutlineEnergy(0.1f, null);
+                Card.EffectOutlineEnergy(null);
         }
         if (!CardEnergyActive)
             PlayerEnd(Player);

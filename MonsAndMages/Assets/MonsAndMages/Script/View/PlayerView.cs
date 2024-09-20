@@ -139,7 +139,7 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.ViewUiHide();
         GameEvent.ViewInfo(InfoType.CardCollect, false);
-        m_cardView.MoveBack(1f, () => GameEvent.ViewUiShow(ViewType.Wild));
+        m_cardView.MoveBack(() => GameEvent.ViewUiShow(ViewType.Wild));
         m_cardView = null;
     }
 
@@ -304,7 +304,7 @@ public class PlayerView : MonoBehaviour
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
                 Card.Pointer(Point);
-                Card.MoveBack(1f, () =>
+                Card.MoveBack(() =>
                 {
                     Card.Rumble(() =>
                     {

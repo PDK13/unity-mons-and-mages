@@ -43,16 +43,18 @@ public class CardMediate : MonoBehaviour
 
     //
 
-    public void EffectAlpha(float Duration, Action OnComplete)
+    public void EffectAlpha(Action OnComplete)
     {
         if (m_effect)
             Debug.Log("Card effect alpha not done yet");
         m_effect = true;
 
+        var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
+
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
-        AlphaGroup.DOFade(0.25f, Duration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        AlphaGroup.DOFade(0.25f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            AlphaGroup.DOFade(0f, Duration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 m_effect = false;
                 OnComplete?.Invoke();
@@ -63,7 +65,7 @@ public class CardMediate : MonoBehaviour
 
     public void InfoRuneStoneUpdate(int Value, Action OnComplete)
     {
-        EffectAlpha(1f, () =>
+        EffectAlpha(() =>
         {
             m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
             {

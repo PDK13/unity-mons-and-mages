@@ -41,24 +41,24 @@ public interface ICard
     void Pointer(Transform Point);
 
 
-    void Open(float Duration, Action OnComplete);
+    void FlipOpen(Action OnComplete);
 
-    void Close(float Duration, Action OnComplete);
+    void FlipClose(Action OnComplete);
 
 
-    void MoveTop(float Duration, Action OnComplete);
+    void MoveTop(Action OnComplete);
 
-    void MoveBack(float Duration, Action OnComplete);
+    void MoveBack(Action OnComplete);
 
 
     void Rumble(Action OnComplete);
 
 
-    void EffectAlpha(float Duration, Action OnComplete);
+    void EffectAlpha(Action OnComplete);
 
-    void EffectOutlineNormal(float Duration, Action OnComplete);
+    void EffectOutlineNormal(Action OnComplete);
 
-    void EffectOutlineEnergy(float Duration, Action OnComplete);
+    void EffectOutlineEnergy(Action OnComplete);
 
 
     void InfoShow(bool Show);

@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                 if (!EventInvoke)
                 {
                     EventInvoke = true;
-                    m_cardMediation[i].EffectAlpha(1f, () =>
+                    m_cardMediation[i].EffectAlpha(() =>
                     {
                         var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
                         var RuneStoneFx = RuneStone.Find("fx-glow");
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                     });
                 }
                 else
-                    m_cardMediation[i].EffectAlpha(1f, null);
+                    m_cardMediation[i].EffectAlpha(null);
 
                 RuneStoneSum += 2;
             }
