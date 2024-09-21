@@ -241,6 +241,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         });
     }
 
+
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
         m_choice = false;
@@ -262,6 +263,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                 OnComplete?.Invoke();
         });
     }
+
 
     public Transform DoCollectReady()
     {

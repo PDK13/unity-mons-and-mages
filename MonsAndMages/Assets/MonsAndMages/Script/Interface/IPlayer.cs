@@ -46,7 +46,9 @@ public interface IPlayer
 
     void DoChoice(Action OnComplete); //Start choice Mediate or Collect
 
+
     void DoMediate(int RuneStoneAdd, Action OnComplete);
+
 
     Transform DoCollectReady();
 

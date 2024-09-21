@@ -291,9 +291,9 @@ public class CardStage : MonoBehaviour, ICard
 
     public void DoOriginActive(Action OnComplete) { }
 
-    public void DoEnterActive() { }
+    public void DoEnterActive(Action OnComplete) { }
 
-    public void DoPassiveActive() { }
+    public void DoPassiveActive(Action OnComplete) { }
 
     //
 

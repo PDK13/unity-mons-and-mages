@@ -47,6 +47,8 @@ public class WildView : MonoBehaviour
             CardClone.name = "card-" + CardCheck.Name.ToString();
             CardClone.transform.localPosition = Vector3.zero;
 
+            CardClone.AddComponent<CardController>(); //Card controller required for every event!
+
             switch (CardCheck.Name)
             {
                 case CardNameType.Cornibus:
@@ -59,7 +61,6 @@ public class WildView : MonoBehaviour
                 case CardNameType.OneTail:
                 case CardNameType.Pott:
                 case CardNameType.Umbella:
-                    CardClone.AddComponent<CardController>();
                     break;
                 default:
                     Destroy(CardClone);

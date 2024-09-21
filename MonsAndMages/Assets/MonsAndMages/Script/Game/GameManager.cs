@@ -150,17 +150,27 @@ public class GameManager : MonoBehaviour
         Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
     } //Mediate Event
 
+
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = false;
         Player.DoCollect(Card, () => CardOriginActive(Card));
     } //Collect Event
 
-
     private void CardOriginActive(ICard Card)
     {
-        Card.DoOriginActive(() => PlayerDostaffNext(Card.Player, true));
+        Card.DoOriginActive(() => CardEnterActive(Card));
     } //Origin Event
+
+    private void CardEnterActive(ICard Card)
+    {
+        Card.DoEnterActive(() => CardPassiveActive(Card));
+    } //Enter Event
+
+    private void CardPassiveActive(ICard Card)
+    {
+        Card.DoPassiveActive(() => PlayerDostaffNext(Card.Player, true));
+    } //Passive Event
 
 
     private void PlayerDostaffNext(IPlayer Player, bool CardActive)

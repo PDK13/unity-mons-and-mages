@@ -360,14 +360,29 @@ public class CardController : MonoBehaviour, ICard
         EffectAlpha(() => OnComplete?.Invoke());
     }
 
-    public virtual void DoOriginActive(Action OnComplete)
+    public void DoOriginActive(Action OnComplete)
     {
-        EffectAlpha(() => Rumble(() => OnComplete?.Invoke()));
-    } //Virtal
+        if (onOriginActive == null)
+            OnComplete?.Invoke();
+        else
+            EffectAlpha(() => onOriginActive.Invoke(() => OnComplete?.Invoke()));
+    }
 
-    public virtual void DoEnterActive() { } //Virtal
+    public void DoEnterActive(Action OnComplete)
+    {
+        if (onEnterActive == null)
+            OnComplete?.Invoke();
+        else
+            EffectAlpha(() => onEnterActive.Invoke(() => OnComplete?.Invoke()));
+    }
 
-    public virtual void DoPassiveActive() { } //Virtal
+    public void DoPassiveActive(Action OnComplete)
+    {
+        if (onPassiveActive == null)
+            OnComplete?.Invoke();
+        else
+            EffectAlpha(() => onPassiveActive.Invoke(() => OnComplete?.Invoke()));
+    }
 
 
     public void DostaffActive(Action OnComplete)
@@ -393,13 +408,19 @@ public class CardController : MonoBehaviour, ICard
         InfoManaUpdate(Mana, ManaPoint, () => Rumble(() => OnComplete?.Invoke()));
     }
 
-    public virtual void DoClassActive(Action OnComplete)
+    public void DoClassActive(Action OnComplete)
     {
-        Rumble(() => OnComplete?.Invoke());
-    } //Virtal
+        if (onClassActive == null)
+            OnComplete?.Invoke();
+        else
+            EffectAlpha(() => onClassActive.Invoke(() => OnComplete?.Invoke()));
+    }
 
-    public virtual void DoSpellActive(Action OnComplete)
+    public void DoSpellActive(Action OnComplete)
     {
-        Rumble(() => OnComplete?.Invoke());
-    } //Virtal
+        if (onSpellActive == null)
+            OnComplete?.Invoke();
+        else
+            EffectAlpha(() => onSpellActive.Invoke(() => OnComplete?.Invoke()));
+    }
 }

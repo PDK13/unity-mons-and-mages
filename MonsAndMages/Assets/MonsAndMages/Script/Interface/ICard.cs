@@ -68,10 +68,9 @@ public interface ICard
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
-    void DoEnterActive(); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
+    void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
-
-    void DoPassiveActive(); //Kích hoạt kĩ năng bị động
+    void DoPassiveActive(Action OnComplete); //Kích hoạt kĩ năng bị động
 
 
     void DostaffActive(Action OnComplete); //Kích hoạt khi đặt trượng phép
