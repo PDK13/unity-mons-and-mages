@@ -61,11 +61,11 @@ public class CardStage : MonoBehaviour, ICard
 
     public int RuneStoneCost => 0;
 
-    public int EnergyPoint => 0;
+    public int ManaPoint => 0;
 
-    public int EnergyCurrent => 0;
+    public int Mana => 0;
 
-    public bool EnergyFull => false;
+    public bool ManaFull => false;
 
     public int Attack => 0;
 
@@ -91,7 +91,7 @@ public class CardStage : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
         InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.EnergyCurrent, m_data.EnergyPoint);
+        InfoManaUpdate(m_data.Mana, m_data.ManaPoint);
         InfoDamageUpdate(m_data.AttackCombine);
 
         m_avaible = false;
@@ -279,7 +279,7 @@ public class CardStage : MonoBehaviour, ICard
         m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void EffectOutlineEnergy(Action OnComplete)
+    public void EffectOutlineMana(Action OnComplete)
     {
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
         m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
@@ -313,11 +313,11 @@ public class CardStage : MonoBehaviour, ICard
 
     public void DoAttackActive(Action OnComplete) { }
 
-    public void DoEnergyFill(int Value, Action OnComplete) { }
+    public void DoManaFill(int Value, Action OnComplete) { }
 
     //
 
-    public void DoEnergyActive(Action OnComplete) { }
+    public void DoManaActive(Action OnComplete) { }
 
     public void DoClassActive(Action OnComplete) { }
 

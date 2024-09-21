@@ -19,7 +19,7 @@ public class CardController : MonoBehaviour, ICard
     private GameObject m_renderer;
     private GameObject m_rendererAlpha;
     private TextMeshProUGUI m_tmpGrow;
-    private TextMeshProUGUI m_tmpEnergy;
+    private TextMeshProUGUI m_tmpMana;
     private TextMeshProUGUI m_tmpDamage;
     private Outline m_outline;
 
@@ -41,7 +41,7 @@ public class CardController : MonoBehaviour, ICard
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
         m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
-        m_tmpEnergy = transform.Find("tmp-energy").GetComponent<TextMeshProUGUI>();
+        m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
         m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
         m_outline = m_renderer.GetComponent<Outline>();
     }
@@ -77,11 +77,11 @@ public class CardController : MonoBehaviour, ICard
 
     public int RuneStoneCost => m_data.RuneStoneCost;
 
-    public int EnergyPoint => m_data.EnergyPoint;
+    public int ManaPoint => m_data.ManaPoint;
 
-    public int EnergyCurrent => m_data.EnergyCurrent;
+    public int Mana => m_data.Mana;
 
-    public bool EnergyFull => m_data.EnergyPoint > 0 && m_data.EnergyCurrent >= m_data.EnergyPoint;
+    public bool ManaFull => m_data.ManaPoint > 0 && m_data.Mana >= m_data.ManaPoint;
 
     public int Attack => m_data.AttackPoint;
 
@@ -107,7 +107,7 @@ public class CardController : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
         InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.EnergyCurrent, m_data.EnergyPoint);
+        InfoManaUpdate(m_data.Mana, m_data.ManaPoint);
         InfoDamageUpdate(m_data.AttackCombine);
 
         m_avaible = false;
@@ -295,7 +295,7 @@ public class CardController : MonoBehaviour, ICard
         m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void EffectOutlineEnergy(Action OnComplete)
+    public void EffectOutlineMana(Action OnComplete)
     {
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
         m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
@@ -305,7 +305,7 @@ public class CardController : MonoBehaviour, ICard
     public void InfoShow(bool Show)
     {
         m_tmpGrow.gameObject.SetActive(Show);
-        m_tmpEnergy.gameObject.SetActive(Show);
+        m_tmpMana.gameObject.SetActive(Show);
         m_tmpDamage.gameObject.SetActive(Show);
     }
 
@@ -316,7 +316,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void InfoManaUpdate(int Value, int Max, bool Effect = false)
     {
-        m_tmpEnergy.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_ENERGY;
+        m_tmpMana.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_Mana;
     }
 
     public void InfoDamageUpdate(int Value, bool Effect = false)
@@ -351,24 +351,24 @@ public class CardController : MonoBehaviour, ICard
         Rumble(() => OnComplete?.Invoke());
     }
 
-    public void DoEnergyFill(int Value, Action OnComplete)
+    public void DoManaFill(int Value, Action OnComplete)
     {
-        m_data.EnergyCurrent += Value;
-        m_tmpEnergy.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        m_data.Mana += Value;
+        m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            var EnergyText = string.Format("{0}/{1}{2}", EnergyCurrent, EnergyPoint, GameConstant.TMP_ICON_ENERGY);
-            m_tmpEnergy.text = EnergyText;
-            m_tmpEnergy.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
+            m_tmpMana.text = ManaText;
+            m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
-                EffectOutlineEnergy(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
             });
         });
     }
 
 
-    public void DoEnergyActive(Action OnComplete)
+    public void DoManaActive(Action OnComplete)
     {
-        m_data.EnergyCurrent = 0;
+        m_data.Mana = 0;
         Rumble(() => OnComplete?.Invoke());
     }
 

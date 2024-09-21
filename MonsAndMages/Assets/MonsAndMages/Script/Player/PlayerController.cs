@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool DoContinueCheck()
     {
-        return m_data.CardQueue.Exists(t => t.EnergyFull);
+        return m_data.CardQueue.Exists(t => t.ManaFull);
     }
 
     public void DoContinue(Action OnComplete)
@@ -342,7 +342,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void CardEnergyActiveDoChoice(Action OnComplete)
+    public void CardManaActiveDoChoice(Action OnComplete)
     {
         foreach (var Card in m_data.CardQueue)
         {
@@ -350,7 +350,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                 continue;
         }
 
-        GameEvent.PlayerCardEnergyActiveDoChoice(this, () =>
+        GameEvent.PlayerCardManaActiveDoChoice(this, () =>
         {
             m_choice = true;
             OnComplete?.Invoke();

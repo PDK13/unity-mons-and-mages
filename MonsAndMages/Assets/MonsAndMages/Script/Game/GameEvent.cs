@@ -79,7 +79,7 @@ public class GameEvent
     public static Action<IPlayer, Action> onPlayerDoChoice { get; set; } //Player choice Mediate or Collect
     public static Action<IPlayer, int, Action> onPlayerDoMediate { get; set; } //Player Mediate Event
     public static Action<IPlayer, ICard, Action> onPlayerDoCollect { get; set; } //Player Collect Event
-    public static Action<IPlayer, Action> onPlayerCardEnergyActiveDoChoice { get; set; }
+    public static Action<IPlayer, Action> onPlayerCardManaActiveDoChoice { get; set; }
     public static Action<IPlayer, Action> onPlayerEnd { get; set; }
     public static Action<IPlayer, int, Action> onPlayerRuneStoneChange { get; set; }
     public static Action<IPlayer, int, Action> onPlayerHealthChange { get; set; }
@@ -120,9 +120,9 @@ public class GameEvent
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
     } //Collect Event
 
-    public static void PlayerCardEnergyActiveDoChoice(IPlayer Player, Action OnComplete)
+    public static void PlayerCardManaActiveDoChoice(IPlayer Player, Action OnComplete)
     {
-        onPlayerCardEnergyActiveDoChoice?.Invoke(Player, OnComplete);
+        onPlayerCardManaActiveDoChoice?.Invoke(Player, OnComplete);
     }
 
     public static void PlayerEnd(IPlayer Player, Action OnComplete)

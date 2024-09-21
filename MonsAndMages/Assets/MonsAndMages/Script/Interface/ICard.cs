@@ -12,11 +12,11 @@ public interface ICard
 
     int RuneStoneCost { get; } //Giá tiền mua bài
 
-    int EnergyPoint { get; } //Năng lượng
+    int ManaPoint { get; } //Năng lượng
 
-    int EnergyCurrent { get; } //Năng lượng hiện tại
+    int Mana { get; } //Năng lượng hiện tại
 
-    bool EnergyFull { get; }
+    bool ManaFull { get; }
 
     int Attack { get; } //Sát thương cơ bản
 
@@ -58,7 +58,7 @@ public interface ICard
 
     void EffectOutlineNormal(Action OnComplete);
 
-    void EffectOutlineEnergy(Action OnComplete);
+    void EffectOutlineMana(Action OnComplete);
 
 
     void InfoShow(bool Show);
@@ -84,10 +84,10 @@ public interface ICard
 
     void DoAttackActive(Action OnComplete); //Tấn công thường khi đặt trượng phép
 
-    void DoEnergyFill(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
+    void DoManaFill(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
 
 
-    void DoEnergyActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
+    void DoManaActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
 
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
 

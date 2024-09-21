@@ -58,7 +58,7 @@ public interface IPlayer
     void DostaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
 
 
-    void CardEnergyActiveDoChoice(Action OnComplete); //Start choice Card full EnergyPoint to active
+    void CardManaActiveDoChoice(Action OnComplete); //Start choice Card full ManaPoint to active
 
 
     void DoEnd(Action OnComplete);

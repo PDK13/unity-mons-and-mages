@@ -21,8 +21,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: e308d5d1238d6fe40ae867e5a188d269, type: 3}
     RuneStoneCost: 5
     RuneStoneTake: 0
-    EnergyPoint: 3
-    EnergyCurrent: 0
+    ManaPoint: 3
+    Mana: 0
     AttackPoint: 2
     GrowCurrent: 0
   - Named: Duchess
@@ -32,8 +32,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 603b8148d241e214091ac8293f61b354, type: 3}
     RuneStoneCost: 3
     RuneStoneTake: 0
-    EnergyPoint: 2
-    EnergyCurrent: 0
+    ManaPoint: 2
+    Mana: 0
     AttackPoint: 1
     GrowCurrent: 0
   - Named: Dragon Egg
@@ -43,8 +43,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: e8db983cdf512c04ca947e840b786e9c, type: 3}
     RuneStoneCost: 5
     RuneStoneTake: 0
-    EnergyPoint: 3
-    EnergyCurrent: 0
+    ManaPoint: 3
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: Eversor
@@ -54,8 +54,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: cbfe947cfb012d74893b5c41fec73365, type: 3}
     RuneStoneCost: 6
     RuneStoneTake: 0
-    EnergyPoint: 3
-    EnergyCurrent: 0
+    ManaPoint: 3
+    Mana: 0
     AttackPoint: 3
     GrowCurrent: 0
   - Named: Flow of the Essentinal
@@ -65,8 +65,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: cb88c35353627044897419c3c291139d, type: 3}
     RuneStoneCost: 4
     RuneStoneTake: 0
-    EnergyPoint: 2
-    EnergyCurrent: 0
+    ManaPoint: 2
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: Forestwing
@@ -76,8 +76,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 1694e0bd42c29b946900eed6a8e4d79e, type: 3}
     RuneStoneCost: 4
     RuneStoneTake: 0
-    EnergyPoint: 2
-    EnergyCurrent: 0
+    ManaPoint: 2
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: Pixie's Grove
@@ -87,8 +87,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: dca5cd6a76676d74b871f43c1f2d2749, type: 3}
     RuneStoneCost: 4
     RuneStoneTake: 1
-    EnergyPoint: 0
-    EnergyCurrent: 0
+    ManaPoint: 0
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: One Tail
@@ -98,8 +98,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 165e9ece6594b9046b785a104043d0b3, type: 3}
     RuneStoneCost: 5
     RuneStoneTake: 0
-    EnergyPoint: 3
-    EnergyCurrent: 0
+    ManaPoint: 3
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: Pott
@@ -109,8 +109,8 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: b073d87d07d93fa4dbd0fbe12ac4be39, type: 3}
     RuneStoneCost: 3
     RuneStoneTake: 0
-    EnergyPoint: 2
-    EnergyCurrent: 0
+    ManaPoint: 2
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0
   - Named: Umbella
@@ -120,7 +120,7 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}
     RuneStoneCost: 3
     RuneStoneTake: 1
-    EnergyPoint: 2
-    EnergyCurrent: 0
+    ManaPoint: 2
+    Mana: 0
     AttackPoint: 0
     GrowCurrent: 0

@@ -50,8 +50,8 @@ public class CardData
     [Min(0)] public int RuneStoneTake; //When staff move to card, get Rune Stone
 
     [Space]
-    [Min(0)] public int EnergyPoint;
-    [Min(0)] public int EnergyCurrent;
+    [Min(0)] public int ManaPoint;
+    [Min(0)] public int Mana;
 
     [Space]
     [Min(0)] public int AttackPoint;
@@ -62,7 +62,7 @@ public class CardData
 
     public int AttackCombine => AttackPoint + GrowCurrent;
 
-    public bool ManaFull => EnergyCurrent >= EnergyPoint;
+    public bool ManaFull => Mana >= ManaPoint;
 }
 
 [Serializable]

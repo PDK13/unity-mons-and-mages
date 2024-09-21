@@ -194,7 +194,7 @@ public class GameManager : MonoBehaviour
                             continue;
                         m_player[i].HealthChange(-Card.AttackCombine, null);
                     }
-                    CardEnergyFill(Card);
+                    CardManaFill(Card);
                 });
             }
         }
@@ -202,46 +202,46 @@ public class GameManager : MonoBehaviour
             PlayerEnd(PlayerCurrent);
     } //Attack Event
 
-    private void CardEnergyFill(ICard Card)
+    private void CardManaFill(ICard Card)
     {
-        Card.DoEnergyFill(1, () => CardEnergyCheck(Card.Player));
-    } //EnergyPoint Event
+        Card.DoManaFill(1, () => CardManaCheck(Card.Player));
+    } //ManaPoint Event
 
-    private void CardEnergyCheck(IPlayer Player)
+    private void CardManaCheck(IPlayer Player)
     {
-        bool CardEnergyActive = false;
+        bool CardManaActive = false;
         foreach (var Card in Player.CardQueue)
         {
             if (Card == null)
                 continue;
 
-            if (!Card.EnergyFull)
+            if (!Card.ManaFull)
                 continue;
 
-            if (!CardEnergyActive)
+            if (!CardManaActive)
             {
-                Card.EffectOutlineEnergy(() => PlayerDoCardEnergyActiveChoice(Player));
-                CardEnergyActive = true;
+                Card.EffectOutlineMana(() => PlayerDoCardManaActiveChoice(Player));
+                CardManaActive = true;
             }
             else
-                Card.EffectOutlineEnergy(null);
+                Card.EffectOutlineMana(null);
         }
-        if (!CardEnergyActive)
+        if (!CardManaActive)
             PlayerEnd(Player);
     }
 
-    private void PlayerDoCardEnergyActiveChoice(IPlayer Player)
+    private void PlayerDoCardManaActiveChoice(IPlayer Player)
     {
-        Player.CardEnergyActiveDoChoice(() =>
+        Player.CardManaActiveDoChoice(() =>
         {
             m_playerChoice = true;
         });
     }
 
 
-    public void CardEnergyActive(ICard Card)
+    public void CardManaActive(ICard Card)
     {
-        Card.DoEnergyActive(() => CardClassActive(Card));
+        Card.DoManaActive(() => CardClassActive(Card));
     }
 
     private void CardClassActive(ICard Card)
@@ -251,7 +251,7 @@ public class GameManager : MonoBehaviour
 
     private void CardSpellActive(ICard Card)
     {
-        Card.DoSpellActive(() => CardEnergyCheck(Card.Player));
+        Card.DoSpellActive(() => CardManaCheck(Card.Player));
     } //Spell Event
 
 
