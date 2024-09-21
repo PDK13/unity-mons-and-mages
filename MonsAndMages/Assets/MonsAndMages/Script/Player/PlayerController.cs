@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         Sequence RuneStoneIconTween = DOTween.Sequence();
         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
-        RuneStoneIconTween.Append(RuneStone.DOAnchorPos(m_runeStoneBox.anchoredPosition, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
             Destroy(RuneStone.gameObject, 0.2f);
@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                         Sequence RuneStoneIconTween = DOTween.Sequence();
                         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
                         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
-                        RuneStoneIconTween.Append(RuneStone.DOAnchorPos(m_runeStoneBox.anchoredPosition, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+                        RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
                         {
                             m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
                             Destroy(RuneStone.gameObject, 0.2f);

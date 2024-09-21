@@ -250,19 +250,21 @@ public class PlayerView : MonoBehaviour
             return;
         }
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
+
         m_infoMask.gameObject.SetActive(true);
         if (Show)
         {
             m_infoMask.alpha = 0;
             m_infoMask
-                .DOFade(1f, 1f)
+                .DOFade(1f, MoveDuration)
                 .SetEase(Ease.Linear);
         }
         else
         {
             m_infoMask.alpha = 1;
             m_infoMask
-                .DOFade(0f, 1f)
+                .DOFade(0f, MoveDuration)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => m_infoMask.gameObject.SetActive(false));
         }

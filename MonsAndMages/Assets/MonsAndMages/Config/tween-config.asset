@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: tween-config
   m_EditorClassIdentifier: 
   WildFill:
-    MoveDuration: 1
+    MoveDuration: 0.5
     MoveEase: 6
   GameView:
     MoveYDuration: 0.25
@@ -21,8 +21,8 @@ MonoBehaviour:
     MoveXDuration: 0.25
     MoveXEase: 6
   CardAction:
-    FlipDuration: 1
-    MoveDuration: 1
+    FlipDuration: 0.5
+    MoveDuration: 0.5
     RumbleDuration: 0.5
-    AlphaDuration: 1
-    OutlineDuration: 1
+    AlphaDuration: 0.5
+    OutlineDuration: 0.5
