@@ -7980,10 +7980,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1358755244}
     m_Modifications:
-    - target: {fileID: 4718037328795772220, guid: 1d72119aa4d7af246a744842cf085bcb, type: 3}
-      propertyPath: m_Name
-      value: tmp-growth
-      objectReference: {fileID: 0}
     - target: {fileID: 4790769038840088764, guid: 1d72119aa4d7af246a744842cf085bcb, type: 3}
       propertyPath: m_Name
       value: card

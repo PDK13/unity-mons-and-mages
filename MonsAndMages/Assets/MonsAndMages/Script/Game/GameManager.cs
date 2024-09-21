@@ -150,27 +150,11 @@ public class GameManager : MonoBehaviour
         Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
     } //Mediate Event
 
-
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = false;
-        Player.DoCollect(Card, () => CardOriginActive(Card));
+        Player.DoCollect(Card, () => PlayerDostaffNext(Card.Player, true));
     } //Collect Event
-
-    private void CardOriginActive(ICard Card)
-    {
-        Card.DoOriginActive(() => CardEnterActive(Card));
-    } //Origin Event
-
-    private void CardEnterActive(ICard Card)
-    {
-        Card.DoEnterActive(() => CardPassiveActive(Card));
-    } //Enter Event
-
-    private void CardPassiveActive(ICard Card)
-    {
-        Card.DoPassiveActive(() => PlayerDostaffNext(Card.Player, true));
-    } //Passive Event
 
 
     private void PlayerDostaffNext(IPlayer Player, bool CardActive)
@@ -219,7 +203,7 @@ public class GameManager : MonoBehaviour
         Card.DoManaFill(1, () => CardManaCheck(Card.Player));
     } //ManaPoint Event
 
-    private void CardManaCheck(IPlayer Player)
+    public void CardManaCheck(IPlayer Player)
     {
         bool CardManaActive = false;
         foreach (var Card in Player.CardQueue)
@@ -253,18 +237,8 @@ public class GameManager : MonoBehaviour
 
     public void CardManaActive(ICard Card)
     {
-        Card.DoManaActive(() => CardClassActive(Card));
+        Card.DoManaActive(() => CardManaCheck(Card.Player));
     }
-
-    private void CardClassActive(ICard Card)
-    {
-        Card.DoClassActive(() => CardSpellActive(Card));
-    } //Class Event
-
-    private void CardSpellActive(ICard Card)
-    {
-        Card.DoSpellActive(() => CardManaCheck(Card.Player));
-    } //Spell Event
 
 
     private void PlayerEnd(IPlayer Player)

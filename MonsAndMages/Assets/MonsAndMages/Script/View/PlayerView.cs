@@ -314,6 +314,7 @@ public class PlayerView : MonoBehaviour
 
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
 
+        m_infoMask.DOKill();
         m_infoMask.gameObject.SetActive(true);
         if (Show)
         {

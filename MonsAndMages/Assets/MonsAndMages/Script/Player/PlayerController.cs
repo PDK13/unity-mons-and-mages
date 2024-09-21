@@ -346,17 +346,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void CardManaActiveDoChoice(Action OnComplete)
     {
-        foreach (var Card in m_data.CardQueue)
-        {
-            if (Card == null)
-                continue;
-        }
-
-        GameEvent.PlayerCardManaActiveDoChoice(this, () =>
-        {
-            m_choice = true;
-            OnComplete?.Invoke();
-        });
+        m_choice = true;
+        OnComplete?.Invoke();
     }
 
 

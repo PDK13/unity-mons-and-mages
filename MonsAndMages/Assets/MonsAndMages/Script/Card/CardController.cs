@@ -55,6 +55,9 @@ public class CardController : MonoBehaviour, ICard
 
     public void BtnTap()
     {
+        if (!GameManager.instance.PlayerChoice)
+            return;
+
         if (Player == null)
         {
             if (!Avaible)
@@ -65,6 +68,22 @@ public class CardController : MonoBehaviour, ICard
             GameEvent.ViewInfo(InfoType.Collect, true);
             MoveTop(() => GameEvent.ButtonInteractable(true));
         }
+        else
+        if (Player == GameManager.instance.PlayerCurrent && ManaFull)
+        {
+            DoManaActive(() =>
+            {
+                DoClassActive(() =>
+                {
+                    DoSpellActive(() =>
+                    {
+                        GameManager.instance.CardManaCheck(Player);
+                    });
+                });
+            });
+        }
+
+        Debug.Log("Card Tap");
     }
 
     //ICard
@@ -357,8 +376,20 @@ public class CardController : MonoBehaviour, ICard
     public void DoCollectActive(IPlayer Player, Action OnComplete)
     {
         m_data.Player = Player;
-        EffectAlpha(() => OnComplete?.Invoke());
-    }
+        EffectAlpha(() =>
+        {
+            DoOriginActive(() =>
+            {
+                DoEnterActive(() =>
+                {
+                    DoPassiveActive(() =>
+                    {
+                        OnComplete?.Invoke();
+                    });
+                });
+            });
+        });
+    } //Invoke from GameManager
 
     public void DoOriginActive(Action OnComplete)
     {
@@ -398,15 +429,18 @@ public class CardController : MonoBehaviour, ICard
     public void DoManaFill(int Value, Action OnComplete)
     {
         Mana += Value;
-        InfoManaUpdate(Mana, ManaPoint, () => OnComplete?.Invoke());
+        if (ManaFull)
+            InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineMana(() => OnComplete?.Invoke()));
+        else
+            InfoManaUpdate(Mana, ManaPoint, () => OnComplete?.Invoke());
     }
 
 
     public void DoManaActive(Action OnComplete)
     {
         Mana = 0;
-        InfoManaUpdate(Mana, ManaPoint, () => Rumble(() => OnComplete?.Invoke()));
-    }
+        InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineNormal(() => OnComplete?.Invoke()));
+    } //Invoke from GameManager
 
     public void DoClassActive(Action OnComplete)
     {

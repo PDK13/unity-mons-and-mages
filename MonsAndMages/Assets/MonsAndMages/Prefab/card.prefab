@@ -534,7 +534,7 @@ GameObject:
   - component: {fileID: 6908322837873286022}
   - component: {fileID: 8360055858762163421}
   m_Layer: 5
-  m_Name: tmp-grow
+  m_Name: tmp-growth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
