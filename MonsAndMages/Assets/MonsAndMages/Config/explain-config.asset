@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 228373b86aa75c64bac111e1da6e7515, type: 3}
+  m_Name: explain-config
+  m_EditorClassIdentifier: 
+  CardOrigin:
+  - Type: 1
+    Text: Roll a dice equal to the number of Dragon on your board, deal damage to
+      opponents or yourself if unlucky.
+  - Type: 2
+    Text: Gain energy equal to half the number of Woodland on your board, rounded
+      up. Each monster can only gain 1 energy this way.
+  - Type: 3
+    Text: Move the staff forward spaces up to number of Ghost on your board and activate
+      the card it lands on. You must move the staff at least 1 space.
+  - Type: 4
+    Text: Resolve the leaf effects on each Insect on your board from left to right,
+      include the newly added Insect card.
+  - Type: 5
+    Text: Inflict 1 stun to opponents.
+  - Type: 6
+    Text: No special effect.
+  CardClass:
+  - Type: 1
+    Text: Roll a number of dice equa to this monster strength, deal 1 damage for
+      each dot rolled.
+  - Type: 2
+    Text: You may remove 1 mana from another monster on your board to have this monster
+      cast its spell once more time.
+  - Type: 3
+    Text: Deal 1 damage for each Singer on your board.
+  - Type: 4
+    Text: Place 1 growth on an adjacent monster. If this is the first growth on that
+      monster, also place 1 rune stone on it.
+  - Type: 5
+    Text: Two monster next to it gain 1 energy.
+  - Type: 6
+    Text: This monster moves forward or backward any number of spaces, then place
+      1 mana on an adjacent monster that it doesn't move past during this movement.

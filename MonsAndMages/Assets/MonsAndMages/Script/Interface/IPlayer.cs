@@ -22,7 +22,7 @@ public interface IPlayer
 
     List<ICard> CardQueue { get; }
 
-    int WandStep { get; }
+    int staffStep { get; }
 
     int[] Mediation { get; }
 
@@ -53,9 +53,9 @@ public interface IPlayer
     void DoCollect(ICard Card, Action OnComplete);
 
 
-    void DoWandNext(Action OnComplete); //Move Wand Next
+    void DostaffNext(Action OnComplete); //Move staff Next
 
-    void DoWandActive(Action OnComplete); //Active Card at Wand after moved if not stunned
+    void DostaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
 
 
     void CardEnergyActiveDoChoice(Action OnComplete); //Start choice Card full EnergyPoint to active

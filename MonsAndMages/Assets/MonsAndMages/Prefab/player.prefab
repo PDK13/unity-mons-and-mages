@@ -1165,7 +1165,7 @@ GameObject:
   - component: {fileID: 1904188552959898102}
   - component: {fileID: 3420785150638956177}
   m_Layer: 5
-  m_Name: wand
+  m_Name: staff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2167,7 +2167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5463272360336922506}
   m_Layer: 5
-  m_Name: wand-move-to
+  m_Name: staff-move-to
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3184,8 +3184,8 @@ MonoBehaviour:
   m_healthBox: {fileID: 592306005136328576}
   m_tmpHealth: {fileID: 6427976990759561715}
   m_runeStoneIcon: {fileID: 2058086290617309697}
-  m_wand: {fileID: 7607550422064173687}
-  m_wandMoveTo: {fileID: 5463272360336922506}
+  m_staff: {fileID: 7607550422064173687}
+  m_staffMoveTo: {fileID: 5463272360336922506}
 --- !u!1 &7163252748347950870
 GameObject:
   m_ObjectHideFlags: 0

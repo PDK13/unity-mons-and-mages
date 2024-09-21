@@ -9,6 +9,7 @@ public class PlayerView : MonoBehaviour
     public static PlayerView instance;
 
     [SerializeField] private GameObject m_btnMediate;
+    [SerializeField] private GameObject m_tmpMediateWarn;
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
 
@@ -20,6 +21,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private Transform m_infoView;
     [SerializeField] private CanvasGroup m_infoMask;
     [SerializeField] private GameObject m_btnInfoAccept;
+    [SerializeField] private GameObject m_tmpInfoAcceptWarn;
     [SerializeField] private GameObject m_btnInfoCancel;
 
     [Space]
@@ -236,8 +238,10 @@ public class PlayerView : MonoBehaviour
             switch (Type)
             {
                 case ViewType.Field:
-                    m_btnMediate.GetComponent<Button>().interactable = PlayerCurrent.MediationEmty;
+                    var MediateAvaible = PlayerCurrent.MediationEmty;
+                    m_btnMediate.GetComponent<Button>().interactable = MediateAvaible;
                     m_btnMediate.SetActive(Choice);
+                    m_tmpMediateWarn.SetActive(MediateAvaible);
                     m_btnCollect.SetActive(Choice);
                     m_btnBack.SetActive(false);
                     m_playerContent.gameObject.SetActive(true);
@@ -245,6 +249,7 @@ public class PlayerView : MonoBehaviour
                     break;
                 case ViewType.Wild:
                     m_btnMediate.SetActive(false);
+                    m_tmpMediateWarn.SetActive(false);
                     m_btnCollect.SetActive(false);
                     m_btnBack.SetActive(Choice);
                     m_playerContent.gameObject.SetActive(false);
@@ -255,6 +260,7 @@ public class PlayerView : MonoBehaviour
         else
         {
             m_btnMediate.SetActive(false);
+            m_tmpMediateWarn.SetActive(false);
             m_btnCollect.SetActive(false);
             m_btnBack.SetActive(false);
             m_playerContent.gameObject.SetActive(false);
@@ -291,6 +297,7 @@ public class PlayerView : MonoBehaviour
         {
             m_infoMask.gameObject.SetActive(false);
             m_btnInfoAccept.SetActive(false);
+            m_tmpInfoAcceptWarn.SetActive(false);
             m_btnInfoCancel.SetActive(false);
             m_mediateOptionContent.gameObject.SetActive(false);
             return;
@@ -320,12 +327,15 @@ public class PlayerView : MonoBehaviour
             case InfoType.Mediate:
                 m_btnInfoAccept.GetComponent<Button>().interactable = true;
                 m_btnInfoAccept.SetActive(false);
+                m_tmpInfoAcceptWarn.SetActive(false);
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(Show);
                 break;
             case InfoType.Collect:
-                m_btnInfoAccept.GetComponent<Button>().interactable = Show && m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                var CollectAvaible = Show && m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
                 m_btnInfoAccept.SetActive(Show);
+                m_tmpInfoAcceptWarn.SetActive(CollectAvaible);
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(false);
                 break;

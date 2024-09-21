@@ -306,7 +306,7 @@ public class CardStage : MonoBehaviour, ICard
 
     //
 
-    public void DoWandActive(Action OnComplete)
+    public void DostaffActive(Action OnComplete)
     {
         EffectAlpha(() => OnComplete?.Invoke());
     }

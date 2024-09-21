@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private TweenConfig m_tweenConfig;
+    [SerializeField] private ExplainConfig m_explainConfig;
+
+    [Space]
     [SerializeField] private Transform m_playerContent;
 
     private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
@@ -122,7 +125,7 @@ public class GameManager : MonoBehaviour
         Player.DoStunnedCheck((Stunned) =>
         {
             if (Stunned)
-                PlayerDoWandNext(Player, false);
+                PlayerDostaffNext(Player, false);
             else
                 PlayerDoChoice(Player);
         });
@@ -142,7 +145,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
         m_playerChoice = false;
-        Player.DoMediate(RuneStoneAdd, () => PlayerDoWandNext(Player, true));
+        Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
     } //Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
@@ -154,24 +157,24 @@ public class GameManager : MonoBehaviour
 
     private void CardOriginActive(ICard Card)
     {
-        Card.DoOriginActive(() => PlayerDoWandNext(Card.Player, true));
+        Card.DoOriginActive(() => PlayerDostaffNext(Card.Player, true));
     } //Origin Event
 
 
-    private void PlayerDoWandNext(IPlayer Player, bool CardActive)
+    private void PlayerDostaffNext(IPlayer Player, bool CardActive)
     {
-        Player.DoWandNext(() =>
+        Player.DostaffNext(() =>
         {
             if (CardActive)
-                PlayerDoWandActive(Player);
+                PlayerDostaffActive(Player);
             else
                 PlayerEnd(Player);
         });
     }
 
-    private void PlayerDoWandActive(IPlayer Player)
+    private void PlayerDostaffActive(IPlayer Player)
     {
-        Player.DoWandActive(() => CardAttack(Player.CardQueue[Player.WandStep]));
+        Player.DostaffActive(() => CardAttack(Player.CardQueue[Player.staffStep]));
     }
 
 

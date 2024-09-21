@@ -13,14 +13,14 @@ public class PlayerData
     [Min(0)] public int StunPoint; //Max 3 to get 1 skip turn
     [Min(0)] public int StunCurrent;
     public List<ICard> CardQueue = new List<ICard>();
-    [Min(0)] public int WandStep;
+    [Min(0)] public int staffStep;
     public int[] Mediation = { 0, 0 };
 
     public IPlayer Player;
 
     public bool Stuned => StunCurrent >= StunPoint;
 
-    public int WandStepNext => WandStep + 1 > CardQueue.Count - 1 ? 0 : WandStep + 1;
+    public int staffStepNext => staffStep + 1 > CardQueue.Count - 1 ? 0 : staffStep + 1;
 
     public bool MediationEmty => Mediation[0] == 0 || Mediation[1] == 0;
 
@@ -47,7 +47,7 @@ public class CardData
 
     [Space]
     [Min(0)] public int RuneStoneCost;
-    [Min(0)] public int RuneStoneTake; //When Wand move to card, get Rune Stone
+    [Min(0)] public int RuneStoneTake; //When staff move to card, get Rune Stone
 
     [Space]
     [Min(0)] public int EnergyPoint;

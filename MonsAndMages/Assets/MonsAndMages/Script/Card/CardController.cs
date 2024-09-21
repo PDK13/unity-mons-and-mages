@@ -341,7 +341,7 @@ public class CardController : MonoBehaviour, ICard
     public virtual void DoPassiveActive() { } //Virtal
 
 
-    public void DoWandActive(Action OnComplete)
+    public void DostaffActive(Action OnComplete)
     {
         EffectAlpha(() => OnComplete?.Invoke());
     }

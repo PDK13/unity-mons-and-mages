@@ -39,8 +39,8 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private GameObject m_runeStoneIcon;
 
     [Space]
-    [SerializeField] private RectTransform m_wand;
-    [SerializeField] private RectTransform m_wandMoveTo;
+    [SerializeField] private RectTransform m_staff;
+    [SerializeField] private RectTransform m_staffMoveTo;
 
     private bool m_choice = false;
     private bool m_turn = false;
@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public List<ICard> CardQueue => m_data.CardQueue;
 
-    public int WandStep => m_data.WandStep;
+    public int staffStep => m_data.staffStep;
 
     public int[] Mediation => m_data.Mediation;
 
@@ -267,7 +267,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         if (m_data.CardQueue.Count >= 5 && CardQueue[0] == null)
         {
-            //Wand still stay at emty position after remove stage card
+            //staff still stay at emty position after remove stage card
             //Destroy(m_cardContent.GetChild(0).gameObject);
             //m_data.CardQueue.RemoveAt(0);
         }
@@ -293,32 +293,32 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoWandNext(Action OnComplete)
+    public void DostaffNext(Action OnComplete)
     {
-        //Update Wand Parent to Last
-        m_wand.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
-        m_wandMoveTo.SetParent(m_wand.parent);
-        m_wandMoveTo.position = m_wand.position;
+        //Update staff Parent to Last
+        m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
+        m_staffMoveTo.SetParent(m_staff.parent);
+        m_staffMoveTo.position = m_staff.position;
 
-        //Start Move Wand to Point
-        var WandIndexLast = m_data.WandStep;
-        var WandIndexNext = m_data.WandStepNext;
+        //Start Move staff to Point
+        var staffIndexLast = m_data.staffStep;
+        var staffIndexNext = m_data.staffStepNext;
 
-        m_data.WandStep = WandIndexNext;
+        m_data.staffStep = staffIndexNext;
 
-        var PointLast = m_cardContent.GetChild(WandIndexLast);
-        var PointNext = m_cardContent.GetChild(WandIndexNext);
+        var PointLast = m_cardContent.GetChild(staffIndexLast);
+        var PointNext = m_cardContent.GetChild(staffIndexNext);
 
-        m_wandMoveTo.position = PointNext.position;
-        m_wand
-            .DOLocalJump(m_wandMoveTo.localPosition, 45f, 1, 1f)
+        m_staffMoveTo.position = PointNext.position;
+        m_staff
+            .DOLocalJump(m_staffMoveTo.localPosition, 45f, 1, 1f)
             .SetEase(Ease.InCubic)
             .OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void DoWandActive(Action OnComplete)
+    public void DostaffActive(Action OnComplete)
     {
-        var Card = m_cardContent.GetChild(WandStep).GetComponentInChildren<ICard>();
+        var Card = m_cardContent.GetChild(staffStep).GetComponentInChildren<ICard>();
 
         if (Card == null)
         {
@@ -326,7 +326,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
 
-        Card.DoWandActive(() => OnComplete?.Invoke());
+        Card.DostaffActive(() => OnComplete?.Invoke());
     }
 
 

@@ -80,7 +80,7 @@ public interface ICard
     void DoPassiveActive(); //Kích hoạt kĩ năng bị động
 
 
-    void DoWandActive(Action OnComplete); //Kích hoạt khi đặt trượng phép
+    void DostaffActive(Action OnComplete); //Kích hoạt khi đặt trượng phép
 
     void DoAttackActive(Action OnComplete); //Tấn công thường khi đặt trượng phép
 
