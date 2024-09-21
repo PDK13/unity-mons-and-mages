@@ -25,6 +25,10 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnInfoCancel;
 
     [Space]
+    [SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
+    [SerializeField] private TextMeshProUGUI m_tmpExplainClass;
+
+    [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
@@ -90,17 +94,20 @@ public class PlayerView : MonoBehaviour
     private void Start()
     {
         m_btnMediate.SetActive(false);
+        m_tmpMediateWarn.gameObject.SetActive(false);
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
 
-        m_playerContent.gameObject.SetActive(false);
-        m_mediateOptionContent.gameObject.SetActive(false);
-
-        m_runeStoneBox.gameObject.SetActive(false);
-
         m_infoMask.gameObject.SetActive(false);
         m_btnInfoAccept.SetActive(false);
+        m_tmpInfoAcceptWarn.SetActive(false);
         m_btnInfoCancel.SetActive(false);
+        m_mediateOptionContent.gameObject.SetActive(false);
+        m_tmpExplainOrigin.gameObject.SetActive(false);
+        m_tmpExplainClass.gameObject.SetActive(false);
+
+        m_playerContent.gameObject.SetActive(false);
+        m_runeStoneBox.gameObject.SetActive(false);
     }
 
     //
@@ -241,7 +248,7 @@ public class PlayerView : MonoBehaviour
                     var MediateAvaible = PlayerCurrent.MediationEmty;
                     m_btnMediate.GetComponent<Button>().interactable = MediateAvaible;
                     m_btnMediate.SetActive(Choice);
-                    m_tmpMediateWarn.SetActive(MediateAvaible);
+                    m_tmpMediateWarn.SetActive(Choice && !MediateAvaible);
                     m_btnCollect.SetActive(Choice);
                     m_btnBack.SetActive(false);
                     m_playerContent.gameObject.SetActive(true);
@@ -300,6 +307,8 @@ public class PlayerView : MonoBehaviour
             m_tmpInfoAcceptWarn.SetActive(false);
             m_btnInfoCancel.SetActive(false);
             m_mediateOptionContent.gameObject.SetActive(false);
+            m_tmpExplainOrigin.gameObject.SetActive(false);
+            m_tmpExplainClass.gameObject.SetActive(false);
             return;
         }
 
@@ -330,14 +339,23 @@ public class PlayerView : MonoBehaviour
                 m_tmpInfoAcceptWarn.SetActive(false);
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(Show);
+                m_tmpExplainOrigin.gameObject.SetActive(false);
+                m_tmpExplainClass.gameObject.SetActive(false);
                 break;
             case InfoType.Collect:
-                var CollectAvaible = Show && m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
                 m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
                 m_btnInfoAccept.SetActive(Show);
-                m_tmpInfoAcceptWarn.SetActive(CollectAvaible);
+                m_tmpInfoAcceptWarn.SetActive(Show && !CollectAvaible);
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(false);
+                if (Show && m_cardView != null)
+                {
+                    m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+                    m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+                }
+                m_tmpExplainOrigin.gameObject.SetActive(Show);
+                m_tmpExplainClass.gameObject.SetActive(Show);
                 break;
         }
     }

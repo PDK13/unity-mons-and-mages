@@ -10,6 +10,20 @@ public class ExplainConfig : ScriptableObject
 
     [Space]
     public List<ExplainConfigClassData> CardClass = new List<ExplainConfigClassData>();
+
+    public string GetExplainOrigin(CardOriginType Type)
+    {
+        if (Type == CardOriginType.None)
+            return "";
+        return "Origin: " + Type.ToString() + "\n" + CardOrigin.Find(t => t.Type == Type).Text;
+    }
+
+    public string GetExplainClass(CardClassType Type)
+    {
+        if (Type == CardClassType.None)
+            return "";
+        return "Class: " + Type.ToString() + "\n" + CardClass.Find(t => t.Type == Type).Text;
+    }
 }
 
 [Serializable]

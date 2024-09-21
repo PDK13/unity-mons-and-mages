@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
 
     public TweenConfig TweenConfig => m_tweenConfig;
 
+    public ExplainConfig ExplainConfig => m_explainConfig;
+
     public IPlayer PlayerCurrent => m_player[m_playerIndex];
 
     public int PlayerIndex => m_playerIndex;
