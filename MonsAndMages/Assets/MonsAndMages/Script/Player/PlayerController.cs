@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private CardMediate[] m_cardMediation = new CardMediate[2];
 
     [Space]
+    [SerializeField] private Transform m_boxGroup;
+
+    [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 

@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 2619235127345963060}
   - component: {fileID: 889380956057068244}
   m_Layer: 5
-  m_Name: health-show
+  m_Name: health-box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,13 +303,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214248498897697265}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5388200428953379312}
-  m_Father: {fileID: 1139719499577276346}
+  m_Father: {fileID: 1782825467955929380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -864,7 +864,7 @@ GameObject:
   - component: {fileID: 1599763171034689973}
   - component: {fileID: 7339959884894410060}
   m_Layer: 5
-  m_Name: stun-show
+  m_Name: stun-box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -877,13 +877,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1669207375839564738}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1178546546658442085}
-  m_Father: {fileID: 1139719499577276346}
+  m_Father: {fileID: 1782825467955929380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -1661,6 +1661,44 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &4129835982979230328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1782825467955929380}
+  m_Layer: 5
+  m_Name: box-group
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1782825467955929380
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4129835982979230328}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 468152004263211028}
+  - {fileID: 5346558398225528333}
+  - {fileID: 592306005136328576}
+  m_Father: {fileID: 1139719499577276346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4179038230080835471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1893,7 +1931,7 @@ GameObject:
   - component: {fileID: 9062372732925587968}
   - component: {fileID: 504659814027460538}
   m_Layer: 5
-  m_Name: rune-stone-show
+  m_Name: rune-stone-box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1906,13 +1944,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4542229629943574571}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5162826281731413191}
-  m_Father: {fileID: 1139719499577276346}
+  m_Father: {fileID: 1782825467955929380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -3059,9 +3097,7 @@ RectTransform:
   - {fileID: 3545055593065633166}
   - {fileID: 178060774933600596}
   - {fileID: 6028285997946610649}
-  - {fileID: 468152004263211028}
-  - {fileID: 5346558398225528333}
-  - {fileID: 592306005136328576}
+  - {fileID: 1782825467955929380}
   - {fileID: 1259370944834643527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3088,6 +3124,7 @@ MonoBehaviour:
   m_cardMediation:
   - {fileID: 7760762296148073712}
   - {fileID: 263434556888504416}
+  m_boxGroup: {fileID: 1782825467955929380}
   m_runeStoneBox: {fileID: 468152004263211028}
   m_tmpRuneStone: {fileID: 8492328101480709625}
   m_stunBox: {fileID: 5346558398225528333}

@@ -16,9 +16,9 @@ MonoBehaviour:
     MoveDuration: 1
     MoveEase: 6
   GameView:
-    MoveYDuration: 0
+    MoveYDuration: 0.25
     MoveYEase: 6
-    MoveXDuration: 0
+    MoveXDuration: 0.25
     MoveXEase: 6
   CardAction:
     FlipDuration: 1

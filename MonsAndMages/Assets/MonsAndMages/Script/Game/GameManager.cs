@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     //
 
+    private bool m_battle;
+
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private TweenConfig m_tweenConfig;
     [SerializeField] private Transform m_playerContent;
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     private int m_playerIndex = 0;
     private bool m_playerChoice = false;
+
+    public bool Battle => m_battle;
 
     public CardConfig CardConfig => m_cardConfig;
 
@@ -59,6 +63,7 @@ public class GameManager : MonoBehaviour
         {
             GameEvent.WildCardFill(() =>
             {
+                m_battle = true;
                 PlayerCurrentStart();
             });
         });
@@ -129,7 +134,7 @@ public class GameManager : MonoBehaviour
         Player.DoChoice(() =>
         {
             m_playerChoice = true;
-            GameEvent.ViewUiShow(ViewType.Field);
+            GameEvent.ViewUiShow(ViewType.Field, true);
         });
     } //Choice Event
 

@@ -31,8 +31,7 @@ public class GameEvent
     //View
 
     public static Action<ViewType, Action> onView { get; set; }
-    public static Action onViewUIHide { get; set; }
-    public static Action<ViewType> onViewUIShow { get; set; }
+    public static Action<ViewType, bool> onViewUI { get; set; }
     public static Action<IPlayer, Action> onViewPlayer { get; set; }
     public static Action<InfoType, bool> onViewInfo { get; set; }
 
@@ -41,14 +40,9 @@ public class GameEvent
         onView?.Invoke(Type, OnComplete);
     }
 
-    public static void ViewUiHide()
+    public static void ViewUiShow(ViewType Type, bool Show)
     {
-        onViewUIHide?.Invoke();
-    }
-
-    public static void ViewUiShow(ViewType Type)
-    {
-        onViewUIShow?.Invoke(Type);
+        onViewUI?.Invoke(Type, Show);
     }
 
     public static void ViewPlayer(IPlayer Player, Action OnComplete)

@@ -57,27 +57,28 @@ public class GameView : MonoBehaviour
         var MoveYDuration = GameManager.instance.TweenConfig.GameView.MoveYDuration;
         var MoveYEase = GameManager.instance.TweenConfig.GameView.MoveYEase;
 
-        GameEvent.ViewUiHide();
         switch (Type)
         {
             case ViewType.Field:
+                GameEvent.ViewUiShow(ViewType.Field, false);
                 m_gameContent
                     .DOLocalMoveY(0f, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ViewUiShow(ViewType.Field);
+                        GameEvent.ViewUiShow(ViewType.Field, true);
                         m_viewChange = false;
                         OnComplete?.Invoke();
                     });
                 break;
             case ViewType.Wild:
+                GameEvent.ViewUiShow(ViewType.Wild, false);
                 m_gameContent
                     .DOLocalMoveY(-m_gameContent.sizeDelta.y, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ViewUiShow(ViewType.Wild);
+                        GameEvent.ViewUiShow(ViewType.Wild, true);
                         m_viewChange = false;
                         OnComplete?.Invoke();
                     });
