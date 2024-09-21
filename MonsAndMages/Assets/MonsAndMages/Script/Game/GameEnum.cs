@@ -59,5 +59,6 @@ public enum ViewType
 
 public enum InfoType
 {
-    CardCollect,
+    Collect,
+    Mediate,
 }

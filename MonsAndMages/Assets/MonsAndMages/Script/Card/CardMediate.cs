@@ -25,7 +25,8 @@ public class CardMediate : MonoBehaviour
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
         m_outline = m_renderer.GetComponent<Outline>();
-        m_tmpRuneStone = transform.Find("rune-stone-show").GetComponentInChildren<TextMeshProUGUI>();
+        m_runeStoneBox = transform.Find("rune-stone-box");
+        m_tmpRuneStone = m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     public void Start()

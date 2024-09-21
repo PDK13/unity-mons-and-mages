@@ -55,27 +55,30 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+            m_tmpRuneStone.text = RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
             m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
+        GameEvent.PlayerRuneStoneChange(this, 0, null);
     }
 
     private void InfoStunUpdate(Action OnComplete)
     {
         m_stunBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_tmpStun.text = GameManager.instance.PlayerCurrent.StunCurrent.ToString();
+            m_tmpStun.text = StunCurrent.ToString();
             m_stunBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
+        GameEvent.PlayerStunnedChange(this, 0, null);
     }
 
     private void InfoHealthUpdate(Action OnComplete)
     {
         m_healthBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_tmpHealth.text = GameManager.instance.PlayerCurrent.HealthCurrent.ToString();
+            m_tmpHealth.text = HealthCurrent.ToString();
             m_healthBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
+        GameEvent.PlayerHealthChange(this, 0, null);
     }
 
     private void InfoMediationUpdate(int Index, Action OnComplete)
@@ -122,6 +125,8 @@ public class PlayerController : MonoBehaviour, IPlayer
         InfoRuneStoneUpdate(null);
         InfoStunUpdate(null);
         InfoHealthUpdate(null);
+        InfoMediationUpdate(0, null);
+        InfoMediationUpdate(1, null);
 
         for (int i = 0; i < m_cardContent.childCount; i++)
             m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
@@ -139,6 +144,14 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
     {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+
+        m_data.RuneStone += Value;
+
         var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
         var RuneStoneFx = RuneStone.Find("fx-glow");
         var RuneStoneIcon = RuneStone.Find("icon");
@@ -156,59 +169,57 @@ public class PlayerController : MonoBehaviour, IPlayer
         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
         RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
-            Destroy(RuneStone.gameObject, 0.2f);
-            OnComplete?.Invoke();
+            InfoRuneStoneUpdate(() =>
+            {
+                Destroy(RuneStone.gameObject, 0.2f);
+                OnComplete?.Invoke();
+            });
         }).SetDelay(0.25f));
         RuneStoneIconTween.Play();
     }
 
     public void DoTakeRuneStoneFromMediation(Action OnComplete)
     {
-        var EventInvoke = false;
-        var RuneStoneSum = 0;
+        var RuneStoneTake = false;
         for (int i = 0; i < m_data.Mediation.Length; i++)
         {
             if (m_data.Mediation[i] > 0)
             {
+                RuneStoneTake = true;
+
                 m_data.Mediation[i] -= 2;
+                m_data.RuneStone += 2;
 
-                if (!EventInvoke)
+                InfoMediationUpdate(i, () =>
                 {
-                    EventInvoke = true;
-                    m_cardMediation[i].EffectAlpha(() =>
+                    var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
+                    var RuneStoneFx = RuneStone.Find("fx-glow");
+                    var RuneStoneIcon = RuneStone.Find("icon");
+                    var RuneStoneIconScale = RuneStoneIcon.localScale;
+
+                    RuneStone.gameObject.SetActive(true);
+
+                    RuneStoneFx
+                        .DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360)
+                        .SetEase(Ease.Linear)
+                        .SetLoops(-1, LoopType.Restart);
+
+                    Sequence RuneStoneIconTween = DOTween.Sequence();
+                    RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
+                    RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
+                    RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
                     {
-                        var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
-                        var RuneStoneFx = RuneStone.Find("fx-glow");
-                        var RuneStoneIcon = RuneStone.Find("icon");
-                        var RuneStoneIconScale = RuneStoneIcon.localScale;
-
-                        RuneStone.gameObject.SetActive(true);
-
-                        RuneStoneFx
-                            .DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360)
-                            .SetEase(Ease.Linear)
-                            .SetLoops(-1, LoopType.Restart);
-
-                        Sequence RuneStoneIconTween = DOTween.Sequence();
-                        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
-                        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
-                        RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+                        InfoRuneStoneUpdate(() =>
                         {
-                            m_runeStoneBox.GetComponentInChildren<TextMeshProUGUI>().text = this.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
                             Destroy(RuneStone.gameObject, 0.2f);
                             OnComplete?.Invoke();
-                        }).SetDelay(0.25f));
-                        RuneStoneIconTween.Play();
-                    });
-                }
-                else
-                    m_cardMediation[i].EffectAlpha(null);
-
-                RuneStoneSum += 2;
+                        });
+                    }).SetDelay(0.25f));
+                    RuneStoneIconTween.Play();
+                });
             }
         }
-        if (!EventInvoke)
+        if (!RuneStoneTake)
             OnComplete?.Invoke();
     }
 
@@ -231,19 +242,23 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
         m_choice = false;
-        if (m_data.Mediation[0] == 0)
+        m_data.RuneStone -= RuneStoneAdd;
+        InfoRuneStoneUpdate(() =>
         {
-            m_data.Mediation[0] = RuneStoneAdd * 2;
-            InfoMediationUpdate(0, () => OnComplete?.Invoke());
-        }
-        else
-        if (m_data.Mediation[1] == 0)
-        {
-            m_data.Mediation[1] = RuneStoneAdd * 2;
-            InfoMediationUpdate(1, () => OnComplete?.Invoke());
-        }
-        else
-            OnComplete?.Invoke();
+            if (m_data.Mediation[0] == 0)
+            {
+                m_data.Mediation[0] = RuneStoneAdd * 2;
+                InfoMediationUpdate(0, () => OnComplete?.Invoke());
+            }
+            else
+            if (m_data.Mediation[1] == 0)
+            {
+                m_data.Mediation[1] = RuneStoneAdd * 2;
+                InfoMediationUpdate(1, () => OnComplete?.Invoke());
+            }
+            else
+                OnComplete?.Invoke();
+        });
     }
 
     public Transform DoCollectReady()
@@ -352,7 +367,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         m_data.RuneStone += Value;
         InfoRuneStoneUpdate(() => OnComplete?.Invoke());
-        GameEvent.PlayerRuneStoneChange(this, Value, null);
     }
 
     public void StunChange(int Value, Action OnComplete)
@@ -365,7 +379,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_data.StunCurrent += Value;
         m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
         InfoStunUpdate(() => OnComplete?.Invoke());
-        GameEvent.PlayerStunnedChange(this, Value, null);
     }
 
     public void HealthChange(int Value, Action OnComplete)
@@ -377,6 +390,5 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         m_data.HealthCurrent += Value;
         InfoHealthUpdate(() => OnComplete?.Invoke());
-        GameEvent.PlayerHealthChange(this, Value, null);
     }
 }

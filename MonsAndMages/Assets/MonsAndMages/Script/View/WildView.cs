@@ -107,6 +107,8 @@ public class WildView : MonoBehaviour
         if (m_wildFillFirstTime)
             yield return new WaitForSeconds(2f);
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
+
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
             var CardPoint = m_cardContent.GetChild(i);
@@ -118,7 +120,7 @@ public class WildView : MonoBehaviour
             if (m_cardDeck.childCount == 0)
                 break;
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(MoveDuration);
         }
         if (m_wildFillFirstTime)
             yield return new WaitForSeconds(2f);

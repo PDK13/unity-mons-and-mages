@@ -47,7 +47,7 @@ public class CardStage : MonoBehaviour, ICard
 
         GameEvent.ButtonInteractable(false);
         GameEvent.CardTap(this, null);
-        GameEvent.ViewInfo(InfoType.CardCollect, true);
+        GameEvent.ViewInfo(InfoType.Collect, true);
         MoveTop(() => GameEvent.ButtonInteractable(true));
     }
 
