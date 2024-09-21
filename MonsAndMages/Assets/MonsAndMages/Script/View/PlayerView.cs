@@ -343,10 +343,19 @@ public class PlayerView : MonoBehaviour
                 m_tmpExplainClass.gameObject.SetActive(false);
                 break;
             case InfoType.Collect:
-                var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
-                m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
-                m_btnInfoAccept.SetActive(Show);
-                m_tmpInfoAcceptWarn.SetActive(Show && !CollectAvaible);
+                if (Show && m_cardView != null)
+                {
+                    var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+                    m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
+                    m_btnInfoAccept.SetActive(Show);
+                    m_tmpInfoAcceptWarn.SetActive(Show && !CollectAvaible);
+                }
+                else
+                {
+                    m_infoMask.gameObject.SetActive(false);
+                    m_btnInfoAccept.SetActive(false);
+                    m_tmpInfoAcceptWarn.SetActive(false);
+                }
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(false);
                 if (Show && m_cardView != null)
