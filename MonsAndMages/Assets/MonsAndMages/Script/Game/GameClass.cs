@@ -43,20 +43,26 @@ public class CardData
     public CardNameType Name;
     public CardOriginType Origin;
     public CardClassType Class;
+    public Sprite Image;
+
+    [Space]
     [Min(0)] public int RuneStoneCost;
-    [Min(0)] public int ManaPoint;
-    [Min(0)] public int ManaCurrent;
+    [Min(0)] public int RuneStoneTake; //When Wand move to card, get Rune Stone
+
+    [Space]
+    [Min(0)] public int EnergyPoint;
+    [Min(0)] public int EnergyCurrent;
+
+    [Space]
     [Min(0)] public int AttackPoint;
     [Min(0)] public int GrowCurrent;
-    [Min(0)] public int RuneStoneTake; //When Wand move to card, get Rune Stone
-    public Sprite Image;
 
     public IPlayer Player;
     public ICard Card;
 
     public int AttackCombine => AttackPoint + GrowCurrent;
 
-    public bool ManaFull => ManaCurrent >= ManaPoint;
+    public bool ManaFull => EnergyCurrent >= EnergyPoint;
 }
 
 [Serializable]

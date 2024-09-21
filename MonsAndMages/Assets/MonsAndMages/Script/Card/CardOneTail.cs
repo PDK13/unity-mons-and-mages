@@ -1,24 +1,12 @@
 using System;
+using UnityEngine;
 
-public class CardOneTail : CardController
+public class CardOneTail : MonoBehaviour
 {
-    public override void DoOriginActive(Action OnComplete)
+    private CardController m_controller;
+
+    private void Awake()
     {
-        EffectAlpha(() => Rumble(() => OnComplete?.Invoke()));
-    }
-
-    public override void DoEnterActive() { }
-
-    public override void DoPassiveActive() { }
-
-
-    public override void DoClassActive(Action OnComplete)
-    {
-        Rumble(() => OnComplete?.Invoke());
-    }
-
-    public override void DoSpellActive(Action OnComplete)
-    {
-        Rumble(() => OnComplete?.Invoke());
+        m_controller = GetComponent<CardController>();
     }
 }

@@ -6,6 +6,12 @@ using UnityEngine.UI;
 
 public class CardController : MonoBehaviour, ICard
 {
+    public Action<Action> onOriginActive;
+    public Action<Action> onEnterActive;
+    public Action<Action> onPassiveActive;
+    public Action<Action> onClassActive;
+    public Action<Action> onSpellActive;
+
     private CardData m_data;
 
     private Button m_button;
@@ -13,7 +19,7 @@ public class CardController : MonoBehaviour, ICard
     private GameObject m_renderer;
     private GameObject m_rendererAlpha;
     private TextMeshProUGUI m_tmpGrow;
-    private TextMeshProUGUI m_tmpMana;
+    private TextMeshProUGUI m_tmpEnergy;
     private TextMeshProUGUI m_tmpDamage;
     private Outline m_outline;
 
@@ -35,7 +41,7 @@ public class CardController : MonoBehaviour, ICard
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
         m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
-        m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
+        m_tmpEnergy = transform.Find("tmp-energy").GetComponent<TextMeshProUGUI>();
         m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
         m_outline = m_renderer.GetComponent<Outline>();
     }
@@ -71,11 +77,11 @@ public class CardController : MonoBehaviour, ICard
 
     public int RuneStoneCost => m_data.RuneStoneCost;
 
-    public int Energy => m_data.ManaPoint;
+    public int EnergyPoint => m_data.EnergyPoint;
 
-    public int EnergyCurrent => m_data.ManaCurrent;
+    public int EnergyCurrent => m_data.EnergyCurrent;
 
-    public bool EnergyFull => m_data.ManaCurrent >= m_data.ManaPoint;
+    public bool EnergyFull => m_data.EnergyPoint > 0 && m_data.EnergyCurrent >= m_data.EnergyPoint;
 
     public int Attack => m_data.AttackPoint;
 
@@ -101,7 +107,7 @@ public class CardController : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
         InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.ManaCurrent, m_data.ManaPoint);
+        InfoManaUpdate(m_data.EnergyCurrent, m_data.EnergyPoint);
         InfoDamageUpdate(m_data.AttackCombine);
 
         m_avaible = false;
@@ -249,9 +255,9 @@ public class CardController : MonoBehaviour, ICard
 
         m_rumble = true;
         Renderer.maskable = false;
-        transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
+        Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
-            transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete(() =>
+            Renderer.transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 GameEvent.CardRumble(this, () =>
                 {
@@ -299,7 +305,7 @@ public class CardController : MonoBehaviour, ICard
     public void InfoShow(bool Show)
     {
         m_tmpGrow.gameObject.SetActive(Show);
-        m_tmpMana.gameObject.SetActive(Show);
+        m_tmpEnergy.gameObject.SetActive(Show);
         m_tmpDamage.gameObject.SetActive(Show);
     }
 
@@ -310,7 +316,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void InfoManaUpdate(int Value, int Max, bool Effect = false)
     {
-        m_tmpMana.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_MANA;
+        m_tmpEnergy.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_ENERGY;
     }
 
     public void InfoDamageUpdate(int Value, bool Effect = false)
@@ -347,14 +353,22 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoEnergyFill(int Value, Action OnComplete)
     {
-        m_data.ManaCurrent += Value;
-        EffectOutlineEnergy(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+        m_data.EnergyCurrent += Value;
+        m_tmpEnergy.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        {
+            var EnergyText = string.Format("{0}/{1}{2}", EnergyCurrent, EnergyPoint, GameConstant.TMP_ICON_ENERGY);
+            m_tmpEnergy.text = EnergyText;
+            m_tmpEnergy.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            {
+                EffectOutlineEnergy(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+            });
+        });
     }
 
 
     public void DoEnergyActive(Action OnComplete)
     {
-        m_data.ManaCurrent = 0;
+        m_data.EnergyCurrent = 0;
         Rumble(() => OnComplete?.Invoke());
     }
 

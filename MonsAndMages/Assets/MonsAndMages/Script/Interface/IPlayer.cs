@@ -58,7 +58,7 @@ public interface IPlayer
     void DoWandActive(Action OnComplete); //Active Card at Wand after moved if not stunned
 
 
-    void CardEnergyActiveDoChoice(Action OnComplete); //Start choice Card full Energy to active
+    void CardEnergyActiveDoChoice(Action OnComplete); //Start choice Card full EnergyPoint to active
 
 
     void DoEnd(Action OnComplete);

@@ -12,7 +12,7 @@ public interface ICard
 
     int RuneStoneCost { get; } //Giá tiền mua bài
 
-    int Energy { get; } //Năng lượng
+    int EnergyPoint { get; } //Năng lượng
 
     int EnergyCurrent { get; } //Năng lượng hiện tại
 

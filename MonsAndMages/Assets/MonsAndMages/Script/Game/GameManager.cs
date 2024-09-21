@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
     private void CardEnergyFill(ICard Card)
     {
         Card.DoEnergyFill(1, () => CardEnergyCheck(Card.Player));
-    } //Energy Event
+    } //EnergyPoint Event
 
     private void CardEnergyCheck(IPlayer Player)
     {

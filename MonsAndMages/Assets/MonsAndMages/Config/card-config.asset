@@ -18,109 +18,109 @@ MonoBehaviour:
     Name: 2
     Origin: 2
     Class: 3
+    Image: {fileID: 21300000, guid: e308d5d1238d6fe40ae867e5a188d269, type: 3}
     RuneStoneCost: 5
-    ManaPoint: 3
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 3
+    EnergyCurrent: 0
     AttackPoint: 2
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: e308d5d1238d6fe40ae867e5a188d269, type: 3}
   - Named: Duchess
     Name: 3
     Origin: 1
     Class: 6
+    Image: {fileID: 21300000, guid: 603b8148d241e214091ac8293f61b354, type: 3}
     RuneStoneCost: 3
-    ManaPoint: 2
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 2
+    EnergyCurrent: 0
     AttackPoint: 1
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: 603b8148d241e214091ac8293f61b354, type: 3}
   - Named: Dragon Egg
     Name: 4
     Origin: 1
     Class: 0
+    Image: {fileID: 21300000, guid: e8db983cdf512c04ca947e840b786e9c, type: 3}
     RuneStoneCost: 5
-    ManaPoint: 3
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 3
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: e8db983cdf512c04ca947e840b786e9c, type: 3}
   - Named: Eversor
     Name: 5
     Origin: 1
     Class: 1
+    Image: {fileID: 21300000, guid: cbfe947cfb012d74893b5c41fec73365, type: 3}
     RuneStoneCost: 6
-    ManaPoint: 3
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 3
+    EnergyCurrent: 0
     AttackPoint: 3
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: cbfe947cfb012d74893b5c41fec73365, type: 3}
   - Named: Flow of the Essentinal
     Name: 6
     Origin: 1
     Class: 5
+    Image: {fileID: 21300000, guid: cb88c35353627044897419c3c291139d, type: 3}
     RuneStoneCost: 4
-    ManaPoint: 2
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 2
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: cb88c35353627044897419c3c291139d, type: 3}
   - Named: Forestwing
     Name: 7
     Origin: 2
     Class: 6
+    Image: {fileID: 21300000, guid: 1694e0bd42c29b946900eed6a8e4d79e, type: 3}
     RuneStoneCost: 4
-    ManaPoint: 2
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 2
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: 1694e0bd42c29b946900eed6a8e4d79e, type: 3}
   - Named: Pixie's Grove
     Name: 8
     Origin: 2
     Class: 0
+    Image: {fileID: 21300000, guid: dca5cd6a76676d74b871f43c1f2d2749, type: 3}
     RuneStoneCost: 4
-    ManaPoint: 0
-    ManaCurrent: 0
+    RuneStoneTake: 1
+    EnergyPoint: 0
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 1
-    Image: {fileID: 21300000, guid: dca5cd6a76676d74b871f43c1f2d2749, type: 3}
   - Named: One Tail
     Name: 9
     Origin: 2
     Class: 2
+    Image: {fileID: 21300000, guid: 165e9ece6594b9046b785a104043d0b3, type: 3}
     RuneStoneCost: 5
-    ManaPoint: 3
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 3
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: 165e9ece6594b9046b785a104043d0b3, type: 3}
   - Named: Pott
     Name: 10
     Origin: 6
     Class: 0
+    Image: {fileID: 21300000, guid: b073d87d07d93fa4dbd0fbe12ac4be39, type: 3}
     RuneStoneCost: 3
-    ManaPoint: 2
-    ManaCurrent: 0
+    RuneStoneTake: 0
+    EnergyPoint: 2
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 0
-    Image: {fileID: 21300000, guid: b073d87d07d93fa4dbd0fbe12ac4be39, type: 3}
   - Named: Umbella
     Name: 11
     Origin: 2
     Class: 0
+    Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}
     RuneStoneCost: 3
-    ManaPoint: 2
-    ManaCurrent: 0
+    RuneStoneTake: 1
+    EnergyPoint: 2
+    EnergyCurrent: 0
     AttackPoint: 0
     GrowCurrent: 0
-    RuneStoneTake: 1
-    Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}

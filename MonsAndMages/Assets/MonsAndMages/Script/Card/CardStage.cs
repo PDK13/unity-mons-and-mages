@@ -61,7 +61,7 @@ public class CardStage : MonoBehaviour, ICard
 
     public int RuneStoneCost => 0;
 
-    public int Energy => 0;
+    public int EnergyPoint => 0;
 
     public int EnergyCurrent => 0;
 
@@ -91,7 +91,7 @@ public class CardStage : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
         InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.ManaCurrent, m_data.ManaPoint);
+        InfoManaUpdate(m_data.EnergyCurrent, m_data.EnergyPoint);
         InfoDamageUpdate(m_data.AttackCombine);
 
         m_avaible = false;

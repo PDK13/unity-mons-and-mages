@@ -390,6 +390,7 @@ public class PlayerView : MonoBehaviour
                     Card.Rumble(() =>
                     {
                         Card.Renderer.maskable = true;
+                        Card.InfoShow(true);
                         OnComplete?.Invoke();
                     });
                 });
@@ -440,7 +441,7 @@ public class PlayerView : MonoBehaviour
         var PlayerStunTmp = PlayerStun.Find("tmp-stun").GetComponent<TextMeshProUGUI>();
         PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
         {
-            PlayerStunTmp.text = Player.HealthCurrent.ToString();
+            PlayerStunTmp.text = Player.StunCurrent.ToString();
             PlayerStun.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() =>
             {
                 OnComplete?.Invoke();
