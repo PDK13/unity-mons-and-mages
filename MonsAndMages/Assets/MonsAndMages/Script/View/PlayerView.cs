@@ -151,6 +151,7 @@ public class PlayerView : MonoBehaviour
                 GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
                 m_cardView = null;
                 GameEvent.ViewUiShow(ViewType.Wild, false);
+                m_runeStoneBox.gameObject.SetActive(true);
                 GameEvent.ViewInfo(InfoType.Collect, false);
                 break;
         }
@@ -317,6 +318,7 @@ public class PlayerView : MonoBehaviour
         switch (Type)
         {
             case InfoType.Mediate:
+                m_btnInfoAccept.GetComponent<Button>().interactable = true;
                 m_btnInfoAccept.SetActive(false);
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(Show);
