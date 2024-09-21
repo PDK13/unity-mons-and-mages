@@ -51,18 +51,14 @@ public class CardData
 
     [Space]
     [Min(0)] public int ManaPoint;
-    [Min(0)] public int Mana;
+    [Min(0)] public int ManaStart;
 
     [Space]
     [Min(0)] public int AttackPoint;
-    [Min(0)] public int GrowCurrent;
+    [Min(0)] public int GrowthStart;
 
     public IPlayer Player;
     public ICard Card;
-
-    public int AttackCombine => AttackPoint + GrowCurrent;
-
-    public bool ManaFull => Mana >= ManaPoint;
 }
 
 [Serializable]

@@ -20,7 +20,7 @@ public interface ICard
 
     int Attack { get; } //Sát thương cơ bản
 
-    int Grow { get; } //Sức mạnh tăng trưởng
+    int Growth { get; } //Sức mạnh tăng trưởng
 
     int AttackCombine { get; } //Tổng sát thương khi tấn công thường
 
@@ -62,12 +62,6 @@ public interface ICard
 
 
     void InfoShow(bool Show);
-
-    void InfoGrowUpdate(int Value, bool Effect = false);
-
-    void InfoManaUpdate(int Value, int Max, bool Effect = false);
-
-    void InfoDamageUpdate(int Value, bool Effect = false);
 
 
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân

@@ -18,7 +18,7 @@ public class CardController : MonoBehaviour, ICard
     private GameObject m_mask;
     private GameObject m_renderer;
     private GameObject m_rendererAlpha;
-    private TextMeshProUGUI m_tmpGrow;
+    private TextMeshProUGUI m_tmpGrowth;
     private TextMeshProUGUI m_tmpMana;
     private TextMeshProUGUI m_tmpDamage;
     private Outline m_outline;
@@ -40,7 +40,7 @@ public class CardController : MonoBehaviour, ICard
         m_mask = transform.Find("mask").gameObject;
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
-        m_tmpGrow = transform.Find("tmp-grow").GetComponent<TextMeshProUGUI>();
+        m_tmpGrowth = transform.Find("tmp-growth").GetComponent<TextMeshProUGUI>();
         m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
         m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
         m_outline = m_renderer.GetComponent<Outline>();
@@ -77,17 +77,19 @@ public class CardController : MonoBehaviour, ICard
 
     public int RuneStoneCost => m_data.RuneStoneCost;
 
+    public int RuneStoneTake { get; private set; }
+
     public int ManaPoint => m_data.ManaPoint;
 
-    public int Mana => m_data.Mana;
+    public int Mana { get; private set; }
 
-    public bool ManaFull => m_data.ManaPoint > 0 && m_data.Mana >= m_data.ManaPoint;
+    public bool ManaFull => m_data.ManaPoint > 0 && Mana >= m_data.ManaPoint;
 
     public int Attack => m_data.AttackPoint;
 
-    public int Grow => m_data.GrowCurrent;
+    public int Growth { get; private set; }
 
-    public int AttackCombine => m_data.AttackCombine;
+    public int AttackCombine => m_data.AttackPoint + Growth;
 
     public IPlayer Player => m_data.Player;
 
@@ -99,6 +101,9 @@ public class CardController : MonoBehaviour, ICard
     public void Init(CardData Data)
     {
         m_data = Data;
+        RuneStoneTake = m_data.RuneStoneTake;
+        Mana = m_data.ManaStart;
+        Growth = m_data.GrowthStart;
 
         m_mask.SetActive(true);
         m_renderer.SetActive(false);
@@ -106,9 +111,9 @@ public class CardController : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<Image>().sprite = m_data.Image;
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
-        InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.Mana, m_data.ManaPoint);
-        InfoDamageUpdate(m_data.AttackCombine);
+        InfoDamageUpdate(AttackCombine);
+        InfoManaUpdate(Mana, m_data.ManaPoint);
+        InfoGrowUpdate(Growth);
 
         m_avaible = false;
     }
@@ -304,14 +309,14 @@ public class CardController : MonoBehaviour, ICard
 
     public void InfoShow(bool Show)
     {
-        m_tmpGrow.gameObject.SetActive(Show);
+        m_tmpGrowth.gameObject.SetActive(Show);
         m_tmpMana.gameObject.SetActive(Show);
         m_tmpDamage.gameObject.SetActive(Show);
     }
 
     public void InfoGrowUpdate(int Value, bool Effect = false)
     {
-        m_tmpGrow.text = Value.ToString() + GameConstant.TMP_ICON_GROW;
+        m_tmpGrowth.text = Value.ToString() + GameConstant.TMP_ICON_GROW;
     }
 
     public void InfoManaUpdate(int Value, int Max, bool Effect = false)
@@ -353,7 +358,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoManaFill(int Value, Action OnComplete)
     {
-        m_data.Mana += Value;
+        m_data.ManaStart += Value;
         m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
             var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
@@ -368,7 +373,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoManaActive(Action OnComplete)
     {
-        m_data.Mana = 0;
+        m_data.ManaStart = 0;
         Rumble(() => OnComplete?.Invoke());
     }
 

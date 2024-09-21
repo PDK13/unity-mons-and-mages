@@ -69,7 +69,7 @@ public class CardStage : MonoBehaviour, ICard
 
     public int Attack => 0;
 
-    public int Grow => 0;
+    public int Growth => 0;
 
     public int AttackCombine => 0;
 
@@ -90,9 +90,6 @@ public class CardStage : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<Image>().sprite = m_data.Image;
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
-        InfoGrowUpdate(m_data.GrowCurrent);
-        InfoManaUpdate(m_data.Mana, m_data.ManaPoint);
-        InfoDamageUpdate(m_data.AttackCombine);
 
         m_avaible = false;
     }
@@ -287,12 +284,6 @@ public class CardStage : MonoBehaviour, ICard
 
 
     public void InfoShow(bool Show) { }
-
-    public void InfoGrowUpdate(int Value, bool Effect = false) { }
-
-    public void InfoManaUpdate(int Value, int Max, bool Effect = false) { }
-
-    public void InfoDamageUpdate(int Value, bool Effect = false) { }
 
     //
 
