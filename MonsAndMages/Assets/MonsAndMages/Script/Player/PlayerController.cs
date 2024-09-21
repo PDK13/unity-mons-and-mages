@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_data = Data;
         m_data.Player = this;
 
-        m_playerName.text = "P" + Index.ToString();
+        m_playerName.text = "P" + (Index + 1).ToString();
 
         InfoRuneStoneUpdate(null);
         InfoStunUpdate(null);

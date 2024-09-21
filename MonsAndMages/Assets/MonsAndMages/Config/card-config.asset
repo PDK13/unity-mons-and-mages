@@ -22,9 +22,9 @@ MonoBehaviour:
     RuneStoneCost: 5
     RuneStoneTake: 0
     ManaPoint: 3
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 2
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Duchess
     Name: 3
     Origin: 1
@@ -33,9 +33,9 @@ MonoBehaviour:
     RuneStoneCost: 3
     RuneStoneTake: 0
     ManaPoint: 2
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 1
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Dragon Egg
     Name: 4
     Origin: 1
@@ -44,9 +44,9 @@ MonoBehaviour:
     RuneStoneCost: 5
     RuneStoneTake: 0
     ManaPoint: 3
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Eversor
     Name: 5
     Origin: 1
@@ -55,9 +55,9 @@ MonoBehaviour:
     RuneStoneCost: 6
     RuneStoneTake: 0
     ManaPoint: 3
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 3
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Flow of the Essentinal
     Name: 6
     Origin: 1
@@ -66,9 +66,9 @@ MonoBehaviour:
     RuneStoneCost: 4
     RuneStoneTake: 0
     ManaPoint: 2
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Forestwing
     Name: 7
     Origin: 2
@@ -77,9 +77,9 @@ MonoBehaviour:
     RuneStoneCost: 4
     RuneStoneTake: 0
     ManaPoint: 2
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Pixie's Grove
     Name: 8
     Origin: 2
@@ -88,9 +88,9 @@ MonoBehaviour:
     RuneStoneCost: 4
     RuneStoneTake: 1
     ManaPoint: 0
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: One Tail
     Name: 9
     Origin: 2
@@ -99,9 +99,9 @@ MonoBehaviour:
     RuneStoneCost: 5
     RuneStoneTake: 0
     ManaPoint: 3
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Pott
     Name: 10
     Origin: 6
@@ -110,9 +110,9 @@ MonoBehaviour:
     RuneStoneCost: 3
     RuneStoneTake: 0
     ManaPoint: 2
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0
   - Named: Umbella
     Name: 11
     Origin: 2
@@ -121,6 +121,6 @@ MonoBehaviour:
     RuneStoneCost: 3
     RuneStoneTake: 1
     ManaPoint: 2
-    Mana: 0
+    ManaStart: 0
     AttackPoint: 0
-    GrowCurrent: 0
+    GrowthStart: 0

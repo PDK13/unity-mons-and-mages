@@ -111,9 +111,9 @@ public class CardController : MonoBehaviour, ICard
         m_rendererAlpha.GetComponent<Image>().sprite = m_data.Image;
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
         InfoShow(false);
-        InfoDamageUpdate(AttackCombine);
-        InfoManaUpdate(Mana, m_data.ManaPoint);
-        InfoGrowUpdate(Growth);
+        InfoDamageUpdate(AttackCombine, null);
+        InfoManaUpdate(Mana, m_data.ManaPoint, null);
+        InfoGrowUpdate(Growth, null);
 
         m_avaible = false;
     }
@@ -314,19 +314,43 @@ public class CardController : MonoBehaviour, ICard
         m_tmpDamage.gameObject.SetActive(Show);
     }
 
-    public void InfoGrowUpdate(int Value, bool Effect = false)
+    private void InfoGrowUpdate(int Value, Action OnComplete)
     {
-        m_tmpGrowth.text = Value.ToString() + GameConstant.TMP_ICON_GROW;
+        m_tmpGrowth.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        {
+            var ManaText = Value.ToString() + GameConstant.TMP_ICON_GROW;
+            m_tmpGrowth.text = ManaText;
+            m_tmpGrowth.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            {
+                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+            });
+        });
     }
 
-    public void InfoManaUpdate(int Value, int Max, bool Effect = false)
+    private void InfoManaUpdate(int Value, int Max, Action OnComplete)
     {
-        m_tmpMana.text = Value.ToString() + "/" + Max.ToString() + GameConstant.TMP_ICON_Mana;
+        m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        {
+            var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
+            m_tmpMana.text = ManaText;
+            m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            {
+                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+            });
+        });
     }
 
-    public void InfoDamageUpdate(int Value, bool Effect = false)
+    private void InfoDamageUpdate(int Value, Action OnComplete)
     {
-        m_tmpDamage.text = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
+        m_tmpDamage.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        {
+            var ManaText = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
+            m_tmpDamage.text = ManaText;
+            m_tmpDamage.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            {
+                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+            });
+        });
     }
 
 
@@ -358,23 +382,15 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoManaFill(int Value, Action OnComplete)
     {
-        m_data.ManaStart += Value;
-        m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
-        {
-            var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
-            m_tmpMana.text = ManaText;
-            m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
-            {
-                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
-            });
-        });
+        Mana += Value;
+        InfoManaUpdate(Mana, ManaPoint, () => OnComplete?.Invoke());
     }
 
 
     public void DoManaActive(Action OnComplete)
     {
-        m_data.ManaStart = 0;
-        Rumble(() => OnComplete?.Invoke());
+        Mana = 0;
+        InfoManaUpdate(Mana, ManaPoint, () => Rumble(() => OnComplete?.Invoke()));
     }
 
     public virtual void DoClassActive(Action OnComplete)
