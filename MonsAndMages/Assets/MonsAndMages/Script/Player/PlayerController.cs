@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     [Space]
     [SerializeField] private RectTransform m_wand;
+    [SerializeField] private RectTransform m_wandMoveTo;
 
     private bool m_choice = false;
     private bool m_turn = false;
@@ -293,6 +295,12 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoWandNext(Action OnComplete)
     {
+        //Update Wand Parent to Last
+        m_wand.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
+        m_wandMoveTo.SetParent(m_wand.parent);
+        m_wandMoveTo.position = m_wand.position;
+
+        //Start Move Wand to Point
         var WandIndexLast = m_data.WandStep;
         var WandIndexNext = m_data.WandStepNext;
 
@@ -301,9 +309,9 @@ public class PlayerController : MonoBehaviour, IPlayer
         var PointLast = m_cardContent.GetChild(WandIndexLast);
         var PointNext = m_cardContent.GetChild(WandIndexNext);
 
-        m_wand.SetParent(PointNext, this.transform);
+        m_wandMoveTo.position = PointNext.position;
         m_wand
-            .DOLocalJump(Vector3.zero, 45f, 1, 1f)
+            .DOLocalJump(m_wandMoveTo.localPosition, 45f, 1, 1f)
             .SetEase(Ease.InCubic)
             .OnComplete(() => OnComplete?.Invoke());
     }

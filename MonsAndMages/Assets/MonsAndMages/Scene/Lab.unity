@@ -3875,7 +3875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &985802692
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5647,7 +5647,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1522470581
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6478,7 +6478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1901593817
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7302,17 +7302,9 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5092339152456079588, guid: 0ae3b0b21994c5048b20c722d0559f3b, type: 3}
-      propertyPath: m_Name
-      value: rune-stone-box
-      objectReference: {fileID: 0}
     - target: {fileID: 6752872254512405823, guid: 0ae3b0b21994c5048b20c722d0559f3b, type: 3}
       propertyPath: m_Name
       value: player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8162259139916042989, guid: 0ae3b0b21994c5048b20c722d0559f3b, type: 3}
-      propertyPath: m_Name
-      value: rune-stone-box
       objectReference: {fileID: 0}
     - target: {fileID: 8251891717430459947, guid: 0ae3b0b21994c5048b20c722d0559f3b, type: 3}
       propertyPath: m_SizeDelta.x
