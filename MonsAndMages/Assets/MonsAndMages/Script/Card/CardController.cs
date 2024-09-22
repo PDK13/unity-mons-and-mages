@@ -1,15 +1,15 @@
 using DG.Tweening;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardController : MonoBehaviour, ICard
 {
-    public Action<Action> onOriginActive;
     public Action<Action> onEnterActive;
     public Action<Action> onPassiveActive;
-    public Action<Action> onClassActive;
+
     public Action<Action> onSpellActive;
 
     private CardData m_data;
@@ -55,35 +55,28 @@ public class CardController : MonoBehaviour, ICard
 
     public void BtnTap()
     {
-        if (!GameManager.instance.PlayerChoice)
+        if (!Avaible)
             return;
 
-        if (Player == null)
+        switch (GameManager.instance.PlayerChoice)
         {
-            if (!Avaible)
-                return;
-
-            GameEvent.ButtonInteractable(false);
-            GameEvent.CardTap(this, null);
-            GameEvent.ViewInfo(InfoType.Collect, true);
-            MoveTop(() => GameEvent.ButtonInteractable(true));
+            case ChoiceType.Main:
+                if (Player != null)
+                    return;
+                GameEvent.ButtonInteractable(false);
+                GameEvent.CardTap(this, null);
+                GameEvent.ViewInfo(InfoType.Collect, true);
+                MoveTop(() => GameEvent.ButtonInteractable(true));
+                break;
+            case ChoiceType.CardFullMana:
+                if (Player != GameManager.instance.PlayerCurrent && ManaFull)
+                    return;
+                GameEvent.ButtonInteractable(false);
+                GameEvent.CardTap(this, null);
+                GameEvent.ViewInfo(InfoType.CardFullMana, true);
+                MoveTop(() => GameEvent.ButtonInteractable(true));
+                break;
         }
-        else
-        if (Player == GameManager.instance.PlayerCurrent && ManaFull)
-        {
-            DoManaActive(() =>
-            {
-                DoClassActive(() =>
-                {
-                    DoSpellActive(() =>
-                    {
-                        GameManager.instance.CardManaCheck(Player);
-                    });
-                });
-            });
-        }
-
-        Debug.Log("Card Tap");
     }
 
     //ICard
@@ -236,7 +229,7 @@ public class CardController : MonoBehaviour, ICard
         transform.SetParent(PlayerView.instance.InfoView, true);
 
         Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.5f, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.35f, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
         CardTween.Insert(0f, transform.DOLocalMove(Vector3.zero, MoveDuration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
@@ -316,12 +309,14 @@ public class CardController : MonoBehaviour, ICard
     public void EffectOutlineNormal(Action OnComplete)
     {
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 2f, OutlineDuration);
         m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
     public void EffectOutlineMana(Action OnComplete)
     {
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
         m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
     }
 
@@ -393,10 +388,32 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoOriginActive(Action OnComplete)
     {
-        if (onOriginActive == null)
-            OnComplete?.Invoke();
-        else
-            EffectAlpha(() => onOriginActive.Invoke(() => OnComplete?.Invoke()));
+        switch (Origin)
+        {
+            case CardOriginType.Dragon:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardOriginType.Woodland:
+                var WoodLandCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Woodland);
+                var ManaGainValue = 1.0f * WoodLandCount / 2 + (WoodLandCount % 2 == 0 ? 0 : 0.5f);
+                EffectAlpha(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
+                break;
+            case CardOriginType.Ghost:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardOriginType.Insects:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardOriginType.Siren:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardOriginType.Neutral:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            default:
+                OnComplete?.Invoke();
+                break;
+        }
     }
 
     public void DoEnterActive(Action OnComplete)
@@ -429,6 +446,8 @@ public class CardController : MonoBehaviour, ICard
     public void DoManaFill(int Value, Action OnComplete)
     {
         Mana += Value;
+        if (Mana > ManaPoint)
+            Mana = ManaPoint;
         if (ManaFull)
             InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineMana(() => OnComplete?.Invoke()));
         else
@@ -439,15 +458,35 @@ public class CardController : MonoBehaviour, ICard
     public void DoManaActive(Action OnComplete)
     {
         Mana = 0;
-        InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineNormal(() => OnComplete?.Invoke()));
+        InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineNormal(() =>
+        {
+            DoClassActive(() => DoSpellActive(() => OnComplete?.Invoke()));
+        }));
     } //Invoke from GameManager
 
     public void DoClassActive(Action OnComplete)
     {
-        if (onClassActive == null)
-            OnComplete?.Invoke();
-        else
-            EffectAlpha(() => onClassActive.Invoke(() => OnComplete?.Invoke()));
+        switch (Class)
+        {
+            case CardClassType.Fighter:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardClassType.MagicAddict:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardClassType.Singer:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardClassType.Caretaker:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardClassType.Diffuser:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+            case CardClassType.Flying:
+                EffectAlpha(() => OnComplete?.Invoke());
+                break;
+        }
     }
 
     public void DoSpellActive(Action OnComplete)

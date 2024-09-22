@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     private List<IPlayer> m_player = new List<IPlayer>(); //Max 4 player, min 2 player in game
 
     private int m_playerIndex = 0;
-    private bool m_playerChoice = false;
+    private ChoiceType m_playerChoice = ChoiceType.None;
 
     public bool Battle => m_battle;
 
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     public int PlayerIndex => m_playerIndex;
 
-    public bool PlayerChoice => m_playerChoice;
+    public ChoiceType PlayerChoice => m_playerChoice;
 
     //
 
@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
-            new PlayerData(0, m_baseIndex == 0, 40, 3),
-            new PlayerData(1, m_baseIndex == 1, 40, 3),
+            new PlayerData(0, m_baseIndex == 0, 10, 10),
+            new PlayerData(1, m_baseIndex == 1, 10, 10),
         };
         GameEvent.InitPlayer(PlayerJoin);
 
@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
     {
         Player.DoChoice(() =>
         {
-            m_playerChoice = true;
+            m_playerChoice = ChoiceType.Main;
             GameEvent.ViewUiShow(ViewType.Field, true);
         });
     } //Choice Event
@@ -146,13 +146,13 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
-        m_playerChoice = false;
+        m_playerChoice = ChoiceType.None;
         Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
     } //Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
-        m_playerChoice = false;
+        m_playerChoice = ChoiceType.None;
         Player.DoCollect(Card, () => PlayerDostaffNext(Card.Player, true));
     } //Collect Event
 
@@ -230,13 +230,14 @@ public class GameManager : MonoBehaviour
     {
         Player.CardManaActiveDoChoice(() =>
         {
-            m_playerChoice = true;
+            m_playerChoice = ChoiceType.CardFullMana;
+            GameEvent.ViewUiShow(ViewType.Field, true);
         });
     }
 
-
     public void CardManaActive(ICard Card)
     {
+        m_playerChoice = ChoiceType.None;
         Card.DoManaActive(() => CardManaCheck(Card.Player));
     }
 

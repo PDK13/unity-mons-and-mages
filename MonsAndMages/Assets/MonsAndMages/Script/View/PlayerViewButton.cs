@@ -7,7 +7,7 @@ public class PlayerViewButton : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_tmpHealth;
     [SerializeField] private TextMeshProUGUI m_tmpStun;
 
-    public bool Base { set { if (value) m_tmpIndex.text = "ME"; } }
+    public bool Base;
 
     public int Health { set => m_tmpHealth.text = value.ToString(); }
 

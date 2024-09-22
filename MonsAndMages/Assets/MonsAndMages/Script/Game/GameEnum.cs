@@ -61,4 +61,12 @@ public enum InfoType
 {
     Collect,
     Mediate,
+    CardFullMana,
+}
+
+public enum ChoiceType
+{
+    None,
+    Main, //Collect & Mediate
+    CardFullMana,
 }

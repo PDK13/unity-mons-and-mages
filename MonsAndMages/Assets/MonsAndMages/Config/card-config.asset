@@ -115,7 +115,7 @@ MonoBehaviour:
     GrowthStart: 0
   - Named: Umbella
     Name: 11
-    Origin: 2
+    Origin: 3
     Class: 0
     Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}
     RuneStoneCost: 3

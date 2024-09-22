@@ -42,9 +42,6 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private RectTransform m_staff;
     [SerializeField] private RectTransform m_staffMoveTo;
 
-    private bool m_choice = false;
-    private bool m_turn = false;
-
     private void Start()
     {
         m_cardPoint.SetActive(false);
@@ -139,7 +136,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStart(Action OnComplete)
     {
-        m_turn = true;
         GameEvent.PlayerStart(this, () => OnComplete?.Invoke());
     }
 
@@ -236,7 +232,6 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         GameEvent.PlayerDoChoice(this, () =>
         {
-            m_choice = true;
             OnComplete?.Invoke();
         });
     }
@@ -244,7 +239,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
-        m_choice = false;
         m_data.RuneStone -= RuneStoneAdd;
         InfoRuneStoneUpdate(() =>
         {
@@ -283,13 +277,15 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCollect(ICard Card, Action OnComplete)
     {
-        m_choice = false;
         RuneStoneChange(-Card.RuneStoneCost, () =>
         {
-            Card.DoCollectActive(this, () =>
+            GameEvent.PlayerDoCollect(this, Card, () =>
             {
-                GameEvent.PlayerDoCollect(this, Card, () => OnComplete?.Invoke());
-            });
+                Card.DoCollectActive(this, () =>
+                {
+                    OnComplete?.Invoke();
+                });
+            }); //Move card first before active card collect event!
         });
         m_data.CardQueue.Add(Card);
     }
@@ -332,28 +328,15 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public bool DoContinueCheck()
-    {
-        return m_data.CardQueue.Exists(t => t.ManaFull);
-    }
-
-    public void DoContinue(Action OnComplete)
-    {
-        m_turn = true;
-        OnComplete?.Invoke();
-    }
-
-
     public void CardManaActiveDoChoice(Action OnComplete)
     {
-        m_choice = true;
+        GameEvent.ViewUiShow(ViewType.Field, true);
         OnComplete?.Invoke();
     }
 
 
     public void DoEnd(Action OnComplete)
     {
-        m_turn = false;
         m_data.StunCurrent = 0;
         GameEvent.PlayerEnd(this, () => OnComplete?.Invoke());
     }
