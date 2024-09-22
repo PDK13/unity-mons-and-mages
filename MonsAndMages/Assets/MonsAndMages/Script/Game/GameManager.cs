@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -69,7 +70,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        GameEvent.View(ViewType.Wild, () =>
+        GameEvent.ViewArea(ViewType.Wild, () =>
         {
             GameEvent.WildCardFill(() =>
             {
@@ -102,7 +103,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerCurrentStart()
     {
-        GameEvent.View(ViewType.Field, () =>
+        GameEvent.ViewArea(ViewType.Field, () =>
         {
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
@@ -143,8 +144,8 @@ public class GameManager : MonoBehaviour
     {
         Player.DoChoice(() =>
         {
-            m_playerChoice = ChoiceType.Main;
-            GameEvent.ViewUiShow(ViewType.Field, true);
+            m_playerChoice = ChoiceType.MediateOrCollect;
+            GameEvent.ShowUiArea(ViewType.Field, true);
         });
     } //Choice Event
 
@@ -153,18 +154,36 @@ public class GameManager : MonoBehaviour
     {
         m_playerChoice = ChoiceType.None;
         Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
-    } //Mediate Event
+    } //Player Do Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
     {
         m_playerChoice = ChoiceType.None;
-        Player.DoCollect(Card, () => PlayerDostaffNext(Card.Player, true));
-    } //Collect Event
+        Player.DoCollect(Card, () =>
+        {
+            switch (Card.Origin)
+            {
+                case CardOriginType.Ghost:
+                    CardOriginGhostDoChoice(Card);
+                    break;
+                default:
+                    PlayerDostaffNext(Card.Player, true);
+                    break;
+            }
+        });
+    } //Player Do Collect Event
 
 
-    private void PlayerDostaffNext(IPlayer Player, bool CardActive)
+    public void CardOriginGhostDoChoice(ICard Card)
     {
-        Player.DostaffNext(() =>
+        m_playerChoice = ChoiceType.CardOriginGhost;
+        GameEvent.OriginGhost(Card);
+    }
+
+
+    public void PlayerDostaffNext(IPlayer Player, bool CardActive)
+    {
+        Player.DoStaffNext(() =>
         {
             if (CardActive)
                 PlayerDostaffActive(Player);
@@ -175,7 +194,7 @@ public class GameManager : MonoBehaviour
 
     private void PlayerDostaffActive(IPlayer Player)
     {
-        Player.DostaffActive(() => CardAttack(Player.CardQueue[Player.staffStep]));
+        Player.DoStaffActive(() => CardAttack(Player.CardQueue[Player.StaffStep]));
     }
 
 
@@ -201,12 +220,12 @@ public class GameManager : MonoBehaviour
         }
         else
             PlayerEnd(PlayerCurrent);
-    } //Attack Event
+    } //Card Attack Event
 
     private void CardManaFill(ICard Card)
     {
         Card.DoManaFill(1, () => CardManaCheck(Card.Player));
-    } //ManaPoint Event
+    } //Card Mana Event
 
     public void CardManaCheck(IPlayer Player)
     {
@@ -236,7 +255,7 @@ public class GameManager : MonoBehaviour
         Player.CardManaActiveDoChoice(() =>
         {
             m_playerChoice = ChoiceType.CardFullMana;
-            GameEvent.ViewUiShow(ViewType.Field, true);
+            GameEvent.ShowUiArea(ViewType.Field, true);
         });
     }
 

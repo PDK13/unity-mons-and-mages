@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,7 @@ public class CardController : MonoBehaviour, ICard
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
     private Transform m_pointer;
+    private bool m_originGhostReady = false;
 
     //
 
@@ -67,21 +69,31 @@ public class CardController : MonoBehaviour, ICard
 
         switch (GameManager.instance.PlayerChoice)
         {
-            case ChoiceType.Main:
+            case ChoiceType.MediateOrCollect:
                 if (Player != null)
                     return;
                 GameEvent.ButtonInteractable(false);
-                GameEvent.CardTap(this, null);
-                GameEvent.ViewInfo(InfoType.Collect, true);
+                GameEvent.ViewCard(this);
+                GameEvent.ShowUiInfo(InfoType.PlayerDoCollect, true);
                 MoveTop(() => GameEvent.ButtonInteractable(true));
                 break;
             case ChoiceType.CardFullMana:
                 if (Player != GameManager.instance.PlayerCurrent || !ManaFull)
                     return;
                 GameEvent.ButtonInteractable(false);
-                GameEvent.CardTap(this, null);
-                GameEvent.ViewInfo(InfoType.CardFullMana, true);
+                GameEvent.ViewCard(this);
+                GameEvent.ShowUiInfo(InfoType.CardFullMana, true);
                 MoveTop(() => GameEvent.ButtonInteractable(true));
+                break;
+            case ChoiceType.CardOriginGhost:
+                if (Player != GameManager.instance.PlayerCurrent || !m_originGhostReady)
+                    return;
+                GameEvent.ButtonInteractable(false);
+                GameEvent.ShowUiArea(ViewType.Field, false);
+                //GameEvent.ShowUiInfo(InfoType.CardOriginGhost, false);
+                for (int i = 0; i < Player.CardQueue.Length; i++)
+                    Player.CardQueue[i].DoOriginGhostUnReady();
+                DoOriginGhostStart();
                 break;
         }
     }
@@ -110,6 +122,8 @@ public class CardController : MonoBehaviour, ICard
 
     public int AttackCombine => m_data.AttackPoint + Growth;
 
+    public CardController Controller => this;
+
     public IPlayer Player => m_data.Player;
 
     public Image Renderer => m_renderer.GetComponent<Image>();
@@ -119,7 +133,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void Init(CardData Data)
     {
-        m_data = Data;
+        m_data = new CardData(Data, null, this);
         RuneStoneTake = m_data.RuneStoneTake;
         Mana = m_data.ManaStart;
         Growth = m_data.GrowthStart;
@@ -340,6 +354,7 @@ public class CardController : MonoBehaviour, ICard
         });
     }
 
+
     public void EffectOrigin(Action OnComplete)
     {
         m_effectOrigin = true;
@@ -438,22 +453,23 @@ public class CardController : MonoBehaviour, ICard
                 });
             });
         });
-    } //Invoke from GameManager
+    } //Collect Event
 
     public void DoOriginActive(Action OnComplete)
     {
         switch (Origin)
         {
             case CardOriginType.Dragon:
-                var DragonAvaibleCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Dragon);
-                DoOriginDragonActive(DragonAvaibleCount, OnComplete);
+                var DragonCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Dragon);
+                DoOriginDragonActive(DragonCount, OnComplete);
                 break;
             case CardOriginType.Woodland:
-                var WoodLandCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Woodland);
-                DoOriginWoodLandActive(WoodLandCount, OnComplete);
+                var WoodlandCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Woodland);
+                DoOriginWoodlandActive(WoodlandCount, OnComplete);
                 break;
             case CardOriginType.Ghost:
-                EffectOrigin(() => OnComplete?.Invoke());
+                var GhostCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Ghost);
+                DoOriginGhostActive(GhostCount, () => EffectOrigin(() => OnComplete?.Invoke()));
                 break;
             case CardOriginType.Insects:
                 EffectOrigin(() => OnComplete?.Invoke());
@@ -468,38 +484,85 @@ public class CardController : MonoBehaviour, ICard
                 OnComplete?.Invoke();
                 break;
         }
-    }
+    } //Origin Event
 
-    private void DoOriginDragonActive(int DragonLeft, Action OnComplete)
+    public void DoOriginDragonActive(int DragonLeft, Action OnComplete)
     {
-        var DiceFaceQueue = GameManager.instance.DiceConfig.Data;
-        var DiceFaceCount = DiceFaceQueue.Count;
-        var DragonDiceIndex = UnityEngine.Random.Range(0, (DiceFaceCount * 10) - 1) / 10;
-        var DragonDiceFace = DiceFaceQueue[DragonDiceIndex];
-        EffectOrigin(() => Rumble(() =>
+        var DiceQueue = GameManager.instance.DiceConfig.Data;
+        var DiceCount = DiceQueue.Count;
+        var DiceIndex = UnityEngine.Random.Range(0, (DiceCount * 10) - 1) / 10;
+        var DiceFace = DiceQueue[DiceIndex];
+        GameEvent.OriginDragon(this, DiceIndex, () =>
         {
-            var PlayerQueue = GameManager.instance.PlayerQueue;
-            for (int i = 0; i < PlayerQueue.Length; i++)
+            EffectOrigin(() => Rumble(() =>
             {
-                if (PlayerQueue[i].Equals(this.Player))
-                    PlayerQueue[i].HealthChange(-DragonDiceFace.Bite, () =>
-                    {
-                        if (DragonLeft > 0)
-                            DoOriginDragonActive(DragonLeft, OnComplete);
-                        else
-                            OnComplete?.Invoke();
-                    });
-                else
-                    PlayerQueue[i].HealthChange(-DragonDiceFace.Dragon, null);
-            }
-        }));
+                var PlayerQueue = GameManager.instance.PlayerQueue;
+                for (int i = 0; i < PlayerQueue.Length; i++)
+                {
+                    if (PlayerQueue[i].Equals(this.Player))
+                        PlayerQueue[i].HealthChange(-DiceFace.Bite, () =>
+                        {
+                            if (DragonLeft > 0)
+                                DoOriginDragonActive(DragonLeft, OnComplete);
+                            else
+                                OnComplete?.Invoke();
+                        });
+                    else
+                        PlayerQueue[i].HealthChange(-DiceFace.Dragon, null);
+                }
+            }));
+        });
         DragonLeft--;
     }
 
-    private void DoOriginWoodLandActive(int WoodLandCount, Action OnComplete)
+    public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete)
     {
-        var ManaGainValue = 1.0f * WoodLandCount / 2 + (WoodLandCount % 2 == 0 ? 0 : 0.5f);
+        var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
         EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
+    }
+
+    public void DoOriginGhostActive(int GhostCount, Action OnComplete)
+    {
+        var StaffCurrent = Player.StaffStep;
+        var StaffAvaible = GhostCount;
+        while (StaffAvaible > 0)
+        {
+            StaffCurrent++;
+            if (StaffCurrent > Player.CardQueue.Length - 1)
+                StaffCurrent = 0;
+            Player.CardQueue[StaffCurrent].DoOriginGhostReady();
+            StaffAvaible--;
+        }
+        OnComplete?.Invoke();
+    }
+
+    public void DoOriginGhostReady()
+    {
+        m_originGhostReady = true;
+        m_effectOutline = true;
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
+        m_outline.DOColor(Color.magenta, OutlineDuration).OnComplete(() => m_effectOutline = false);
+    }
+
+    public void DoOriginGhostStart()
+    {
+        EffectAlpha(() =>
+        {
+            Player.DoStaffNext(() =>
+            {
+                if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
+                    Player.DoStaffActive(() => GameManager.instance.PlayerDostaffNext(Player, true));
+                else
+                    DoOriginGhostStart();
+            });
+        });
+    }
+
+    public void DoOriginGhostUnReady()
+    {
+        m_originGhostReady = false;
+        EffectOutlineNormal(null);
     }
 
     public void DoEnterActive(Action OnComplete)
@@ -508,7 +571,7 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
         else
             EffectAlpha(() => onEnterActive.Invoke(() => OnComplete?.Invoke()));
-    }
+    } //Enter Event
 
     public void DoPassiveActive(Action OnComplete)
     {
@@ -516,7 +579,7 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
         else
             EffectAlpha(() => onPassiveActive.Invoke(() => OnComplete?.Invoke()));
-    }
+    } //Passive Event
 
 
     public void DostaffActive(Action OnComplete)

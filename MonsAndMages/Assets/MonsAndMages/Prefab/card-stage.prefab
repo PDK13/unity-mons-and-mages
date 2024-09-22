@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -265,7 +265,6 @@ GameObject:
   - component: {fileID: 6579715562159598248}
   - component: {fileID: 5090766707334347801}
   - component: {fileID: 3309139029959933911}
-  - component: {fileID: 9080653693932122795}
   m_Layer: 5
   m_Name: card-stage
   m_TagString: Untagged
@@ -361,19 +360,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbaac0b3fd431c54a9001d6a012d500a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_renderer: {fileID: 701322156118787910}
-  m_rendererAlpha: {fileID: 2389725409295161900}
---- !u!114 &9080653693932122795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4790769038840088764}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c043caf3a5e4ad42b04034f0b40901a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

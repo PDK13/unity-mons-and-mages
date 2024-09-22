@@ -20,9 +20,11 @@ public interface IPlayer
 
     bool Stuned { get; }
 
-    List<ICard> CardQueue { get; }
+    ICard[] CardQueue { get; }
 
-    int staffStep { get; }
+    int StaffStep { get; }
+
+    ICard CardCurrent { get; }
 
     int[] Mediation { get; }
 
@@ -44,7 +46,7 @@ public interface IPlayer
     void DoStunnedCheck(Action<bool> OnComplete); //Check stun stage
 
 
-    void DoChoice(Action OnComplete); //Start choice Mediate or Collect
+    void DoChoice(Action OnComplete); //Start choice PlayerDoMediate or PlayerDoCollect
 
 
     void DoMediate(int RuneStoneAdd, Action OnComplete);
@@ -55,9 +57,9 @@ public interface IPlayer
     void DoCollect(ICard Card, Action OnComplete);
 
 
-    void DostaffNext(Action OnComplete); //Move staff Next
+    void DoStaffNext(Action OnComplete); //Move staff Next
 
-    void DostaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
+    void DoStaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
 
 
     void CardManaActiveDoChoice(Action OnComplete); //Start choice Card full ManaPoint to active

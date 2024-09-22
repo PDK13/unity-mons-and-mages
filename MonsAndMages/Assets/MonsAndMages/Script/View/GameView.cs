@@ -14,7 +14,7 @@ public class GameView : MonoBehaviour
     {
         GameEvent.onInitPlayer += OnInitPlayer;
 
-        GameEvent.onView += OnView;
+        GameEvent.onViewArea += OnView;
         GameEvent.onViewPlayer += OnViewPlayer;
 
         GameEvent.onCardRumble += OnCardRumble;
@@ -24,7 +24,7 @@ public class GameView : MonoBehaviour
     {
         GameEvent.onInitPlayer -= OnInitPlayer;
 
-        GameEvent.onView += OnView;
+        GameEvent.onViewArea += OnView;
         GameEvent.onViewPlayer -= OnViewPlayer;
 
         GameEvent.onCardRumble -= OnCardRumble;
@@ -60,25 +60,25 @@ public class GameView : MonoBehaviour
         switch (Type)
         {
             case ViewType.Field:
-                GameEvent.ViewUiShow(ViewType.Field, false);
+                GameEvent.ShowUiArea(ViewType.Field, false);
                 m_gameContent
                     .DOLocalMoveY(0f, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ViewUiShow(ViewType.Field, true);
+                        GameEvent.ShowUiArea(ViewType.Field, true);
                         m_viewChange = false;
                         OnComplete?.Invoke();
                     });
                 break;
             case ViewType.Wild:
-                GameEvent.ViewUiShow(ViewType.Wild, false);
+                GameEvent.ShowUiArea(ViewType.Wild, false);
                 m_gameContent
                     .DOLocalMoveY(-m_gameContent.sizeDelta.y, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ViewUiShow(ViewType.Wild, true);
+                        GameEvent.ShowUiArea(ViewType.Wild, true);
                         m_viewChange = false;
                         OnComplete?.Invoke();
                     });

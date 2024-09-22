@@ -60,6 +60,10 @@ public interface ICard
 
     void EffectOutlineMana(Action OnComplete);
 
+    void EffectOrigin(Action OnComplete);
+
+    void EffectClass(Action OnComplete);
+
 
     void InfoShow(bool Show);
 
@@ -67,6 +71,18 @@ public interface ICard
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
+
+    void DoOriginDragonActive(int DragonLeft, Action OnComplete);
+
+    void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete);
+
+    void DoOriginGhostActive(int GhostCount, Action OnComplete);
+
+    void DoOriginGhostReady();
+
+    void DoOriginGhostStart();
+
+    void DoOriginGhostUnReady();
 
     void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 

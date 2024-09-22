@@ -14,14 +14,18 @@ public class CardStage : MonoBehaviour, ICard
     private GameObject m_rendererAlpha;
     private Outline m_outline;
 
-    private bool m_avaible = false;
+    private bool m_avaible = true;
     private bool m_flip = false;
-    private bool m_ready = false;
+    private bool m_ready = true;
     private bool m_move = false;
     private bool m_top = false;
     private bool m_rumble = false;
-    private bool m_effect = false;
+    private bool m_effectAlpha = false;
+    private bool m_effectOutline = false;
+    private bool m_effectOrigin = false;
+    private bool m_effectClass = false;
     private Transform m_pointer;
+    private bool m_originGhostReady = false;
 
     //
 
@@ -31,6 +35,7 @@ public class CardStage : MonoBehaviour, ICard
         m_mask = transform.Find("mask").gameObject;
         m_renderer = transform.Find("renderer").gameObject;
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
+        m_outline = m_renderer.GetComponent<Outline>();
     }
 
     public void Start()
@@ -45,10 +50,19 @@ public class CardStage : MonoBehaviour, ICard
         if (!Avaible)
             return;
 
-        GameEvent.ButtonInteractable(false);
-        GameEvent.CardTap(this, null);
-        GameEvent.ViewInfo(InfoType.Collect, true);
-        MoveTop(() => GameEvent.ButtonInteractable(true));
+        switch (GameManager.instance.PlayerChoice)
+        {
+            case ChoiceType.CardOriginGhost:
+                if (Player != GameManager.instance.PlayerCurrent || !m_originGhostReady)
+                    return;
+                GameEvent.ButtonInteractable(false);
+                GameEvent.ShowUiArea(ViewType.Field, false);
+                //GameEvent.ShowUiInfo(InfoType.CardOriginGhost, false);
+                for (int i = 0; i < Player.CardQueue.Length; i++)
+                    Player.CardQueue[i].DoOriginGhostUnReady();
+                DoOriginGhostStart();
+                break;
+        }
     }
 
     //ICard
@@ -73,39 +87,16 @@ public class CardStage : MonoBehaviour, ICard
 
     public int AttackCombine => 0;
 
-    public IPlayer Player => m_data.Player;
+    public IPlayer Player => GetComponentInParent<IPlayer>();
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
-    public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effect;
+    public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
 
 
-    public void Init(CardData Data)
-    {
-        m_data = Data;
+    public void Init(CardData Data) { }
 
-        m_mask.SetActive(true);
-        m_renderer.SetActive(false);
-        m_renderer.GetComponent<Image>().sprite = m_data.Image;
-        m_rendererAlpha.GetComponent<Image>().sprite = m_data.Image;
-        m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
-        InfoShow(false);
-
-        m_avaible = false;
-    }
-
-    public void Fill(Transform Point)
-    {
-        this.Pointer(Point);
-
-        var DurationMove = GameManager.instance.TweenConfig.WildFill.MoveDuration;
-        var EaseMove = GameManager.instance.TweenConfig.WildFill.MoveEase;
-
-        transform.SetParent(Point, true);
-        transform.DOLocalMove(Vector3.zero, DurationMove).SetEase(EaseMove);
-
-        FlipOpen(null);
-    }
+    public void Fill(Transform Point) { }
 
 
     public void Ready()
@@ -253,18 +244,16 @@ public class CardStage : MonoBehaviour, ICard
 
     public void EffectAlpha(Action OnComplete)
     {
-        if (m_effect)
-            Debug.Log("Card effect alpha not done yet");
-        m_effect = true;
+        m_effectAlpha = true;
 
         var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
 
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
-        AlphaGroup.DOFade(0.25f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        AlphaGroup.DOFade(1f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                m_effect = false;
+                m_effectAlpha = false;
                 OnComplete?.Invoke();
             });
         });
@@ -272,15 +261,31 @@ public class CardStage : MonoBehaviour, ICard
 
     public void EffectOutlineNormal(Action OnComplete)
     {
+        m_effectOutline = true;
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
-        m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
+        m_outline.DOScale(Vector2.one * 2f, OutlineDuration);
+        m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() =>
+        {
+            m_effectOutline = false;
+            OnComplete?.Invoke();
+        });
     }
 
     public void EffectOutlineMana(Action OnComplete)
     {
+        m_effectOutline = true;
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
-        m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
+        m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() =>
+        {
+            m_effectOutline = false;
+            OnComplete?.Invoke();
+        });
     }
+
+    public void EffectOrigin(Action OnComplete) { }
+
+    public void EffectClass(Action OnComplete) { }
 
 
     public void InfoShow(bool Show) { }
@@ -290,6 +295,42 @@ public class CardStage : MonoBehaviour, ICard
     public void DoCollectActive(IPlayer Player, Action OnComplete) { }
 
     public void DoOriginActive(Action OnComplete) { }
+
+    public void DoOriginDragonActive(int DragonLeft, Action OnComplete) { }
+
+    public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete) { }
+
+    public void DoOriginGhostActive(int GhostCount, Action OnComplete) { }
+
+    public void DoOriginGhostReady()
+    {
+        m_originGhostReady = true;
+        m_effectOutline = true;
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration).SetLoops(-1);
+        m_outline.DOColor(Color.magenta, OutlineDuration).OnComplete(() => m_effectOutline = false);
+    }
+
+    public void DoOriginGhostStart()
+    {
+        EffectAlpha(() =>
+        {
+            Player.DoStaffNext(() =>
+            {
+                if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
+                    Player.DoStaffActive(() => GameManager.instance.PlayerDostaffNext(Player, true));
+                else
+                    DoOriginGhostStart();
+            });
+        });
+    }
+
+    public void DoOriginGhostUnReady()
+    {
+        m_originGhostReady = false;
+        m_outline.DOKill();
+        EffectOutlineNormal(null);
+    }
 
     public void DoEnterActive(Action OnComplete) { }
 

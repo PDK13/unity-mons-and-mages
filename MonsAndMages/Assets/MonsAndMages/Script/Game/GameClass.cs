@@ -13,14 +13,12 @@ public class PlayerData
     [Min(0)] public int StunPoint; //Max 3 to get 1 skip turn
     [Min(0)] public int StunCurrent;
     public List<ICard> CardQueue = new List<ICard>();
-    [Min(0)] public int staffStep;
+    [Min(0)] public int StaffStep;
     public int[] Mediation = { 0, 0 };
 
     public IPlayer Player;
 
     public bool Stuned => StunCurrent >= StunPoint;
-
-    public int staffStepNext => staffStep + 1 > CardQueue.Count - 1 ? 0 : staffStep + 1;
 
     public bool MediationEmty => Mediation[0] == 0 || Mediation[1] == 0;
 
@@ -59,4 +57,21 @@ public class CardData
 
     public IPlayer Player;
     public ICard Card;
+
+    public CardData(CardData Data, IPlayer Player, ICard Card)
+    {
+        this.Named = Data.Named;
+        this.Name = Data.Name;
+        this.Origin = Data.Origin;
+        this.Class = Data.Class;
+        this.Image = Data.Image;
+        this.RuneStoneCost = Data.RuneStoneCost;
+        this.RuneStoneTake = Data.RuneStoneTake;
+        this.ManaPoint = Data.ManaPoint;
+        this.ManaStart = Data.ManaStart;
+        this.AttackPoint = Data.AttackPoint;
+        this.GrowthStart = Data.GrowthStart;
+        this.Player = Player;
+        this.Card = Card;
+    }
 }

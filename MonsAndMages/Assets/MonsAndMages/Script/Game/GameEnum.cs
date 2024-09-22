@@ -60,14 +60,16 @@ public enum ViewType
 public enum InfoType
 {
     None,
-    Collect,
-    Mediate,
+    PlayerDoCollect,
+    PlayerDoMediate,
     CardFullMana,
+    CardOriginGhost,
 }
 
 public enum ChoiceType
 {
     None,
-    Main, //Collect & Mediate
+    MediateOrCollect,
     CardFullMana,
+    CardOriginGhost,
 }

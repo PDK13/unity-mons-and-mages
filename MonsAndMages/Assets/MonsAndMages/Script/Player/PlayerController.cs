@@ -103,9 +103,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool Stuned => m_data.Stuned;
 
-    public List<ICard> CardQueue => m_data.CardQueue;
+    public ICard[] CardQueue => m_data.CardQueue.ToArray();
 
-    public int staffStep => m_data.staffStep;
+    public int StaffStep => m_data.StaffStep;
+
+    public ICard CardCurrent => CardQueue[StaffStep];
 
     public int[] Mediation => m_data.Mediation;
 
@@ -291,7 +293,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DostaffNext(Action OnComplete)
+    public void DoStaffNext(Action OnComplete)
     {
         //Update staff Parent to Last
         m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
@@ -299,13 +301,13 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_staffMoveTo.position = m_staff.position;
 
         //Start Move staff to Point
-        var staffIndexLast = m_data.staffStep;
-        var staffIndexNext = m_data.staffStepNext;
+        var StaffIndexLast = m_data.StaffStep;
+        var StaffIndexNext = StaffIndexLast + 1 > CardQueue.Length - 1 ? 0 : StaffIndexLast + 1;
 
-        m_data.staffStep = staffIndexNext;
+        m_data.StaffStep = StaffIndexNext;
 
-        var PointLast = m_cardContent.GetChild(staffIndexLast);
-        var PointNext = m_cardContent.GetChild(staffIndexNext);
+        var PointLast = m_cardContent.GetChild(StaffIndexLast);
+        var PointNext = m_cardContent.GetChild(StaffIndexNext);
 
         m_staffMoveTo.position = PointNext.position;
         m_staff
@@ -314,9 +316,9 @@ public class PlayerController : MonoBehaviour, IPlayer
             .OnComplete(() => OnComplete?.Invoke());
     }
 
-    public void DostaffActive(Action OnComplete)
+    public void DoStaffActive(Action OnComplete)
     {
-        var Card = m_cardContent.GetChild(staffStep).GetComponentInChildren<ICard>();
+        var Card = m_cardContent.GetChild(StaffStep).GetComponentInChildren<ICard>();
 
         if (Card == null)
         {
@@ -330,7 +332,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void CardManaActiveDoChoice(Action OnComplete)
     {
-        GameEvent.ViewUiShow(ViewType.Field, true);
+        GameEvent.ShowUiArea(ViewType.Field, true);
         OnComplete?.Invoke();
     }
 
