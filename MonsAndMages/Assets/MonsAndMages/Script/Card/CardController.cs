@@ -445,12 +445,12 @@ public class CardController : MonoBehaviour, ICard
         switch (Origin)
         {
             case CardOriginType.Dragon:
-                EffectOrigin(() => OnComplete?.Invoke());
+                var DragonAvaibleCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Dragon);
+                DoOriginDragonActive(DragonAvaibleCount, OnComplete);
                 break;
             case CardOriginType.Woodland:
                 var WoodLandCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Woodland);
-                var ManaGainValue = 1.0f * WoodLandCount / 2 + (WoodLandCount % 2 == 0 ? 0 : 0.5f);
-                EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
+                DoOriginWoodLandActive(WoodLandCount, OnComplete);
                 break;
             case CardOriginType.Ghost:
                 EffectOrigin(() => OnComplete?.Invoke());
@@ -468,6 +468,38 @@ public class CardController : MonoBehaviour, ICard
                 OnComplete?.Invoke();
                 break;
         }
+    }
+
+    private void DoOriginDragonActive(int DragonLeft, Action OnComplete)
+    {
+        var DiceFaceQueue = GameManager.instance.DiceConfig.Data;
+        var DiceFaceCount = DiceFaceQueue.Count;
+        var DragonDiceIndex = UnityEngine.Random.Range(0, (DiceFaceCount * 10) - 1) / 10;
+        var DragonDiceFace = DiceFaceQueue[DragonDiceIndex];
+        EffectOrigin(() => Rumble(() =>
+        {
+            var PlayerQueue = GameManager.instance.PlayerQueue;
+            for (int i = 0; i < PlayerQueue.Length; i++)
+            {
+                if (PlayerQueue[i].Equals(this.Player))
+                    PlayerQueue[i].HealthChange(-DragonDiceFace.Bite, () =>
+                    {
+                        if (DragonLeft > 0)
+                            DoOriginDragonActive(DragonLeft, OnComplete);
+                        else
+                            OnComplete?.Invoke();
+                    });
+                else
+                    PlayerQueue[i].HealthChange(-DragonDiceFace.Dragon, null);
+            }
+        }));
+        DragonLeft--;
+    }
+
+    private void DoOriginWoodLandActive(int WoodLandCount, Action OnComplete)
+    {
+        var ManaGainValue = 1.0f * WoodLandCount / 2 + (WoodLandCount % 2 == 0 ? 0 : 0.5f);
+        EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
     }
 
     public void DoEnterActive(Action OnComplete)

@@ -35,6 +35,9 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private RectTransform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
+    [Space]
+    [SerializeField] private RectTransform m_diceSample;
+
     private InfoType m_infoType;
     private ICard m_cardView;
     private int m_mediateOptionIndex = -1;
@@ -71,6 +74,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
 
         GameEvent.onCardTap += OnCardTap;
+
+        GameEvent.onDiceDragon += OnDiceDragon;
     }
 
     private void OnDisable()
@@ -94,6 +99,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedChange -= OnPlayerStunnedChange;
 
         GameEvent.onCardTap -= OnCardTap;
+
+        GameEvent.onDiceDragon -= OnDiceDragon;
     }
 
     private void Start()
@@ -355,7 +362,7 @@ public class PlayerView : MonoBehaviour
             else
                 PlayerButton.GetComponent<Outline>().effectColor = Color.gray;
         }
-        //m_tmpRuneStone.text = Player.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+        //m_tmpRuneStone.text = PlayerQueue.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
     private void OnViewInfo(InfoType Type, bool Show)
@@ -524,14 +531,14 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
-        var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
-        PlayerView.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
-        {
-            PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
-        });
+        //var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+        //PlayerView.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
+        //{
+        //    PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
+        //    {
+        OnComplete?.Invoke();
+        //    });
+        //});
     }
 
     private void OnPlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
@@ -581,4 +588,10 @@ public class PlayerView : MonoBehaviour
         m_cardView = Card;
         OnComplete?.Invoke();
     }
+
+
+    private void OnDiceDragon(ICard Card, Action OnComplete)
+    {
+        OnComplete?.Invoke();
+    } //Update!!
 }

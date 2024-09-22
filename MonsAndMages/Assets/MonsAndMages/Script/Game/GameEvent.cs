@@ -21,7 +21,7 @@ public class GameEvent
 
     //Wild
 
-    public static Action<Action> onWildFill;
+    public static Action<Action> onWildFill { get; set; }
 
     public static void WildCardFill(Action OnComplete)
     {
@@ -48,7 +48,7 @@ public class GameEvent
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
         onViewPlayer?.Invoke(Player, OnComplete);
-    } //View Player field
+    } //View PlayerQueue field
 
     public static void ViewInfo(InfoType Type, bool Show)
     {
@@ -57,8 +57,8 @@ public class GameEvent
 
     //Button
 
-    public static Action<bool> onButtonInteractable;
-    public static Action<Button> onButtonPress;
+    public static Action<bool> onButtonInteractable { get; set; }
+    public static Action<Button> onButtonPress { get; set; }
 
     public static void ButtonInteractable(bool Interactable)
     {
@@ -70,15 +70,15 @@ public class GameEvent
         onButtonPress?.Invoke(Button);
     }
 
-    //Player
+    //PlayerQueue
 
-    public static Action<IPlayer, Action> onPlayerStart { get; set; } //Player start turn
-    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply { get; set; } //Player take rune stone from supply
-    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromMediation { get; set; } //Player take rune stone from mediation
-    public static Action<IPlayer, Action> onPlayerStunnedCheck { get; set; } //Player start turn
-    public static Action<IPlayer, Action> onPlayerDoChoice { get; set; } //Player choice Mediate or Collect
-    public static Action<IPlayer, int, Action> onPlayerDoMediate { get; set; } //Player Mediate Event
-    public static Action<IPlayer, ICard, Action> onPlayerDoCollect { get; set; } //Player Collect Event
+    public static Action<IPlayer, Action> onPlayerStart { get; set; } //PlayerQueue start turn
+    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply { get; set; } //PlayerQueue take rune stone from supply
+    public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromMediation { get; set; } //PlayerQueue take rune stone from mediation
+    public static Action<IPlayer, Action> onPlayerStunnedCheck { get; set; } //PlayerQueue start turn
+    public static Action<IPlayer, Action> onPlayerDoChoice { get; set; } //PlayerQueue choice Mediate or Collect
+    public static Action<IPlayer, int, Action> onPlayerDoMediate { get; set; } //PlayerQueue Mediate Event
+    public static Action<IPlayer, ICard, Action> onPlayerDoCollect { get; set; } //PlayerQueue Collect Event
     public static Action<IPlayer, Action> onPlayerCardManaActiveDoChoice { get; set; }
     public static Action<ICard, Action> onCardManaActive { get; set; }
     public static Action<IPlayer, Action> onPlayerEnd { get; set; }
@@ -170,5 +170,14 @@ public class GameEvent
     public static void CardAttack(ICard Card, Action OnComplete)
     {
         onCardAttack?.Invoke(Card, OnComplete);
+    }
+
+    //Dice
+
+    public static Action<ICard, Action> onDiceDragon { get; set; }
+
+    public static void DiceDragon(ICard Card, Action OnComplete)
+    {
+        onDiceDragon?.Invoke(Card, OnComplete);
     }
 }
