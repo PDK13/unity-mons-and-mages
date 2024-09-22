@@ -22,6 +22,8 @@ public class CardController : MonoBehaviour, ICard
     private TextMeshProUGUI m_tmpMana;
     private TextMeshProUGUI m_tmpDamage;
     private Outline m_outline;
+    private GameObject m_originIcon;
+    private GameObject m_classIcon;
 
     private bool m_avaible = false;
     private bool m_flip = false;
@@ -29,7 +31,10 @@ public class CardController : MonoBehaviour, ICard
     private bool m_move = false;
     private bool m_top = false;
     private bool m_rumble = false;
-    private bool m_effect = false;
+    private bool m_effectAlpha = false;
+    private bool m_effectOutline = false;
+    private bool m_effectOrigin = false;
+    private bool m_effectClass = false;
     private Transform m_pointer;
 
     //
@@ -44,6 +49,8 @@ public class CardController : MonoBehaviour, ICard
         m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
         m_tmpDamage = transform.Find("tmp-damage").GetComponent<TextMeshProUGUI>();
         m_outline = m_renderer.GetComponent<Outline>();
+        m_originIcon = transform.Find("origin-icon").gameObject;
+        m_classIcon = transform.Find("class-icon").gameObject;
     }
 
     public void Start()
@@ -107,7 +114,7 @@ public class CardController : MonoBehaviour, ICard
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
-    public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effect;
+    public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
 
 
     public void Init(CardData Data)
@@ -126,6 +133,10 @@ public class CardController : MonoBehaviour, ICard
         InfoDamageUpdate(AttackCombine, null);
         InfoManaUpdate(Mana, m_data.ManaPoint, null);
         InfoGrowUpdate(Growth, null);
+        m_originIcon.GetComponent<Image>().sprite = GameManager.instance.CardConfig.GetIconOrigin(Origin);
+        m_originIcon.GetComponent<CanvasGroup>().alpha = 0;
+        m_classIcon.GetComponent<Image>().sprite = GameManager.instance.CardConfig.GetIconClass(Class);
+        m_classIcon.GetComponent<CanvasGroup>().alpha = 0;
 
         m_avaible = false;
     }
@@ -290,18 +301,16 @@ public class CardController : MonoBehaviour, ICard
 
     public void EffectAlpha(Action OnComplete)
     {
-        if (m_effect)
-            Debug.Log("Card effect alpha not done yet");
-        m_effect = true;
+        m_effectAlpha = true;
 
         var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
 
         var AlphaGroup = m_rendererAlpha.GetComponent<CanvasGroup>();
-        AlphaGroup.DOFade(0.25f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        AlphaGroup.DOFade(1f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                m_effect = false;
+                m_effectAlpha = false;
                 OnComplete?.Invoke();
             });
         });
@@ -309,16 +318,60 @@ public class CardController : MonoBehaviour, ICard
 
     public void EffectOutlineNormal(Action OnComplete)
     {
+        m_effectOutline = true;
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
         m_outline.DOScale(Vector2.one * 2f, OutlineDuration);
-        m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
+        m_outline.DOColor(Color.black, OutlineDuration).OnComplete(() =>
+        {
+            m_effectOutline = false;
+            OnComplete?.Invoke();
+        });
     }
 
     public void EffectOutlineMana(Action OnComplete)
     {
+        m_effectOutline = true;
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
         m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
-        m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() => OnComplete?.Invoke());
+        m_outline.DOColor(Color.cyan, OutlineDuration).OnComplete(() =>
+        {
+            m_effectOutline = false;
+            OnComplete?.Invoke();
+        });
+    }
+
+    public void EffectOrigin(Action OnComplete)
+    {
+        m_effectOrigin = true;
+
+        var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
+
+        var AlphaGroup = m_originIcon.GetComponent<CanvasGroup>();
+        AlphaGroup.DOFade(1f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                m_effectOrigin = false;
+                OnComplete?.Invoke();
+            });
+        });
+    }
+
+    public void EffectClass(Action OnComplete)
+    {
+        m_effectClass = true;
+
+        var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;
+
+        var AlphaGroup = m_classIcon.GetComponent<CanvasGroup>();
+        AlphaGroup.DOFade(1f, AlphaDuration * 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            AlphaGroup.DOFade(0f, AlphaDuration * 0.5f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                m_effectClass = false;
+                OnComplete?.Invoke();
+            });
+        });
     }
 
 
@@ -392,24 +445,24 @@ public class CardController : MonoBehaviour, ICard
         switch (Origin)
         {
             case CardOriginType.Dragon:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectOrigin(() => OnComplete?.Invoke());
                 break;
             case CardOriginType.Woodland:
                 var WoodLandCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Woodland);
                 var ManaGainValue = 1.0f * WoodLandCount / 2 + (WoodLandCount % 2 == 0 ? 0 : 0.5f);
-                EffectAlpha(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
+                EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
                 break;
             case CardOriginType.Ghost:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectOrigin(() => OnComplete?.Invoke());
                 break;
             case CardOriginType.Insects:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectOrigin(() => OnComplete?.Invoke());
                 break;
             case CardOriginType.Siren:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectOrigin(() => OnComplete?.Invoke());
                 break;
             case CardOriginType.Neutral:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectOrigin(() => OnComplete?.Invoke());
                 break;
             default:
                 OnComplete?.Invoke();
@@ -470,22 +523,22 @@ public class CardController : MonoBehaviour, ICard
         switch (Class)
         {
             case CardClassType.Fighter:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
             case CardClassType.MagicAddict:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
             case CardClassType.Singer:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
             case CardClassType.Caretaker:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
             case CardClassType.Diffuser:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
             case CardClassType.Flying:
-                EffectAlpha(() => OnComplete?.Invoke());
+                EffectClass(() => OnComplete?.Invoke());
                 break;
         }
     }

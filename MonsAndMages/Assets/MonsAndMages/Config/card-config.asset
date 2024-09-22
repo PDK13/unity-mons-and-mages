@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1042eb4b1dbe5174aad0d7ed21ccfaaf, type: 3}
   m_Name: card-config
   m_EditorClassIdentifier: 
-  TrickImage: {fileID: 0}
   Card:
   - Named: Cornibus
     Name: 2
@@ -124,3 +123,29 @@ MonoBehaviour:
     ManaStart: 0
     AttackPoint: 0
     GrowthStart: 0
+  Origin:
+  - Type: 1
+    Icon: {fileID: 21300000, guid: 1aa40bbe2d6fba94eae59dcae4bda2c4, type: 3}
+  - Type: 2
+    Icon: {fileID: 21300000, guid: 5aeedb3e9bdb68d40aa54dcb123195f2, type: 3}
+  - Type: 3
+    Icon: {fileID: 21300000, guid: bcca667615a690e4c83f888b3181b070, type: 3}
+  - Type: 4
+    Icon: {fileID: 21300000, guid: 66714924472538c4c9e0cf4f0ec5240d, type: 3}
+  - Type: 5
+    Icon: {fileID: 21300000, guid: 1b032b786236fe341bbb475a428754d9, type: 3}
+  - Type: 6
+    Icon: {fileID: 21300000, guid: 4021fde0cfb40cb4c8fe97c2dded34df, type: 3}
+  Class:
+  - Type: 1
+    Icon: {fileID: 21300000, guid: 267b70d01f43e40458254e0487c45284, type: 3}
+  - Type: 2
+    Icon: {fileID: 21300000, guid: 5c055670936515e46a5928e8fbdac7d6, type: 3}
+  - Type: 3
+    Icon: {fileID: 21300000, guid: b3b4bdf1adab9f344afc5f919d30c3ea, type: 3}
+  - Type: 4
+    Icon: {fileID: 21300000, guid: 43f84c247ef61c14295d8013f412f6f2, type: 3}
+  - Type: 5
+    Icon: {fileID: 21300000, guid: 7ebc821408cb1f44aa3f38c103a30769, type: 3}
+  - Type: 6
+    Icon: {fileID: 21300000, guid: 46716ff477cdc2448b56a08945d97094, type: 3}

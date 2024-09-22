@@ -60,10 +60,3 @@ public class CardData
     public IPlayer Player;
     public ICard Card;
 }
-
-[Serializable]
-public class WildCardData
-{
-    public CardNameType Name;
-    public Transform Card;
-}
