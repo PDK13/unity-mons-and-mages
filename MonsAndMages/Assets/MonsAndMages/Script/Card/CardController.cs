@@ -69,7 +69,7 @@ public class CardController : MonoBehaviour, ICard
                 MoveTop(() => GameEvent.ButtonInteractable(true));
                 break;
             case ChoiceType.CardFullMana:
-                if (Player != GameManager.instance.PlayerCurrent && ManaFull)
+                if (Player != GameManager.instance.PlayerCurrent || !ManaFull)
                     return;
                 GameEvent.ButtonInteractable(false);
                 GameEvent.CardTap(this, null);
@@ -257,6 +257,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_move = false;
             transform.SetParent(m_pointer, true);
+            transform.SetSiblingIndex(0);
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -343,15 +344,15 @@ public class CardController : MonoBehaviour, ICard
 
     private void InfoManaUpdate(int Value, int Max, Action OnComplete)
     {
-        m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+        EffectOutlineMana(() => EffectOutlineNormal(() =>
         {
-            var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
-            m_tmpMana.text = ManaText;
-            m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
+            m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
             {
-                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+                var ManaText = string.Format("{0}/{1}{2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
+                m_tmpMana.text = ManaText;
+                m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
             });
-        });
+        }));
     }
 
     private void InfoDamageUpdate(int Value, Action OnComplete)

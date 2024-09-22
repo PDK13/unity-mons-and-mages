@@ -59,6 +59,7 @@ public enum ViewType
 
 public enum InfoType
 {
+    None,
     Collect,
     Mediate,
     CardFullMana,

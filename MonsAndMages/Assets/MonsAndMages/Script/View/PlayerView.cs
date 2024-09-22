@@ -64,6 +64,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoChoice += OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate += OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
+        GameEvent.onCardManaActive += OnCardManaActive;
         GameEvent.onPlayerEnd += OnPlayerEnd;
         GameEvent.onPlayerRuneStoneChange += OnPlayerRuneStoneChange;
         GameEvent.onPlayerHealthChange += OnPlayerHealthChange;
@@ -86,6 +87,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoChoice -= OnPlayerDoChoice;
         GameEvent.onPlayerDoMediate -= OnPlayerDoMediate;
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
+        GameEvent.onCardManaActive -= OnCardManaActive;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
         GameEvent.onPlayerRuneStoneChange -= OnPlayerRuneStoneChange;
         GameEvent.onPlayerHealthChange -= OnPlayerHealthChange;
@@ -120,7 +122,6 @@ public class PlayerView : MonoBehaviour
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.Main)
             return;
-        m_infoType = InfoType.Mediate;
 
         for (int i = 0; i < m_mediateOptionContent.childCount; i++)
         {
@@ -137,7 +138,6 @@ public class PlayerView : MonoBehaviour
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.Main)
             return;
-        m_infoType = InfoType.Collect;
         GameEvent.View(ViewType.Wild, null);
     }
 
@@ -162,15 +162,21 @@ public class PlayerView : MonoBehaviour
                         break;
                     case InfoType.Collect:
                         GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
-                        m_cardView = null;
                         GameEvent.ViewUiShow(ViewType.Wild, false);
-                        m_runeStoneBox.gameObject.SetActive(true);
                         GameEvent.ViewInfo(InfoType.Collect, false);
+                        m_cardView = null;
                         break;
                 }
                 break;
             case ChoiceType.CardFullMana:
-                //...
+                switch (m_infoType)
+                {
+                    case InfoType.CardFullMana:
+                        GameManager.instance.CardManaActive(m_cardView);
+                        GameEvent.ViewInfo(InfoType.CardFullMana, false);
+                        m_cardView = null;
+                        break;
+                }
                 break;
         }
     }
@@ -187,19 +193,25 @@ public class PlayerView : MonoBehaviour
                         GameEvent.ViewInfo(InfoType.Mediate, false);
                         break;
                     case InfoType.Collect:
-                        GameEvent.ViewUiShow(ViewType.Wild, false);
+                        GameEvent.ViewUiShow(ViewType.Wild, true);
                         GameEvent.ViewInfo(InfoType.Collect, false);
-                        m_cardView.MoveBack(() => GameEvent.ViewUiShow(ViewType.Wild, true));
+                        m_cardView.MoveBack(null);
                         m_cardView = null;
                         break;
                 }
                 break;
             case ChoiceType.CardFullMana:
-                //...
+                switch (m_infoType)
+                {
+                    case InfoType.CardFullMana:
+                        GameEvent.ViewUiShow(ViewType.Field, true);
+                        GameEvent.ViewInfo(InfoType.CardFullMana, false);
+                        m_cardView.MoveBack(null);
+                        m_cardView = null;
+                        break;
+                }
                 break;
         }
-
-
     }
 
     public void BtnMediateOption(int OptionIndex)
@@ -260,7 +272,7 @@ public class PlayerView : MonoBehaviour
             m_playerContent.gameObject.SetActive(Type == ViewType.Field);
             m_warnMediate.SetActive(false);
             m_warnFullMana.SetActive(false);
-            m_runeStoneBox.gameObject.SetActive(false);
+            m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
             return;
         }
 
@@ -310,7 +322,7 @@ public class PlayerView : MonoBehaviour
                         m_playerContent.gameObject.SetActive(false);
                         m_warnMediate.SetActive(false);
                         m_warnFullMana.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(false);
+                        m_runeStoneBox.gameObject.SetActive(true);
                         break;
                 }
                 break;
@@ -321,7 +333,7 @@ public class PlayerView : MonoBehaviour
                 m_playerContent.gameObject.SetActive(Type == ViewType.Field);
                 m_warnMediate.SetActive(false);
                 m_warnFullMana.SetActive(false);
-                m_runeStoneBox.gameObject.SetActive(false);
+                m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
                 break;
         }
     }
@@ -350,6 +362,7 @@ public class PlayerView : MonoBehaviour
     {
         if (!GameManager.instance.Battle)
         {
+            m_infoType = InfoType.None;
             m_infoMask.gameObject.SetActive(false);
             m_btnInfoAccept.SetActive(false);
             m_btnInfoCancel.SetActive(false);
@@ -359,6 +372,8 @@ public class PlayerView : MonoBehaviour
             m_tmpExplainClass.gameObject.SetActive(false);
             return;
         }
+
+        m_infoType = Type;
 
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
 
@@ -500,6 +515,11 @@ public class PlayerView : MonoBehaviour
                 });
             });
         });
+    }
+
+    private void OnCardManaActive(ICard Card, Action OnComplete)
+    {
+        Card.MoveBack(() => Card.DoManaActive(() => OnComplete?.Invoke()));
     }
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
