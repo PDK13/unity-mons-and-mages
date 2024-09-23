@@ -178,7 +178,7 @@ public class GameEvent
 
     //Origin
 
-    public static Action<ICard, int, Action> onOriginDragon { get; set; }
+    public static Action<ICard, int, Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
     public static Action<ICard> onOriginGhost { get; set; }
 
     public static void OriginDragon(ICard Card, int Dice, Action OnComplete)
@@ -189,5 +189,14 @@ public class GameEvent
     public static void OriginGhost(ICard Card)
     {
         onOriginGhost?.Invoke(Card);
+    }
+
+    //Class
+
+    public static Action<ICard, int, Action> onClassFighter { get; set; } //Roll a Dice for Fighter
+
+    public static void ClassFighter(ICard Card, int Dice, Action OnComplete)
+    {
+        onClassFighter?.Invoke(Card, Dice, OnComplete);
     }
 }

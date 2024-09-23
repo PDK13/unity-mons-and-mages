@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     private void InfoMediationUpdate(int Index, Action OnComplete)
     {
-        m_cardMediation[Index].InfoRuneStoneUpdate(m_data.Mediation[Index], () => OnComplete?.Invoke());
+        m_cardMediation[Index].InfoRuneStoneUpdate(m_data.Mediation[Index], OnComplete);
     }
 
     //IPlayer
@@ -138,7 +138,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStart(Action OnComplete)
     {
-        GameEvent.PlayerStart(this, () => OnComplete?.Invoke());
+        GameEvent.PlayerStart(this, OnComplete);
     }
 
 
@@ -247,13 +247,13 @@ public class PlayerController : MonoBehaviour, IPlayer
             if (m_data.Mediation[0] == 0)
             {
                 m_data.Mediation[0] = RuneStoneAdd * 2;
-                InfoMediationUpdate(0, () => OnComplete?.Invoke());
+                InfoMediationUpdate(0, OnComplete);
             }
             else
             if (m_data.Mediation[1] == 0)
             {
                 m_data.Mediation[1] = RuneStoneAdd * 2;
-                InfoMediationUpdate(1, () => OnComplete?.Invoke());
+                InfoMediationUpdate(1, OnComplete);
             }
             else
                 OnComplete?.Invoke();
@@ -326,7 +326,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
 
-        Card.DostaffActive(() => OnComplete?.Invoke());
+        Card.DostaffActive(OnComplete);
     }
 
 
@@ -340,7 +340,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoEnd(Action OnComplete)
     {
         m_data.StunCurrent = 0;
-        GameEvent.PlayerEnd(this, () => OnComplete?.Invoke());
+        GameEvent.PlayerEnd(this, OnComplete);
     }
 
 
@@ -364,7 +364,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         m_data.StunCurrent += Value;
         m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
-        InfoStunUpdate(() => OnComplete?.Invoke());
+        InfoStunUpdate(OnComplete);
     }
 
     public void HealthChange(int Value, Action OnComplete)
@@ -375,6 +375,6 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
         m_data.HealthCurrent += Value;
-        InfoHealthUpdate(() => OnComplete?.Invoke());
+        InfoHealthUpdate(OnComplete);
     }
 }

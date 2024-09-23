@@ -15,4 +15,5 @@ public class DiceConfigData
     public Sprite Face;
     [Min(0)] public int Dragon = 0;
     [Min(0)] public int Bite = 0;
+    [Min(0)] public int Dot = 0;
 }

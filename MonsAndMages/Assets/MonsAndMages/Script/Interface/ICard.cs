@@ -70,11 +70,10 @@ public interface ICard
 
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
 
+
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
     void DoOriginDragonActive(int DragonLeft, Action OnComplete);
-
-    void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete);
 
     void DoOriginGhostActive(int GhostCount, Action OnComplete);
 
@@ -83,6 +82,13 @@ public interface ICard
     void DoOriginGhostStart();
 
     void DoOriginGhostUnReady();
+
+    void DoOriginInsectActive(Action OnComplete);
+
+    void DoOriginSirenActive(Action OnComplete);
+
+    void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete);
+
 
     void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
@@ -98,7 +104,21 @@ public interface ICard
 
     void DoManaActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
 
+
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
+
+    void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete);
+
+    void DoClassMagicAddictActive(Action OnComplete);
+
+    void DoClassSingerActive(int SingerCount, Action OnComplete);
+
+    void DoClassCareTakerActive(Action OnComplete);
+
+    void DoClassDiffuserActive(Action OnComplete);
+
+    void DoClassFlyingActive(Action OnComplete);
+
 
     void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }

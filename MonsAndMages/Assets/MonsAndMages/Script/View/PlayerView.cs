@@ -79,6 +79,8 @@ public class PlayerView : MonoBehaviour
         //Origin
         GameEvent.onOriginDragon += OnOriginDragon;
         GameEvent.onOriginGhost += OnOriginGhost;
+        //Class
+        GameEvent.onClassFighter += OnClassFighter;
     }
 
     private void OnDisable()
@@ -106,6 +108,8 @@ public class PlayerView : MonoBehaviour
         //Origin
         GameEvent.onOriginDragon -= OnOriginDragon;
         GameEvent.onOriginGhost -= OnOriginGhost;
+        //Class
+        GameEvent.onClassFighter -= OnClassFighter;
     }
 
     private void Start()
@@ -186,6 +190,7 @@ public class PlayerView : MonoBehaviour
                 {
                     case InfoType.CardFullMana:
                         GameManager.instance.CardManaActive(m_cardView);
+                        GameEvent.ShowUiArea(ViewType.Field, false);
                         GameEvent.ShowUiInfo(InfoType.CardFullMana, false);
                         m_cardView = null;
                         break;
@@ -506,8 +511,13 @@ public class PlayerView : MonoBehaviour
                 m_btnInfoCancel.SetActive(Show);
                 m_mediateOptionContent.gameObject.SetActive(false);
                 m_warnInfoAccept.SetActive(false);
-                m_tmpExplainOrigin.gameObject.SetActive(false);
-                m_tmpExplainClass.gameObject.SetActive(false);
+                if (Show && m_cardView != null)
+                {
+                    m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+                    m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+                }
+                m_tmpExplainOrigin.gameObject.SetActive(Show);
+                m_tmpExplainClass.gameObject.SetActive(Show);
                 break;
             case InfoType.CardOriginGhost:
                 m_btnInfoAccept.GetComponent<Button>().interactable = true;
@@ -599,7 +609,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnCardManaActive(ICard Card, Action OnComplete)
     {
-        Card.MoveBack(() => Card.DoManaActive(() => OnComplete?.Invoke()));
+        Card.MoveBack(() => Card.DoManaActive(OnComplete));
     }
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
@@ -663,5 +673,12 @@ public class PlayerView : MonoBehaviour
     private void OnOriginGhost(ICard Card)
     {
         GameEvent.ShowUiArea(ViewType.Field, true);
+    }
+
+    //GameEvent - Class
+
+    private void OnClassFighter(ICard Card, int Dice, Action OnComplete)
+    {
+        OnComplete?.Invoke();
     }
 }

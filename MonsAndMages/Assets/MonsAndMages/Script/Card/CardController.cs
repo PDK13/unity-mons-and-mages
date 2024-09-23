@@ -74,6 +74,7 @@ public class CardController : MonoBehaviour, ICard
                     return;
                 GameEvent.ButtonInteractable(false);
                 GameEvent.ViewCard(this);
+                //GameEvent.ShowUiArea(ViewType.Field, false);
                 GameEvent.ShowUiInfo(InfoType.PlayerDoCollect, true);
                 MoveTop(() => GameEvent.ButtonInteractable(true));
                 break;
@@ -82,6 +83,7 @@ public class CardController : MonoBehaviour, ICard
                     return;
                 GameEvent.ButtonInteractable(false);
                 GameEvent.ViewCard(this);
+                GameEvent.ShowUiArea(ViewType.Field, false);
                 GameEvent.ShowUiInfo(InfoType.CardFullMana, true);
                 MoveTop(() => GameEvent.ButtonInteractable(true));
                 break;
@@ -121,8 +123,6 @@ public class CardController : MonoBehaviour, ICard
     public int Growth { get; private set; }
 
     public int AttackCombine => m_data.AttackPoint + Growth;
-
-    public CardController Controller => this;
 
     public IPlayer Player => m_data.Player;
 
@@ -405,7 +405,7 @@ public class CardController : MonoBehaviour, ICard
             m_tmpGrowth.text = ManaText;
             m_tmpGrowth.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
-                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+                EffectOutlineMana(() => EffectOutlineNormal(OnComplete));
             });
         });
     }
@@ -431,7 +431,7 @@ public class CardController : MonoBehaviour, ICard
             m_tmpDamage.text = ManaText;
             m_tmpDamage.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
-                EffectOutlineMana(() => EffectOutlineNormal(() => OnComplete?.Invoke()));
+                EffectOutlineMana(() => EffectOutlineNormal(OnComplete));
             });
         });
     }
@@ -455,6 +455,7 @@ public class CardController : MonoBehaviour, ICard
         });
     } //Collect Event
 
+
     public void DoOriginActive(Action OnComplete)
     {
         switch (Origin)
@@ -469,16 +470,16 @@ public class CardController : MonoBehaviour, ICard
                 break;
             case CardOriginType.Ghost:
                 var GhostCount = Player.CardQueue.Count(t => t.Origin == CardOriginType.Ghost);
-                DoOriginGhostActive(GhostCount, () => EffectOrigin(() => OnComplete?.Invoke()));
+                DoOriginGhostActive(GhostCount, () => EffectOrigin(OnComplete));
                 break;
             case CardOriginType.Insects:
-                EffectOrigin(() => OnComplete?.Invoke());
+                DoOriginInsectActive(OnComplete);
                 break;
             case CardOriginType.Siren:
-                EffectOrigin(() => OnComplete?.Invoke());
+                DoOriginSirenActive(OnComplete);
                 break;
             case CardOriginType.Neutral:
-                EffectOrigin(() => OnComplete?.Invoke());
+                DoOriginNeutralActive(OnComplete);
                 break;
             default:
                 OnComplete?.Invoke();
@@ -492,6 +493,9 @@ public class CardController : MonoBehaviour, ICard
         var DiceCount = DiceQueue.Count;
         var DiceIndex = UnityEngine.Random.Range(0, (DiceCount * 10) - 1) / 10;
         var DiceFace = DiceQueue[DiceIndex];
+
+        DragonLeft--;
+
         GameEvent.OriginDragon(this, DiceIndex, () =>
         {
             EffectOrigin(() => Rumble(() =>
@@ -512,14 +516,7 @@ public class CardController : MonoBehaviour, ICard
                 }
             }));
         });
-        DragonLeft--;
     } //Origin Dragon Event
-
-    public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete)
-    {
-        var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
-        EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
-    } //Origin Woodland Event
 
     public void DoOriginGhostActive(int GhostCount, Action OnComplete)
     {
@@ -565,12 +562,28 @@ public class CardController : MonoBehaviour, ICard
         EffectOutlineNormal(null);
     }
 
+    public void DoOriginInsectActive(Action OnComplete) { EffectOrigin(OnComplete); } //Origin Insect Event
+
+    public void DoOriginSirenActive(Action OnComplete) { EffectOrigin(OnComplete); } //Origin Siren Event
+
+    public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete)
+    {
+        var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
+        EffectOrigin(() => DoManaFill((int)ManaGainValue, OnComplete));
+    } //Origin Woodland Event
+
+    public void DoOriginNeutralActive(Action OnComplete)
+    {
+        EffectOrigin(OnComplete);
+    } //Origin Neutral Active
+
+
     public void DoEnterActive(Action OnComplete)
     {
         if (onEnterActive == null)
             OnComplete?.Invoke();
         else
-            EffectAlpha(() => onEnterActive.Invoke(() => OnComplete?.Invoke()));
+            EffectAlpha(() => onEnterActive.Invoke(OnComplete));
     } //Enter Event
 
     public void DoPassiveActive(Action OnComplete)
@@ -578,13 +591,13 @@ public class CardController : MonoBehaviour, ICard
         if (onPassiveActive == null)
             OnComplete?.Invoke();
         else
-            EffectAlpha(() => onPassiveActive.Invoke(() => OnComplete?.Invoke()));
+            EffectAlpha(() => onPassiveActive.Invoke(OnComplete));
     } //Passive Event
 
 
     public void DostaffActive(Action OnComplete)
     {
-        EffectAlpha(() => DoAttackActive(() => DoManaFill(1, () => OnComplete?.Invoke())));
+        EffectAlpha(() => DoAttackActive(() => DoManaFill(1, OnComplete)));
     }
 
     public void DoAttackActive(Action OnComplete)
@@ -608,9 +621,9 @@ public class CardController : MonoBehaviour, ICard
         if (Mana > ManaPoint)
             Mana = ManaPoint;
         if (ManaFull)
-            InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineMana(() => OnComplete?.Invoke()));
+            InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineMana(OnComplete));
         else
-            InfoManaUpdate(Mana, ManaPoint, () => OnComplete?.Invoke());
+            InfoManaUpdate(Mana, ManaPoint, OnComplete);
     }
 
 
@@ -619,40 +632,132 @@ public class CardController : MonoBehaviour, ICard
         Mana = 0;
         InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineNormal(() =>
         {
-            DoClassActive(() => DoSpellActive(() => OnComplete?.Invoke()));
+            DoClassActive(() => DoSpellActive(OnComplete));
         }));
     } //Invoke from GameManager
+
 
     public void DoClassActive(Action OnComplete)
     {
         switch (Class)
         {
             case CardClassType.Fighter:
-                EffectClass(() => OnComplete?.Invoke());
+                DoClassFighterActive(this.AttackCombine, 0, OnComplete);
                 break;
             case CardClassType.MagicAddict:
-                EffectClass(() => OnComplete?.Invoke());
+                DoClassMagicAddictActive(OnComplete);
                 break;
             case CardClassType.Singer:
-                EffectClass(() => OnComplete?.Invoke());
+                var SingerCount = Player.CardQueue.Count(t => t.Class == CardClassType.Singer);
+                DoClassSingerActive(SingerCount, OnComplete);
                 break;
             case CardClassType.Caretaker:
-                EffectClass(() => OnComplete?.Invoke());
+                DoClassCareTakerActive(OnComplete);
                 break;
             case CardClassType.Diffuser:
-                EffectClass(() => OnComplete?.Invoke());
+                DoClassDiffuserActive(OnComplete);
                 break;
             case CardClassType.Flying:
-                EffectClass(() => OnComplete?.Invoke());
+                DoClassFlyingActive(OnComplete);
+                break;
+            default:
+                OnComplete?.Invoke();
                 break;
         }
-    }
+    } //Class Event
+
+    public void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete)
+    {
+        var DiceQueue = GameManager.instance.DiceConfig.Data;
+        var DiceCount = DiceQueue.Count;
+        var DiceIndex = UnityEngine.Random.Range(0, (DiceCount * 10) - 1) / 10;
+        var DiceFace = DiceQueue[DiceIndex];
+
+        AttackCombineLeft--;
+        DiceDotSumRolled += DiceFace.Dot;
+
+        GameEvent.ClassFighter(this, DiceIndex, () =>
+        {
+            if (AttackCombineLeft > 0)
+                EffectClass(() => DoClassFighterActive(AttackCombineLeft, DiceDotSumRolled, OnComplete));
+            else
+            {
+                var DiceDotSumAttack = (int)(DiceDotSumRolled / 2);
+                EffectClass(() => Rumble(() =>
+                {
+                    var OnCompleteEvent = false;
+                    var PlayerQueue = GameManager.instance.PlayerQueue;
+                    for (int i = 0; i < PlayerQueue.Length; i++)
+                    {
+                        if (PlayerQueue[i].Equals(this.Player))
+                            continue;
+
+                        if (!OnCompleteEvent)
+                        {
+                            OnCompleteEvent = true;
+                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, OnComplete);
+                        }
+                        else
+                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, null);
+                    }
+                }));
+            }
+        });
+
+    } //Class Fighter Event
+
+    public void DoClassMagicAddictActive(Action OnComplete) { EffectClass(OnComplete); } //Class Magic Addict Event
+
+    public void DoClassSingerActive(int SingerCount, Action OnComplete)
+    {
+        EffectClass(() => Rumble(() =>
+        {
+            var OnCompleteEvent = false;
+            var PlayerQueue = GameManager.instance.PlayerQueue;
+            for (int i = 0; i < PlayerQueue.Length; i++)
+            {
+                if (PlayerQueue[i].Equals(this.Player))
+                    continue;
+
+                if (!OnCompleteEvent)
+                {
+                    OnCompleteEvent = true;
+                    PlayerQueue[i].HealthChange(-SingerCount, OnComplete);
+                }
+                else
+                    PlayerQueue[i].HealthChange(-SingerCount, null);
+            }
+        }));
+    } //Class Singer Event
+
+    public void DoClassCareTakerActive(Action OnComplete) { EffectClass(OnComplete); } //Class Care Taker Event
+
+    public void DoClassDiffuserActive(Action OnComplete)
+    {
+        EffectClass(() => Rumble(() =>
+        {
+            var CardCurrentIndex = Player.CardQueue.ToList().IndexOf(this);
+            var CardL = CardCurrentIndex - 1 >= 0 ? Player.CardQueue[CardCurrentIndex - 1] : null;
+            var CardR = CardCurrentIndex + 1 <= Player.CardQueue.Length - 1 ? Player.CardQueue[CardCurrentIndex + 1] : null;
+            EffectOutlineMana(() =>
+            {
+                EffectOutlineNormal(OnComplete);
+                if (CardL != null)
+                    CardL.DoManaFill(1, null);
+                if (CardR != null)
+                    CardR.DoManaFill(1, null);
+            });
+        }));
+    } //Class Diffuser Event
+
+    public void DoClassFlyingActive(Action OnComplete) { EffectClass(OnComplete); } //Class Flying Event
+
 
     public void DoSpellActive(Action OnComplete)
     {
         if (onSpellActive == null)
             OnComplete?.Invoke();
         else
-            EffectAlpha(() => onSpellActive.Invoke(() => OnComplete?.Invoke()));
+            EffectAlpha(() => onSpellActive.Invoke(OnComplete));
     }
 }

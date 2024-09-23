@@ -16,18 +16,24 @@ MonoBehaviour:
   - Face: {fileID: 21300000, guid: aa8f714cd996c6a45adbc27a1b1b20c7, type: 3}
     Dragon: 1
     Bite: 1
+    Dot: 3
   - Face: {fileID: 21300000, guid: 4f0592c0cce789c44a813f5171bc2b8c, type: 3}
     Dragon: 1
     Bite: 1
+    Dot: 1
   - Face: {fileID: 21300000, guid: dc516d9423b32be44ad180be2cc8f9c6, type: 3}
     Dragon: 1
     Bite: 0
+    Dot: 2
   - Face: {fileID: 21300000, guid: 77aee59c86ec1e0488fd4ac7a35daef7, type: 3}
     Dragon: 1
     Bite: 0
+    Dot: 2
   - Face: {fileID: 21300000, guid: a4ee39c6ca90a8e4dae2ad97c26ff83e, type: 3}
     Dragon: 1
     Bite: 0
+    Dot: 1
   - Face: {fileID: 21300000, guid: dd4c2302c87303e4dbd36adf2f8badb4, type: 3}
     Dragon: 2
     Bite: 0
+    Dot: 1
