@@ -229,16 +229,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         GameEvent.PlayerStunnedCheck(this, null);
     }
 
-
-    public void DoChoice(Action OnComplete)
-    {
-        GameEvent.PlayerDoChoice(this, () =>
-        {
-            OnComplete?.Invoke();
-        });
-    }
-
-
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
         m_data.RuneStone -= RuneStoneAdd;
@@ -279,16 +269,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCollect(ICard Card, Action OnComplete)
     {
-        RuneStoneChange(-Card.RuneStoneCost, () =>
-        {
-            GameEvent.PlayerDoCollect(this, Card, () =>
-            {
-                Card.DoCollectActive(this, () =>
-                {
-                    OnComplete?.Invoke();
-                });
-            }); //Move card first before active card collect event!
-        });
+        RuneStoneChange(-Card.RuneStoneCost, () => OnComplete?.Invoke());
         m_data.CardQueue.Add(Card);
     }
 
@@ -327,13 +308,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
 
         Card.DostaffActive(OnComplete);
-    }
-
-
-    public void CardManaActiveDoChoice(Action OnComplete)
-    {
-        GameEvent.ShowUiArea(ViewType.Field, true);
-        OnComplete?.Invoke();
     }
 
 

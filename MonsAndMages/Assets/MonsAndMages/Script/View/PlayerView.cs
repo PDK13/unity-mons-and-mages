@@ -23,10 +23,11 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnInfoCancel;
 
     [Space]
-    [SerializeField] private GameObject m_warnMediate;
-    [SerializeField] private GameObject m_warnInfoAccept;
-    [SerializeField] private GameObject m_warnFullMana;
-    [SerializeField] private GameObject m_warnStaffMove;
+    [SerializeField] private GameObject m_hintChoiceMediate;
+    [SerializeField] private GameObject m_hintCollectAccept;
+    [SerializeField] private GameObject m_hintManaActive;
+    [SerializeField] private GameObject m_hintOriginGhost;
+    [SerializeField] private GameObject m_hintClassMagicAddict;
 
     [Space]
     [SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
@@ -39,7 +40,6 @@ public class PlayerView : MonoBehaviour
     [Space]
     [SerializeField] private RectTransform m_diceSample;
 
-    private InfoType m_infoType;
     private ICard m_cardView;
     private int m_mediateOptionIndex = -1;
 
@@ -60,11 +60,21 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInit += OnInit;
         GameEvent.onInitPlayer += OnInitPlayer;
         //View
-        GameEvent.onViewCard += OnViewCard;
         GameEvent.onViewPlayer += OnViewPlayer;
-        //Show
-        GameEvent.onShowUiArea += OnShowUiArea;
-        GameEvent.onShowUiInfo += OnShowUiInfo;
+        //Ui-Choice
+        GameEvent.onUiChoiceHide += OnUiChoiceHide;
+        GameEvent.onUiChoiceCurrent += OnUiChoiceCurrent;
+        GameEvent.onUiChoiceMediateOrCollect += OnUiChoiceMediateOrCollect;
+        GameEvent.onUiChoiceCardFullMana += OnUiChoiceCardFullMana;
+        GameEvent.onUiChoiceCardOriginGhost += OnUiChoiceCardOriginGhost;
+        GameEvent.onUiChoiceCardClassMagicAddict += OnUiChoiceCardClassMagicAddict;
+        //Ui-Info
+        GameEvent.onUiInfoHide += OnUiInfoHide;
+        GameEvent.onUiInfoCollect += OnUiInfoCollect;
+        GameEvent.onUiInfoMediate += OnUiInfoMediate;
+        GameEvent.onUiInfoFullMana += OnUiInfoFullMana;
+        GameEvent.onUiInfoOriginGhost += OnUiInfoOriginGhost;
+        GameEvent.onUiInfoClassMagicAddict += OnUiInfoClassMagicAddict;
         //Player
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
@@ -81,6 +91,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginGhost += OnOriginGhost;
         //Class
         GameEvent.onClassFighter += OnClassFighter;
+        GameEvent.onClassMagicAddict += OnClassMagicAddict;
     }
 
     private void OnDisable()
@@ -89,11 +100,21 @@ public class PlayerView : MonoBehaviour
         GameEvent.onInit -= OnInit;
         GameEvent.onInitPlayer -= OnInitPlayer;
         //View
-        GameEvent.onViewCard -= OnViewCard;
         GameEvent.onViewPlayer -= OnViewPlayer;
-        //Show
-        GameEvent.onShowUiArea -= OnShowUiArea;
-        GameEvent.onShowUiInfo -= OnShowUiInfo;
+        //Ui-Choice
+        GameEvent.onUiChoiceHide -= OnUiChoiceHide;
+        GameEvent.onUiChoiceCurrent -= OnUiChoiceCurrent;
+        GameEvent.onUiChoiceMediateOrCollect -= OnUiChoiceMediateOrCollect;
+        GameEvent.onUiChoiceCardFullMana -= OnUiChoiceCardFullMana;
+        GameEvent.onUiChoiceCardOriginGhost -= OnUiChoiceCardOriginGhost;
+        GameEvent.onUiChoiceCardClassMagicAddict -= OnUiChoiceCardClassMagicAddict;
+        //Ui-Info
+        GameEvent.onUiInfoHide -= OnUiInfoHide;
+        GameEvent.onUiInfoCollect -= OnUiInfoCollect;
+        GameEvent.onUiInfoMediate -= OnUiInfoMediate;
+        GameEvent.onUiInfoFullMana -= OnUiInfoFullMana;
+        GameEvent.onUiInfoOriginGhost -= OnUiInfoOriginGhost;
+        GameEvent.onUiInfoClassMagicAddict -= OnUiInfoClassMagicAddict;
         //Player
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
@@ -110,12 +131,13 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginGhost -= OnOriginGhost;
         //Class
         GameEvent.onClassFighter -= OnClassFighter;
+        GameEvent.onClassMagicAddict -= OnClassMagicAddict;
     }
 
     private void Start()
     {
         m_btnMediate.SetActive(false);
-        m_warnMediate.gameObject.SetActive(false);
+        m_hintChoiceMediate.gameObject.SetActive(false);
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
 
@@ -123,9 +145,9 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.SetActive(false);
         m_btnInfoCancel.SetActive(false);
         m_mediateOptionContent.gameObject.SetActive(false);
-        m_warnInfoAccept.SetActive(false);
-        m_warnFullMana.SetActive(false);
-        m_warnStaffMove.SetActive(false);
+        m_hintCollectAccept.SetActive(false);
+        m_hintManaActive.SetActive(false);
+        m_hintOriginGhost.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
         m_tmpExplainClass.gameObject.SetActive(false);
 
@@ -148,7 +170,7 @@ public class PlayerView : MonoBehaviour
             Button.interactable = GameManager.instance.PlayerCurrent.RuneStone >= i + 1;
         }
 
-        GameEvent.ShowUiInfo(InfoType.PlayerDoMediate, true);
+        GameEvent.UiInfoMediate();
     }
 
     public void BtnViewCollect()
@@ -170,42 +192,25 @@ public class PlayerView : MonoBehaviour
         switch (GameManager.instance.PlayerChoice)
         {
             case ChoiceType.MediateOrCollect:
-                switch (m_infoType)
+                switch (GameView.instance.ViewType)
                 {
-                    case InfoType.PlayerDoMediate:
-                        GameManager.instance.PlayerDoMediate(GameManager.instance.PlayerCurrent, m_mediateOptionIndex + 1);
-                        GameEvent.ShowUiArea(ViewType.Field, true);
-                        GameEvent.ShowUiInfo(InfoType.PlayerDoMediate, false);
+                    case ViewType.Field: //Mediate
+                        GameManager.instance.PlayerDoMediateStart(GameManager.instance.PlayerCurrent, m_mediateOptionIndex + 1);
                         break;
-                    case InfoType.PlayerDoCollect:
-                        GameManager.instance.PlayerDoCollect(GameManager.instance.PlayerCurrent, m_cardView);
-                        GameEvent.ShowUiArea(ViewType.Wild, false);
-                        GameEvent.ShowUiInfo(InfoType.PlayerDoCollect, false);
-                        m_cardView = null;
+                    case ViewType.Wild: //Collect
+                        GameManager.instance.PlayerDoCollectStart(GameManager.instance.PlayerCurrent, m_cardView);
                         break;
                 }
                 break;
             case ChoiceType.CardFullMana:
-                switch (m_infoType)
-                {
-                    case InfoType.CardFullMana:
-                        GameManager.instance.CardManaActive(m_cardView);
-                        GameEvent.ShowUiArea(ViewType.Field, false);
-                        GameEvent.ShowUiInfo(InfoType.CardFullMana, false);
-                        m_cardView = null;
-                        break;
-                }
+                GameManager.instance.CardManaActiveStart(m_cardView);
                 break;
-                //case ChoiceType.CardOriginGhost:
-                //    switch (m_infoType)
-                //    {
-                //        case InfoType.CardOriginGhost:
-                //            GameManager.instance.CardOriginGhostDoChoice(m_cardView);
-                //            GameEvent.ShowUiInfo(InfoType.CardOriginGhost, false);
-                //            m_cardView = null;
-                //            break;
-                //    }
-                //    break;
+            case ChoiceType.CardOriginGhost:
+                GameManager.instance.CardOriginGhostDoStart(m_cardView);
+                break;
+            case ChoiceType.CardClassMagicAddict:
+                GameManager.instance.CardClassMagicAddictStart(m_cardView);
+                break;
         }
     }
 
@@ -214,37 +219,21 @@ public class PlayerView : MonoBehaviour
         switch (GameManager.instance.PlayerChoice)
         {
             case ChoiceType.MediateOrCollect:
-                switch (m_infoType)
+                switch (GameView.instance.ViewType)
                 {
-                    case InfoType.PlayerDoMediate:
-                        GameEvent.ShowUiArea(ViewType.Field, true);
-                        GameEvent.ShowUiInfo(InfoType.PlayerDoMediate, false);
+                    case ViewType.Field: //Mediate
+                        GameEvent.UiInfoHide(true, true);
                         break;
-                    case InfoType.PlayerDoCollect:
-                        GameEvent.ShowUiArea(ViewType.Wild, true);
-                        GameEvent.ShowUiInfo(InfoType.PlayerDoCollect, false);
-                        m_cardView.MoveBack(null);
-                        m_cardView = null;
+                    case ViewType.Wild: //Collect
+                        GameEvent.UiInfoHide(true, true);
                         break;
                 }
                 break;
             case ChoiceType.CardFullMana:
-                switch (m_infoType)
-                {
-                    case InfoType.CardFullMana:
-                        GameEvent.ShowUiArea(ViewType.Field, true);
-                        GameEvent.ShowUiInfo(InfoType.CardFullMana, false);
-                        m_cardView.MoveBack(null);
-                        m_cardView = null;
-                        break;
-                }
+            case ChoiceType.CardOriginGhost:
+            case ChoiceType.CardClassMagicAddict:
+                GameEvent.UiInfoHide(true, true);
                 break;
-                //case ChoiceType.CardOriginGhost:
-                //    GameEvent.ShowUiArea(ViewType.Field, true);
-                //    GameEvent.ShowUiInfo(InfoType.CardOriginGhost, false);
-                //    m_cardView.MoveBack(null);
-                //    m_cardView = null;
-                //    break;
         }
     }
 
@@ -276,7 +265,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnInitPlayer(PlayerData[] Player)
     {
-        GameEvent.ShowUiArea(ViewType.Field, true);
+        OnUiChoiceCurrent();
 
         for (int i = 0; i < m_playerContent.transform.childCount; i++)
         {
@@ -299,9 +288,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnViewCard(ICard Card)
     {
-        if (m_cardView != null)
-            Debug.LogWarning("View another card " + Card.Name + " not allow");
-        m_cardView = Card;
+
     }
 
     private void OnViewPlayer(IPlayer Player, Action OnComplete)
@@ -324,132 +311,120 @@ public class PlayerView : MonoBehaviour
         //m_tmpRuneStone.text = PlayerQueue.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
     }
 
-    //GameEvent - Show
+    //GameEvent - Ui Choice
 
-    private void OnShowUiArea(ViewType Type, bool Show)
+    private void OnUiChoiceHide()
     {
-        if (!GameManager.instance.Battle || !Show)
-        {
-            m_btnMediate.SetActive(false);
-            m_btnCollect.SetActive(false);
-            m_btnBack.SetActive(false);
-            m_playerContent.gameObject.SetActive(Type == ViewType.Field);
-            m_warnMediate.SetActive(false);
-            m_warnFullMana.SetActive(false);
-            m_warnStaffMove.SetActive(false);
-            m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
-            return;
-        }
+        var Type = GameView.instance.ViewType;
+        m_btnMediate.SetActive(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.gameObject.SetActive(Type == ViewType.Field);
+        m_hintChoiceMediate.SetActive(false);
+        m_hintManaActive.SetActive(false);
+        m_hintOriginGhost.SetActive(false);
+        m_hintClassMagicAddict.SetActive(false);
+        m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
+    }
 
+    private void OnUiChoiceCurrent()
+    {
         switch (GameManager.instance.PlayerChoice)
         {
+            case ChoiceType.None:
+                OnUiChoiceHide();
+                break;
             case ChoiceType.MediateOrCollect:
-                switch (Type)
-                {
-                    case ViewType.Field:
-                        var MediateAvaible = PlayerCurrent.MediationEmty;
-                        m_btnMediate.GetComponent<Button>().interactable = MediateAvaible;
-                        m_btnMediate.SetActive(true);
-                        m_btnCollect.SetActive(true);
-                        m_btnBack.SetActive(false);
-                        m_playerContent.gameObject.SetActive(true);
-                        m_warnMediate.SetActive(!MediateAvaible);
-                        m_warnFullMana.SetActive(false);
-                        m_warnStaffMove.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(false);
-                        break;
-                    case ViewType.Wild:
-                        m_btnMediate.SetActive(false);
-                        m_btnCollect.SetActive(false);
-                        m_btnBack.SetActive(true);
-                        m_playerContent.gameObject.SetActive(false);
-                        m_warnMediate.SetActive(false);
-                        m_warnFullMana.SetActive(false);
-                        m_warnStaffMove.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(true);
-                        break;
-                }
+                OnUiChoiceMediateOrCollect();
                 break;
             case ChoiceType.CardFullMana:
-                switch (Type)
-                {
-                    case ViewType.Field:
-                        m_btnMediate.SetActive(false);
-                        m_btnCollect.SetActive(false);
-                        m_btnBack.SetActive(false);
-                        m_playerContent.gameObject.SetActive(true);
-                        m_warnMediate.SetActive(false);
-                        m_warnFullMana.SetActive(true);
-                        m_warnStaffMove.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(false);
-                        break;
-                    case ViewType.Wild:
-                        m_btnMediate.SetActive(false);
-                        m_btnCollect.SetActive(false);
-                        m_btnBack.SetActive(true);
-                        m_playerContent.gameObject.SetActive(false);
-                        m_warnMediate.SetActive(false);
-                        m_warnFullMana.SetActive(false);
-                        m_warnStaffMove.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(true);
-                        break;
-                }
+                OnUiChoiceCardFullMana();
                 break;
             case ChoiceType.CardOriginGhost:
-                switch (Type)
-                {
-                    case ViewType.Field:
-                        m_btnMediate.SetActive(false);
-                        m_btnCollect.SetActive(false);
-                        m_btnBack.SetActive(false);
-                        m_playerContent.gameObject.SetActive(true);
-                        m_warnMediate.SetActive(false);
-                        m_warnFullMana.SetActive(false);
-                        m_warnStaffMove.SetActive(true);
-                        m_runeStoneBox.gameObject.SetActive(false);
-                        break;
-                    case ViewType.Wild:
-                        m_btnMediate.SetActive(false);
-                        m_btnCollect.SetActive(false);
-                        m_btnBack.SetActive(true);
-                        m_playerContent.gameObject.SetActive(false);
-                        m_warnMediate.SetActive(false);
-                        m_warnFullMana.SetActive(false);
-                        m_warnStaffMove.SetActive(false);
-                        m_runeStoneBox.gameObject.SetActive(true);
-                        break;
-                }
+                OnUiChoiceCardOriginGhost();
                 break;
-            default:
-                m_btnMediate.SetActive(false);
-                m_btnCollect.SetActive(false);
-                m_btnBack.SetActive(false);
-                m_playerContent.gameObject.SetActive(Type == ViewType.Field);
-                m_warnMediate.SetActive(false);
-                m_warnFullMana.SetActive(false);
-                m_warnStaffMove.SetActive(false);
-                m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
+            case ChoiceType.CardClassMagicAddict:
+                OnUiChoiceCardClassMagicAddict();
                 break;
         }
     }
 
-    private void OnShowUiInfo(InfoType Type, bool Show)
+    private void OnUiChoiceMediateOrCollect()
     {
-        if (!GameManager.instance.Battle)
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
         {
-            m_infoType = InfoType.None;
-            m_infoMask.gameObject.SetActive(false);
-            m_btnInfoAccept.SetActive(false);
-            m_btnInfoCancel.SetActive(false);
-            m_mediateOptionContent.gameObject.SetActive(false);
-            m_warnInfoAccept.SetActive(false);
-            m_tmpExplainOrigin.gameObject.SetActive(false);
-            m_tmpExplainClass.gameObject.SetActive(false);
-            return;
+            case ViewType.Field:
+                var MediateAvaible = PlayerCurrent.MediationEmty;
+                m_btnMediate.GetComponent<Button>().interactable = MediateAvaible;
+                m_btnMediate.SetActive(true);
+                m_btnCollect.SetActive(true);
+                m_hintChoiceMediate.SetActive(!MediateAvaible);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
         }
+    }
 
-        m_infoType = Type;
+    private void OnUiChoiceCardFullMana()
+    {
+        OnUiChoiceHide();
 
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintManaActive.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnUiChoiceCardOriginGhost()
+    {
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintOriginGhost.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnUiChoiceCardClassMagicAddict()
+    {
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintClassMagicAddict.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    //GameEvent - Ui Info
+
+    private void UiMaskInfo(bool Show)
+    {
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
 
         m_infoMask.DOKill();
@@ -469,76 +444,100 @@ public class PlayerView : MonoBehaviour
                 .SetEase(Ease.Linear)
                 .OnComplete(() => m_infoMask.gameObject.SetActive(false));
         }
+    } //Info MaskTween
 
-        switch (Type)
+    private void OnUiInfoHide(bool MaskTween, bool CardBack)
+    {
+        if (MaskTween)
+            UiMaskInfo(false);
+        else
         {
-            case InfoType.PlayerDoMediate:
-                m_btnInfoAccept.GetComponent<Button>().interactable = true;
-                m_btnInfoAccept.SetActive(false);
-                m_btnInfoCancel.SetActive(Show);
-                m_mediateOptionContent.gameObject.SetActive(Show);
-                m_warnInfoAccept.SetActive(false);
-                m_tmpExplainOrigin.gameObject.SetActive(false);
-                m_tmpExplainClass.gameObject.SetActive(false);
-                break;
-            case InfoType.PlayerDoCollect:
-                if (Show && m_cardView != null)
-                {
-                    var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
-                    m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
-                    m_btnInfoAccept.SetActive(Show);
-                    m_warnInfoAccept.SetActive(Show && !CollectAvaible);
-                }
-                else
-                {
-                    m_infoMask.gameObject.SetActive(false);
-                    m_btnInfoAccept.SetActive(false);
-                    m_warnInfoAccept.SetActive(false);
-                }
-                m_btnInfoCancel.SetActive(Show);
-                m_mediateOptionContent.gameObject.SetActive(false);
-                if (Show && m_cardView != null)
-                {
-                    m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
-                    m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
-                }
-                m_tmpExplainOrigin.gameObject.SetActive(Show);
-                m_tmpExplainClass.gameObject.SetActive(Show);
-                break;
-            case InfoType.CardFullMana:
-                m_btnInfoAccept.GetComponent<Button>().interactable = true;
-                m_btnInfoAccept.SetActive(Show);
-                m_btnInfoCancel.SetActive(Show);
-                m_mediateOptionContent.gameObject.SetActive(false);
-                m_warnInfoAccept.SetActive(false);
-                if (Show && m_cardView != null)
-                {
-                    m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
-                    m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
-                }
-                m_tmpExplainOrigin.gameObject.SetActive(Show);
-                m_tmpExplainClass.gameObject.SetActive(Show);
-                break;
-            case InfoType.CardOriginGhost:
-                m_btnInfoAccept.GetComponent<Button>().interactable = true;
-                m_btnInfoAccept.SetActive(Show);
-                m_btnInfoCancel.SetActive(Show);
-                m_mediateOptionContent.gameObject.SetActive(false);
-                m_warnInfoAccept.SetActive(false);
-                m_tmpExplainOrigin.gameObject.SetActive(false);
-                m_tmpExplainClass.gameObject.SetActive(false);
-                break;
-            default:
-                m_infoMask.gameObject.SetActive(false);
-                m_btnInfoAccept.SetActive(false);
-                m_btnInfoCancel.SetActive(false);
-                m_mediateOptionContent.gameObject.SetActive(false);
-                m_warnInfoAccept.SetActive(false);
-                m_tmpExplainOrigin.gameObject.SetActive(false);
-                m_tmpExplainClass.gameObject.SetActive(false);
-                break;
+            m_infoMask.DOKill();
+            m_infoMask.gameObject.SetActive(false);
         }
-    }
+
+        if (m_cardView != null)
+        {
+            if (CardBack)
+                m_cardView.MoveBack(null);
+            m_cardView = null;
+        }
+
+        m_btnInfoAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(false);
+        m_mediateOptionContent.gameObject.SetActive(false);
+        m_hintCollectAccept.SetActive(false);
+        m_tmpExplainOrigin.gameObject.SetActive(false);
+        m_tmpExplainClass.gameObject.SetActive(false);
+    } //Info Hide
+
+    private void OnUiInfoCollect(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.MoveTop(null);
+
+        var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
+        m_btnInfoAccept.SetActive(true);
+        m_hintCollectAccept.SetActive(!CollectAvaible);
+        m_btnInfoCancel.SetActive(true);
+        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_tmpExplainOrigin.gameObject.SetActive(true);
+        m_tmpExplainClass.gameObject.SetActive(true);
+    } //Info Collect
+
+    private void OnUiInfoMediate()
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+
+        m_btnInfoCancel.SetActive(true);
+        m_mediateOptionContent.gameObject.SetActive(true);
+    } //Info Meidate
+
+    private void OnUiInfoFullMana(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.MoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_tmpExplainOrigin.gameObject.SetActive(true);
+        m_tmpExplainClass.gameObject.SetActive(true);
+    } //Info Full Mana
+
+    private void OnUiInfoOriginGhost(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.MoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+    } //Info Origin Ghost
+
+    private void OnUiInfoClassMagicAddict(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.MoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+    } //Info Class Magic Addict
 
     //GameEvent - Player
 
@@ -577,40 +576,11 @@ public class PlayerView : MonoBehaviour
         OnComplete?.Invoke();
     }
 
-    private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete)
-    {
-        //...
-    }
+    private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete) { OnComplete?.Invoke(); }
 
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
-    {
-        GameEvent.ShowUiInfo(InfoType.PlayerDoCollect, false);
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete) { OnComplete?.Invoke(); }
 
-        Card.Renderer.maskable = false;
-        var Point = Player.DoCollectReady().transform;
-        GameEvent.ViewArea(ViewType.Field, () =>
-        {
-            GameEvent.WildCardFill(null);
-            GameEvent.ViewPlayer(PlayerCurrent, () =>
-            {
-                Card.Pointer(Point);
-                Card.MoveBack(() =>
-                {
-                    Card.Rumble(() =>
-                    {
-                        Card.Renderer.maskable = true;
-                        Card.InfoShow(true);
-                        OnComplete?.Invoke();
-                    });
-                });
-            });
-        });
-    }
-
-    private void OnCardManaActive(ICard Card, Action OnComplete)
-    {
-        Card.MoveBack(() => Card.DoManaActive(OnComplete));
-    }
+    private void OnCardManaActive(ICard Card, Action OnComplete) { OnComplete?.Invoke(); }
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
@@ -665,20 +635,25 @@ public class PlayerView : MonoBehaviour
 
     //GameEvent - Origin
 
-    private void OnOriginDragon(ICard Card, int Dice, Action OnComplete)
+    private void OnOriginDragon(Action OnComplete)
     {
         OnComplete?.Invoke();
     }
 
     private void OnOriginGhost(ICard Card)
     {
-        GameEvent.ShowUiArea(ViewType.Field, true);
+        GameEvent.UiChoiceCardOriginGhost();
     }
 
     //GameEvent - Class
 
-    private void OnClassFighter(ICard Card, int Dice, Action OnComplete)
+    private void OnClassFighter(Action OnComplete)
     {
         OnComplete?.Invoke();
+    }
+
+    private void OnClassMagicAddict(ICard Card)
+    {
+        GameEvent.UiChoiceCardClassMagicAddict();
     }
 }

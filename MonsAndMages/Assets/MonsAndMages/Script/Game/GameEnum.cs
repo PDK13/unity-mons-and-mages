@@ -57,19 +57,11 @@ public enum ViewType
     Wild,
 }
 
-public enum InfoType
-{
-    None,
-    PlayerDoCollect,
-    PlayerDoMediate,
-    CardFullMana,
-    CardOriginGhost,
-}
-
 public enum ChoiceType
 {
     None,
     MediateOrCollect,
     CardFullMana,
     CardOriginGhost,
+    CardClassMagicAddict,
 }

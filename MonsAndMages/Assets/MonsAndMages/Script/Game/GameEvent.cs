@@ -31,7 +31,6 @@ public class GameEvent
     //View
 
     public static Action<ViewType, Action> onViewArea { get; set; }
-    public static Action<ICard> onViewCard { get; set; }
     public static Action<IPlayer, Action> onViewPlayer { get; set; }
 
     public static void ViewArea(ViewType Type, Action OnComplete)
@@ -39,29 +38,87 @@ public class GameEvent
         onViewArea?.Invoke(Type, OnComplete);
     }
 
-    public static void ViewCard(ICard Card)
-    {
-        onViewCard?.Invoke(Card);
-    }
-
     public static void ViewPlayer(IPlayer Player, Action OnComplete)
     {
         onViewPlayer?.Invoke(Player, OnComplete);
     }
 
-    //Show
+    //Ui-Choice
 
-    public static Action<ViewType, bool> onShowUiArea { get; set; }
-    public static Action<InfoType, bool> onShowUiInfo { get; set; }
+    public static Action onUiChoiceHide { get; set; }
+    public static Action onUiChoiceCurrent { get; set; }
+    public static Action onUiChoiceMediateOrCollect { get; set; }
+    public static Action onUiChoiceCardFullMana { get; set; }
+    public static Action onUiChoiceCardOriginGhost { get; set; }
+    public static Action onUiChoiceCardClassMagicAddict { get; set; }
 
-    public static void ShowUiArea(ViewType Type, bool Show)
+    public static void UiChoiceHide()
     {
-        onShowUiArea?.Invoke(Type, Show);
+        onUiChoiceHide?.Invoke();
     }
 
-    public static void ShowUiInfo(InfoType Type, bool Show)
+    public static void UiChoiceCurrent()
     {
-        onShowUiInfo?.Invoke(Type, Show);
+        onUiChoiceCurrent?.Invoke();
+    }
+
+    public static void UiChoiceMediateOrCollect()
+    {
+        onUiChoiceMediateOrCollect?.Invoke();
+    }
+
+    public static void UiChoiceCardFullMana()
+    {
+        onUiChoiceCardFullMana?.Invoke();
+    }
+
+    public static void UiChoiceCardOriginGhost()
+    {
+        onUiChoiceCardOriginGhost?.Invoke();
+    }
+
+    public static void UiChoiceCardClassMagicAddict()
+    {
+        onUiChoiceCardClassMagicAddict?.Invoke();
+    }
+
+    //Ui-Info
+
+    public static Action<bool, bool> onUiInfoHide { get; set; }
+    public static Action<ICard> onUiInfoCollect { get; set; }
+    public static Action onUiInfoMediate { get; set; }
+    public static Action<ICard> onUiInfoFullMana { get; set; }
+    public static Action<ICard> onUiInfoOriginGhost { get; set; }
+    public static Action<ICard> onUiInfoClassMagicAddict { get; set; }
+
+    public static void UiInfoHide(bool MaskTween, bool CardBack)
+    {
+        onUiInfoHide?.Invoke(MaskTween, CardBack);
+    }
+
+    public static void UiInfoCollect(ICard Card)
+    {
+        onUiInfoCollect?.Invoke(Card);
+    }
+
+    public static void UiInfoMediate()
+    {
+        onUiInfoMediate?.Invoke();
+    }
+
+    public static void UiInfoFullMana(ICard Card)
+    {
+        onUiInfoFullMana?.Invoke(Card);
+    }
+
+    public static void UiInfoOriginGhost(ICard Card)
+    {
+        onUiInfoOriginGhost?.Invoke(Card);
+    }
+
+    public static void UiInfoClassMagicAddict(ICard Card)
+    {
+        onUiInfoClassMagicAddict?.Invoke(Card);
     }
 
     //Button
@@ -85,9 +142,9 @@ public class GameEvent
     public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromSupply { get; set; } //PlayerQueue take rune stone from supply
     public static Action<IPlayer, int, Action> onPlayerTakeRuneStoneFromMediation { get; set; } //PlayerQueue take rune stone from mediation
     public static Action<IPlayer, Action> onPlayerStunnedCheck { get; set; } //PlayerQueue start turn
-    public static Action<IPlayer, Action> onPlayerDoChoice { get; set; } //PlayerQueue choice PlayerDoMediate or PlayerDoCollect
-    public static Action<IPlayer, int, Action> onPlayerDoMediate { get; set; } //PlayerQueue PlayerDoMediate Event
-    public static Action<IPlayer, ICard, Action> onPlayerDoCollect { get; set; } //PlayerQueue PlayerDoCollect Event
+    public static Action<IPlayer, Action> onPlayerDoChoice { get; set; } //PlayerQueue choice PlayerDoMediateStart or PlayerDoCollectStart
+    public static Action<IPlayer, int, Action> onPlayerDoMediate { get; set; } //PlayerQueue PlayerDoMediateStart Event
+    public static Action<IPlayer, ICard, Action> onPlayerDoCollect { get; set; } //PlayerQueue PlayerDoCollectStart Event
     public static Action<IPlayer, Action> onPlayerCardManaActiveDoChoice { get; set; }
     public static Action<ICard, Action> onCardManaActive { get; set; }
     public static Action<IPlayer, Action> onPlayerEnd { get; set; }
@@ -123,12 +180,12 @@ public class GameEvent
     public static void PlayerDoMediate(IPlayer Player, int RuneStoneAdd, Action OnComplete)
     {
         onPlayerDoMediate?.Invoke(Player, RuneStoneAdd, OnComplete);
-    } //PlayerDoMediate Event
+    } //PlayerDoMediateStart Event
 
     public static void PlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
     {
         onPlayerDoCollect?.Invoke(Player, Card, OnComplete);
-    } //PlayerDoCollect Event
+    } //PlayerDoCollectStart Event
 
     public static void PlayerCardManaActiveDoChoice(IPlayer Player, Action OnComplete)
     {
@@ -178,12 +235,12 @@ public class GameEvent
 
     //Origin
 
-    public static Action<ICard, int, Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
+    public static Action<Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
     public static Action<ICard> onOriginGhost { get; set; }
 
-    public static void OriginDragon(ICard Card, int Dice, Action OnComplete)
+    public static void OriginDragon(Action OnComplete)
     {
-        onOriginDragon?.Invoke(Card, Dice, OnComplete);
+        onOriginDragon?.Invoke(OnComplete);
     }
 
     public static void OriginGhost(ICard Card)
@@ -193,10 +250,16 @@ public class GameEvent
 
     //Class
 
-    public static Action<ICard, int, Action> onClassFighter { get; set; } //Roll a Dice for Fighter
+    public static Action<Action> onClassFighter { get; set; } //Roll a Dice for Fighter
+    public static Action<ICard> onClassMagicAddict { get; set; }
 
-    public static void ClassFighter(ICard Card, int Dice, Action OnComplete)
+    public static void ClassFighter(Action OnComplete)
     {
-        onClassFighter?.Invoke(Card, Dice, OnComplete);
+        onClassFighter?.Invoke(OnComplete);
+    }
+
+    public static void ClassMagicAddict(ICard Card)
+    {
+        onClassMagicAddict?.Invoke(Card);
     }
 }

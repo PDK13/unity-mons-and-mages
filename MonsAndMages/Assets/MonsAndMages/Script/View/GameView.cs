@@ -4,11 +4,22 @@ using UnityEngine;
 
 public class GameView : MonoBehaviour
 {
+    public static GameView instance;
+
     [SerializeField] private RectTransform m_playerContent;
     [SerializeField] private RectTransform m_gameContent;
 
     private ViewType m_viewType = ViewType.None;
     private bool m_viewChange = false;
+
+    public ViewType ViewType => m_viewType;
+
+    //
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void OnEnable()
     {
@@ -60,26 +71,26 @@ public class GameView : MonoBehaviour
         switch (Type)
         {
             case ViewType.Field:
-                GameEvent.ShowUiArea(ViewType.Field, false);
+                GameEvent.UiChoiceHide();
                 m_gameContent
                     .DOLocalMoveY(0f, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ShowUiArea(ViewType.Field, true);
                         m_viewChange = false;
+                        GameEvent.UiChoiceCurrent();
                         OnComplete?.Invoke();
                     });
                 break;
             case ViewType.Wild:
-                GameEvent.ShowUiArea(ViewType.Wild, false);
+                GameEvent.UiChoiceHide();
                 m_gameContent
                     .DOLocalMoveY(-m_gameContent.sizeDelta.y, MoveYDuration)
                     .SetEase(MoveYEase)
                     .OnComplete(() =>
                     {
-                        GameEvent.ShowUiArea(ViewType.Wild, true);
                         m_viewChange = false;
+                        GameEvent.UiChoiceCurrent();
                         OnComplete?.Invoke();
                     });
                 break;

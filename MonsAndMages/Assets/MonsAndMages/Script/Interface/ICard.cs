@@ -75,7 +75,7 @@ public interface ICard
 
     void DoOriginDragonActive(int DragonLeft, Action OnComplete);
 
-    void DoOriginGhostActive(int GhostCount, Action OnComplete);
+    void DoOriginGhostActive(int GhostCount);
 
     void DoOriginGhostReady();
 
@@ -110,6 +110,12 @@ public interface ICard
     void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete);
 
     void DoClassMagicAddictActive(Action OnComplete);
+
+    void DoClassMagicAddictReady();
+
+    void DoClassMagicAddictStart();
+
+    void DoClassMagicAddictUnReady();
 
     void DoClassSingerActive(int SingerCount, Action OnComplete);
 

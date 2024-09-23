@@ -135,48 +135,70 @@ public class GameManager : MonoBehaviour
             if (Stunned)
                 PlayerDoStaffNext(Player, false);
             else
-                PlayerDoChoice(Player);
+                PlayerDoChoiceMediateOrCollect(Player);
         });
     }
 
 
-    private void PlayerDoChoice(IPlayer Player)
+    private void PlayerDoChoiceMediateOrCollect(IPlayer Player)
     {
-        Player.DoChoice(() =>
-        {
-            m_playerChoice = ChoiceType.MediateOrCollect;
-            GameEvent.ShowUiArea(ViewType.Field, true);
-        });
-    } //Choice Event
+        m_playerChoice = ChoiceType.MediateOrCollect;
+        GameEvent.UiChoiceMediateOrCollect();
+    } //Do Choice
 
-
-    public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
+    public void PlayerDoMediateStart(IPlayer Player, int RuneStoneAdd)
     {
         m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+
         Player.DoMediate(RuneStoneAdd, () => PlayerDoStaffNext(Player, true));
-    } //Player Do Mediate Event
+    }
 
-    public void PlayerDoCollect(IPlayer Player, ICard Card)
+    public void PlayerDoCollectStart(IPlayer Player, ICard Card)
     {
         m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+
         Player.DoCollect(Card, () =>
         {
-            switch (Card.Origin)
-            {
-                case CardOriginType.Ghost:
-                    CardOriginGhostDoChoice(Card);
-                    break;
-                default:
-                    PlayerDoStaffNext(Card.Player, true);
-                    break;
-            }
-        });
-    } //Player Do Collect Event
+            Card.Renderer.maskable = false;
+            var Point = Player.DoCollectReady().transform;
 
-    private void CardOriginGhostDoChoice(ICard Card)
+            GameEvent.ViewArea(ViewType.Field, () =>
+            {
+                GameEvent.WildCardFill(null);
+                GameEvent.ViewPlayer(Player, () =>
+                {
+                    Card.Pointer(Point);
+                    Card.MoveBack(() => Card.Rumble(() =>
+                    {
+                        Card.Renderer.maskable = true;
+                        Card.InfoShow(true);
+                        Card.DoCollectActive(Player, () => PlayerDoStaffNext(Card.Player, true));
+                    }));
+                    //Move card first before active card collect event!
+                });
+                //Go back to field and player's area!
+            });
+            //After player's rune stone updated, start progess ui!
+        });
+    }
+
+
+    public void CardOriginGhostDoChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginGhost;
-        GameEvent.OriginGhost(Card);
+        GameEvent.UiChoiceCardOriginGhost();
+    } //Do Choice
+
+    public void CardOriginGhostDoStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        Card.MoveBack(() => Card.DoOriginGhostStart());
     }
 
 
@@ -191,7 +213,7 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    private void CardManaCheck(IPlayer Player)
+    public void CardManaCheck(IPlayer Player)
     {
         bool CardManaActive = false;
         foreach (var Card in Player.CardQueue)
@@ -204,7 +226,7 @@ public class GameManager : MonoBehaviour
 
             if (!CardManaActive)
             {
-                Card.EffectOutlineMana(() => PlayerDoCardManaActiveChoice(Player));
+                Card.EffectOutlineMana(() => PlayerDoCardManaActiveDoChoice(Player));
                 CardManaActive = true;
             }
             else
@@ -214,19 +236,34 @@ public class GameManager : MonoBehaviour
             PlayerEnd(Player);
     }
 
-    private void PlayerDoCardManaActiveChoice(IPlayer Player)
-    {
-        Player.CardManaActiveDoChoice(() =>
-        {
-            m_playerChoice = ChoiceType.CardFullMana;
-            GameEvent.ShowUiArea(ViewType.Field, true);
-        });
-    }
 
-    public void CardManaActive(ICard Card)
+    private void PlayerDoCardManaActiveDoChoice(IPlayer Player)
+    {
+        m_playerChoice = ChoiceType.CardFullMana;
+        GameEvent.UiChoiceCardFullMana();
+    } //Do Choice
+
+    public void CardManaActiveStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
-        GameEvent.CardActiveMana(Card, () => CardManaCheck(Card.Player));
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        GameEvent.CardActiveMana(Card, () => Card.MoveBack(() => Card.DoManaActive(() => CardManaCheck(Card.Player))));
+    }
+
+
+    public void CardClassMagicAddictDoChoice(ICard Card)
+    {
+        m_playerChoice = ChoiceType.CardClassMagicAddict;
+        GameEvent.UiChoiceCardClassMagicAddict();
+    } //Do Choice
+
+    public void CardClassMagicAddictStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        Card.MoveBack(() => Card.DoClassMagicAddictStart());
     }
 
 
