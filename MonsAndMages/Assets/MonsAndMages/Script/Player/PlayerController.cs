@@ -352,7 +352,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
         m_data.RuneStone += Value;
-        InfoRuneStoneUpdate(() => OnComplete?.Invoke());
+        InfoRuneStoneUpdate(OnComplete);
     }
 
     public void StunChange(int Value, Action OnComplete)
