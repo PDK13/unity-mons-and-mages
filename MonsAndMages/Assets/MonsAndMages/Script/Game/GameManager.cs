@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
         Player.DoStunnedCheck((Stunned) =>
         {
             if (Stunned)
-                PlayerDostaffNext(Player, false);
+                PlayerDoStaffNext(Player, false);
             else
                 PlayerDoChoice(Player);
         });
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDoMediate(IPlayer Player, int RuneStoneAdd)
     {
         m_playerChoice = ChoiceType.None;
-        Player.DoMediate(RuneStoneAdd, () => PlayerDostaffNext(Player, true));
+        Player.DoMediate(RuneStoneAdd, () => PlayerDoStaffNext(Player, true));
     } //Player Do Mediate Event
 
     public void PlayerDoCollect(IPlayer Player, ICard Card)
@@ -167,67 +167,31 @@ public class GameManager : MonoBehaviour
                     CardOriginGhostDoChoice(Card);
                     break;
                 default:
-                    PlayerDostaffNext(Card.Player, true);
+                    PlayerDoStaffNext(Card.Player, true);
                     break;
             }
         });
     } //Player Do Collect Event
 
-
-    public void CardOriginGhostDoChoice(ICard Card)
+    private void CardOriginGhostDoChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginGhost;
         GameEvent.OriginGhost(Card);
     }
 
 
-    public void PlayerDostaffNext(IPlayer Player, bool CardActive)
+    public void PlayerDoStaffNext(IPlayer Player, bool CardActive)
     {
         Player.DoStaffNext(() =>
         {
             if (CardActive)
-                PlayerDostaffActive(Player);
+                Player.DoStaffActive(() => CardManaCheck(Player));
             else
                 PlayerEnd(Player);
         });
     }
 
-    private void PlayerDostaffActive(IPlayer Player)
-    {
-        Player.DoStaffActive(() => CardAttack(Player.CardQueue[Player.StaffStep]));
-    }
-
-
-    private void CardAttack(ICard Card)
-    {
-        if (Card != null)
-        {
-            if (Card.Name == CardNameType.Stage)
-                PlayerEnd(PlayerCurrent);
-            else
-            {
-                Card.DoAttackActive(() =>
-                {
-                    for (int i = 0; i < m_playerQueue.Count; i++)
-                    {
-                        if (m_playerQueue[i] == Card.Player)
-                            continue;
-                        m_playerQueue[i].HealthChange(-Card.AttackCombine, null);
-                    }
-                    CardManaFill(Card);
-                });
-            }
-        }
-        else
-            PlayerEnd(PlayerCurrent);
-    } //Card Attack Event
-
-    private void CardManaFill(ICard Card)
-    {
-        Card.DoManaFill(1, () => CardManaCheck(Card.Player));
-    } //Card Mana Event
-
-    public void CardManaCheck(IPlayer Player)
+    private void CardManaCheck(IPlayer Player)
     {
         bool CardManaActive = false;
         foreach (var Card in Player.CardQueue)

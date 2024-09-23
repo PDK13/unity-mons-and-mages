@@ -513,13 +513,13 @@ public class CardController : MonoBehaviour, ICard
             }));
         });
         DragonLeft--;
-    }
+    } //Origin Dragon Event
 
     public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete)
     {
         var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
         EffectOrigin(() => DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke()));
-    }
+    } //Origin Woodland Event
 
     public void DoOriginGhostActive(int GhostCount, Action OnComplete)
     {
@@ -534,7 +534,7 @@ public class CardController : MonoBehaviour, ICard
             StaffAvaible--;
         }
         OnComplete?.Invoke();
-    }
+    } //Origin Ghost Event
 
     public void DoOriginGhostReady()
     {
@@ -552,7 +552,7 @@ public class CardController : MonoBehaviour, ICard
             Player.DoStaffNext(() =>
             {
                 if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
-                    Player.DoStaffActive(() => GameManager.instance.PlayerDostaffNext(Player, true));
+                    Player.DoStaffActive(() => GameManager.instance.PlayerDoStaffNext(Player, true));
                 else
                     DoOriginGhostStart();
             });
@@ -584,12 +584,22 @@ public class CardController : MonoBehaviour, ICard
 
     public void DostaffActive(Action OnComplete)
     {
-        EffectAlpha(() => OnComplete?.Invoke());
+        EffectAlpha(() => DoAttackActive(() => DoManaFill(1, () => OnComplete?.Invoke())));
     }
 
     public void DoAttackActive(Action OnComplete)
     {
-        Rumble(() => OnComplete?.Invoke());
+        Rumble(() =>
+        {
+            var PlayerQueue = GameManager.instance.PlayerQueue;
+            for (int i = 0; i < PlayerQueue.Length; i++)
+            {
+                if (PlayerQueue[i] == Player)
+                    continue;
+                PlayerQueue[i].HealthChange(-AttackCombine, null);
+            }
+            OnComplete?.Invoke();
+        });
     }
 
     public void DoManaFill(int Value, Action OnComplete)

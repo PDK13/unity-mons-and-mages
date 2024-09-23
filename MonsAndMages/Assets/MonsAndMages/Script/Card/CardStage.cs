@@ -318,7 +318,7 @@ public class CardStage : MonoBehaviour, ICard
             Player.DoStaffNext(() =>
             {
                 if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
-                    Player.DoStaffActive(() => GameManager.instance.PlayerDostaffNext(Player, true));
+                    Player.DoStaffActive(() => GameManager.instance.PlayerDoStaffNext(Player, true));
                 else
                     DoOriginGhostStart();
             });
