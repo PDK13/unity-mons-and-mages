@@ -125,6 +125,8 @@ public class CardStage : MonoBehaviour, ICard
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
+    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
+
     public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
 
 
@@ -160,10 +162,16 @@ public class CardStage : MonoBehaviour, ICard
         m_ready = true;
     }
 
-    public void Pointer(RectTransform Point, RectTransform Centre)
+    public void Pointer(RectTransform Point, RectTransform Centre, bool PointChange, bool CentreChange)
     {
         m_pointer = Point;
         m_centre = Centre;
+
+        if (PointChange)
+            transform.SetParent(m_pointer, true);
+        if (CentreChange)
+            transform.localPosition = CentreInPointer;
+        transform.SetSiblingIndex(m_centre.GetSiblingIndex());
     }
 
 
@@ -260,19 +268,24 @@ public class CardStage : MonoBehaviour, ICard
 
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
 
-        var PointWorld = m_pointer.position;
+        transform.SetParent(m_pointer, true);
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, transform.DOMove(PointWorld, MoveDuration).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOLocalMove(CentreInPointer, MoveDuration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            transform.SetParent(m_pointer, true);
-            transform.SetSiblingIndex(0);
+            transform.SetSiblingIndex(m_centre.GetSiblingIndex());
             OnComplete?.Invoke();
         });
         CardTween.Play();
+    }
+
+    public void MoveHorizontal(Action OnComplete)
+    {
+
     }
 
 
@@ -284,6 +297,7 @@ public class CardStage : MonoBehaviour, ICard
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
         m_rumble = true;
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
         Renderer.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
@@ -293,6 +307,7 @@ public class CardStage : MonoBehaviour, ICard
                 {
                     m_rumble = false;
                     Renderer.maskable = true;
+                    transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                     OnComplete?.Invoke();
                 });
             });

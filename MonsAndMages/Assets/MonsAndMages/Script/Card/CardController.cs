@@ -159,7 +159,7 @@ public class CardController : MonoBehaviour, ICard
 
     public void Fill(RectTransform Point, RectTransform Centre)
     {
-        this.Pointer(Point, Centre);
+        this.Pointer(Point, Centre, false, false);
 
         var DurationMove = GameManager.instance.TweenConfig.WildFill.MoveDuration;
         var EaseMove = GameManager.instance.TweenConfig.WildFill.MoveEase;
@@ -176,10 +176,16 @@ public class CardController : MonoBehaviour, ICard
         m_ready = true;
     }
 
-    public void Pointer(RectTransform Point, RectTransform Centre)
+    public void Pointer(RectTransform Point, RectTransform Centre, bool PointChange, bool CentreChange)
     {
         m_pointer = Point;
         m_centre = Centre;
+
+        if (PointChange)
+            transform.SetParent(m_pointer, true);
+        if (CentreChange)
+            transform.localPosition = CentreInPointer;
+        transform.SetSiblingIndex(m_centre.GetSiblingIndex());
     }
 
 

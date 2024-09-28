@@ -85,12 +85,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_cardMediation[Index].InfoRuneStoneUpdate(m_data.Mediation[Index], OnComplete);
     }
 
-    private void DoCardPointerReRange()
-    {
-        for (int i = 0; i < CardQueue.Length; i++)
-            CardQueue[i].Pointer(PointerLast, m_cardContent.GetChild(i).GetComponent<RectTransform>());
-    }
-
     //IPlayer
 
     public int Index => m_data.Index;
@@ -140,14 +134,13 @@ public class PlayerController : MonoBehaviour, IPlayer
         for (int i = 0; i < m_cardContent.childCount; i++)
             m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
 
-        DoCardPointerReRange();
-
         GameManager.instance.PlayerJoin(this);
     }
 
 
     public void DoStart(Action OnComplete)
     {
+        DoCardPointerReRange(); //Check this in Start
         GameEvent.PlayerStart(this, OnComplete);
     }
 
@@ -281,6 +274,12 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         RuneStoneChange(-Card.RuneStoneCost, () => OnComplete?.Invoke());
         m_data.CardQueue.Add(Card);
+    }
+
+    public void DoCardPointerReRange()
+    {
+        for (int i = 0; i < CardQueue.Length; i++)
+            CardQueue[i].Pointer(PointerLast, m_cardContent.GetChild(i).GetComponent<RectTransform>(), true, true);
     }
 
 

@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour
                 GameEvent.WildCardFill(null);
                 GameEvent.ViewPlayer(Player, () =>
                 {
-                    Card.Pointer(Point.Pointer, Point.Centre);
+                    Card.Pointer(Point.Pointer, Point.Centre, false, false);
                     Card.MoveBack(() => Card.Rumble(() =>
                     {
                         Card.Renderer.maskable = true;

@@ -28,6 +28,8 @@ public interface ICard
 
     Image Renderer { get; }
 
+    Vector2 CentreInPointer { get; }
+
     bool Avaible { get; }
 
 
@@ -38,7 +40,7 @@ public interface ICard
 
     void Ready();
 
-    public void Pointer(RectTransform Point, RectTransform Centre);
+    public void Pointer(RectTransform Point, RectTransform Centre, bool PointChange, bool CentreChange);
 
 
     void FlipOpen(Action OnComplete);
@@ -49,6 +51,8 @@ public interface ICard
     void MoveTop(Action OnComplete);
 
     void MoveBack(Action OnComplete);
+
+    void MoveHorizontal(Action OnComplete);
 
 
     void Rumble(Action OnComplete);
