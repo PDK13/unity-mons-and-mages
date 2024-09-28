@@ -35,8 +35,8 @@ public class CardStage : MonoBehaviour, ICard
     private bool m_effectOutline = false;
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
-    private Transform m_pointer;
-    private Transform m_centre;
+    private RectTransform m_pointer;
+    private RectTransform m_centre;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
     private bool m_classFlyingReady = false;
@@ -62,7 +62,6 @@ public class CardStage : MonoBehaviour, ICard
         m_button.onClick.AddListener(BtnTap);
         m_avaible = true;
         m_ready = true;
-        m_pointer = this.transform.parent;
         InfoShow(false);
     }
 
@@ -153,7 +152,7 @@ public class CardStage : MonoBehaviour, ICard
         m_avaible = false;
     }
 
-    public void Fill(Transform Point) { }
+    public void Fill(RectTransform Point, RectTransform Centre) { }
 
 
     public void Ready()
@@ -161,9 +160,10 @@ public class CardStage : MonoBehaviour, ICard
         m_ready = true;
     }
 
-    public void Pointer(Transform Point)
+    public void Pointer(RectTransform Point, RectTransform Centre)
     {
         m_pointer = Point;
+        m_centre = Centre;
     }
 
 

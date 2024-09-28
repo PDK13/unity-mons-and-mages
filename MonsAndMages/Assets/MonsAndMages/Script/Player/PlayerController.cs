@@ -85,6 +85,12 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_cardMediation[Index].InfoRuneStoneUpdate(m_data.Mediation[Index], OnComplete);
     }
 
+    private void DoCardPointerReRange()
+    {
+        for (int i = 0; i < CardQueue.Length; i++)
+            CardQueue[i].Pointer(PointerLast, m_cardContent.GetChild(i).GetComponent<RectTransform>());
+    }
+
     //IPlayer
 
     public int Index => m_data.Index;
@@ -113,6 +119,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool MediationEmty => m_data.MediationEmty;
 
+    public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+
     public PlayerController Controller => this;
 
 
@@ -131,6 +139,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
         for (int i = 0; i < m_cardContent.childCount; i++)
             m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
+
+        DoCardPointerReRange();
 
         GameManager.instance.PlayerJoin(this);
     }
@@ -251,7 +261,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public Transform DoCollectReady()
+    public (RectTransform Pointer, RectTransform Centre) DoCollectReady()
     {
         if (m_data.CardQueue.Count >= 5 && CardQueue[0] == null)
         {
@@ -264,7 +274,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         CardPoint.SetActive(true);
         CardPoint.name = "card-point";
 
-        return CardPoint.transform;
+        return (CardPoint.GetComponent<RectTransform>(), CardPoint.GetComponent<RectTransform>());
     }
 
     public void DoCollect(ICard Card, Action OnComplete)

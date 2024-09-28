@@ -36,7 +36,8 @@ public class CardController : MonoBehaviour, ICard
     private bool m_effectOutline = false;
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
-    private Transform m_pointer;
+    private RectTransform m_pointer;
+    private RectTransform m_centre;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
     private bool m_classFlyingReady = false;
@@ -127,6 +128,8 @@ public class CardController : MonoBehaviour, ICard
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
+    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
+
     public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
 
 
@@ -154,15 +157,15 @@ public class CardController : MonoBehaviour, ICard
         m_avaible = false;
     }
 
-    public void Fill(Transform Point)
+    public void Fill(RectTransform Point, RectTransform Centre)
     {
-        this.Pointer(Point);
+        this.Pointer(Point, Centre);
 
         var DurationMove = GameManager.instance.TweenConfig.WildFill.MoveDuration;
         var EaseMove = GameManager.instance.TweenConfig.WildFill.MoveEase;
 
         transform.SetParent(Point, true);
-        transform.DOLocalMove(Vector3.zero, DurationMove).SetEase(EaseMove);
+        transform.GetComponent<RectTransform>().DOLocalMove(CentreInPointer, DurationMove).SetEase(EaseMove);
 
         FlipOpen(null);
     }
@@ -173,9 +176,10 @@ public class CardController : MonoBehaviour, ICard
         m_ready = true;
     }
 
-    public void Pointer(Transform Point)
+    public void Pointer(RectTransform Point, RectTransform Centre)
     {
         m_pointer = Point;
+        m_centre = Centre;
     }
 
 
@@ -272,16 +276,16 @@ public class CardController : MonoBehaviour, ICard
 
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
 
-        var PointWorld = m_pointer.position;
+        transform.SetParent(m_pointer, true);
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, transform.DOMove(PointWorld, MoveDuration).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOLocalMove(CentreInPointer, MoveDuration).SetEase(Ease.OutQuad));
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            transform.SetParent(m_pointer, true);
-            transform.SetSiblingIndex(0);
+            transform.SetSiblingIndex(m_centre.GetSiblingIndex());
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -301,6 +305,7 @@ public class CardController : MonoBehaviour, ICard
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
         m_rumble = true;
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
         Renderer.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
@@ -310,6 +315,7 @@ public class CardController : MonoBehaviour, ICard
                 {
                     m_rumble = false;
                     Renderer.maskable = true;
+                    transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                     OnComplete?.Invoke();
                 });
             });

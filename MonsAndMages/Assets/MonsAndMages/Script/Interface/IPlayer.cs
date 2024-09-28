@@ -30,6 +30,8 @@ public interface IPlayer
 
     bool MediationEmty { get; }
 
+    RectTransform PointerLast { get; }
+
     PlayerController Controller { get; }
 
 
@@ -49,7 +51,7 @@ public interface IPlayer
     void DoMediate(int RuneStoneAdd, Action OnComplete);
 
 
-    Transform DoCollectReady();
+    public (RectTransform Pointer, RectTransform Centre) DoCollectReady();
 
     void DoCollect(ICard Card, Action OnComplete);
 

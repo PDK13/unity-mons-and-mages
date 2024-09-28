@@ -33,12 +33,12 @@ public interface ICard
 
     void Init(CardData Data); //Khởi tạo bài
 
-    void Fill(Transform Point); //Thêm bài vào khu vực chung
+    void Fill(RectTransform Point, RectTransform Centre); //Thêm bài vào khu vực chung
 
 
     void Ready();
 
-    void Pointer(Transform Point);
+    public void Pointer(RectTransform Point, RectTransform Centre);
 
 
     void FlipOpen(Action OnComplete);

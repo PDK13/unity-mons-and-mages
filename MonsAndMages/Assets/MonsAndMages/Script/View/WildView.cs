@@ -12,6 +12,8 @@ public class WildView : MonoBehaviour
 
     private bool m_wildFillFirstTime = true;
 
+    public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
@@ -84,9 +86,9 @@ public class WildView : MonoBehaviour
 
     private void OnPlayerStart(IPlayer Player, Action OnComplete)
     {
-        for (int i = 0; i < m_cardContent.childCount; i++)
+        for (int i = 0; i < PointerLast.childCount; i++)
         {
-            var Card = m_cardContent.GetChild(i).GetComponentInChildren<ICard>();
+            var Card = PointerLast.GetChild(i).GetComponentInChildren<ICard>();
             if (Card != null)
                 Card.Ready();
         }
@@ -112,11 +114,10 @@ public class WildView : MonoBehaviour
 
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
-            var CardPoint = m_cardContent.GetChild(i);
-            if (CardPoint.childCount != 0)
-                continue;
+            var Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
 
-            m_cardDeck.GetChild(m_cardDeck.childCount - 1).GetComponent<ICard>().Fill(CardPoint);
+            var Card = m_cardDeck.GetChild(m_cardDeck.childCount - 1).GetComponent<ICard>();
+            Card.Fill(PointerLast, Centre);
 
             if (m_cardDeck.childCount == 0)
                 break;

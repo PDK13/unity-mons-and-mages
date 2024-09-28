@@ -164,14 +164,14 @@ public class GameManager : MonoBehaviour
         Player.DoCollect(Card, () =>
         {
             Card.Renderer.maskable = false;
-            var Point = Player.DoCollectReady().transform;
+            var Point = Player.DoCollectReady();
 
             GameEvent.ViewArea(ViewType.Field, () =>
             {
                 GameEvent.WildCardFill(null);
                 GameEvent.ViewPlayer(Player, () =>
                 {
-                    Card.Pointer(Point);
+                    Card.Pointer(Point.Pointer, Point.Centre);
                     Card.MoveBack(() => Card.Rumble(() =>
                     {
                         Card.Renderer.maskable = true;
