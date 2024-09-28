@@ -125,6 +125,12 @@ public interface ICard
 
     void DoClassFlyingActive(Action OnComplete);
 
+    void DoClassFlyingReady();
+
+    void DoClassFlyingStart();
+
+    void DoClassFlyingUnReady();
+
 
     void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }

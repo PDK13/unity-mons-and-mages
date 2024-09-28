@@ -39,6 +39,7 @@ public class CardController : MonoBehaviour, ICard
     private Transform m_pointer;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
+    private bool m_classFlyingReady = false;
 
     //
 
@@ -89,6 +90,11 @@ public class CardController : MonoBehaviour, ICard
                 if (Player != GameManager.instance.PlayerCurrent || !m_classMagicAddictReady)
                     return;
                 GameEvent.UiInfoClassMagicAddict(this);
+                break;
+            case ChoiceType.CardClassFlying:
+                if (Player != GameManager.instance.PlayerCurrent || !m_classFlyingReady)
+                    return;
+                GameEvent.UiInfoClassFlying(this);
                 break;
         }
     }
@@ -279,6 +285,11 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
         });
         CardTween.Play();
+    }
+
+    public void MoveHorizontal(Action OnComplete)
+    {
+
     }
 
 
@@ -804,7 +815,40 @@ public class CardController : MonoBehaviour, ICard
         }));
     } //Class Diffuser Event
 
-    public void DoClassFlyingActive(Action OnComplete) { EffectClass(OnComplete); } //Class Flying Event
+    public void DoClassFlyingActive(Action OnComplete)
+    {
+        EffectClass(OnComplete);
+    } //Class Flying Event
+
+    public void DoClassFlyingReady()
+    {
+        m_classFlyingReady = true;
+        m_effectOutline = true;
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
+        m_outline.DOColor(Color.green, OutlineDuration).OnComplete(() => m_effectOutline = false);
+    }
+
+    public void DoClassFlyingStart()
+    {
+        foreach (var Card in Player.CardQueue)
+            Card.DoClassFlyingUnReady();
+        EffectAlpha(() =>
+        {
+            var CardCurrentIndex = Player.CardQueue.ToList().IndexOf(this);
+            var CardTargetIndex = Player.CardQueue.ToList().IndexOf(Player.CardCurrent);
+
+        });
+    }
+
+    public void DoClassFlyingUnReady()
+    {
+        m_classFlyingReady = false;
+        if (ManaFull)
+            EffectOutlineMana(null);
+        else
+            EffectOutlineNormal(null);
+    }
 
 
     public void DoSpellActive(Action OnComplete)

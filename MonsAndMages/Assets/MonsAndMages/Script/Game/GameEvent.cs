@@ -51,6 +51,7 @@ public class GameEvent
     public static Action onUiChoiceCardFullMana { get; set; }
     public static Action onUiChoiceCardOriginGhost { get; set; }
     public static Action onUiChoiceCardClassMagicAddict { get; set; }
+    public static Action onUiChoiceCardClassFlying { get; set; }
 
     public static void UiChoiceHide()
     {
@@ -82,6 +83,11 @@ public class GameEvent
         onUiChoiceCardClassMagicAddict?.Invoke();
     }
 
+    public static void UiChoiceCardClassFlying()
+    {
+        onUiChoiceCardClassFlying?.Invoke();
+    }
+
     //Ui-Info
 
     public static Action<bool, bool> onUiInfoHide { get; set; }
@@ -90,6 +96,7 @@ public class GameEvent
     public static Action<ICard> onUiInfoFullMana { get; set; }
     public static Action<ICard> onUiInfoOriginGhost { get; set; }
     public static Action<ICard> onUiInfoClassMagicAddict { get; set; }
+    public static Action<ICard> onUiInfoClassFlying { get; set; }
 
     public static void UiInfoHide(bool MaskTween, bool CardBack)
     {
@@ -119,6 +126,11 @@ public class GameEvent
     public static void UiInfoClassMagicAddict(ICard Card)
     {
         onUiInfoClassMagicAddict?.Invoke(Card);
+    }
+
+    public static void UiInfoClassFlying(ICard Card)
+    {
+        onUiInfoClassFlying?.Invoke(Card);
     }
 
     //Button
@@ -252,6 +264,7 @@ public class GameEvent
 
     public static Action<Action> onClassFighter { get; set; } //Roll a Dice for Fighter
     public static Action<ICard> onClassMagicAddict { get; set; }
+    public static Action<ICard> onClassFlying { get; set; }
 
     public static void ClassFighter(Action OnComplete)
     {
@@ -261,5 +274,10 @@ public class GameEvent
     public static void ClassMagicAddict(ICard Card)
     {
         onClassMagicAddict?.Invoke(Card);
+    }
+
+    public static void ClassFlying(ICard Card)
+    {
+        onClassFlying?.Invoke(Card);
     }
 }

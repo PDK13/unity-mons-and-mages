@@ -36,8 +36,10 @@ public class CardStage : MonoBehaviour, ICard
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
     private Transform m_pointer;
+    private Transform m_centre;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
+    private bool m_classFlyingReady = false;
 
     //
 
@@ -476,6 +478,36 @@ public class CardStage : MonoBehaviour, ICard
     public void DoClassDiffuserActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Diffuser Event
 
     public void DoClassFlyingActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Flying Event
+
+    public void DoClassFlyingReady()
+    {
+        m_classFlyingReady = true;
+        m_effectOutline = true;
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
+        m_outline.DOColor(Color.green, OutlineDuration).OnComplete(() => m_effectOutline = false);
+    }
+
+    public void DoClassFlyingStart()
+    {
+        foreach (var Card in Player.CardQueue)
+            Card.DoClassFlyingUnReady();
+        EffectAlpha(() =>
+        {
+            var CardCurrentIndex = Player.CardQueue.ToList().IndexOf(this);
+            var CardTargetIndex = Player.CardQueue.ToList().IndexOf(Player.CardCurrent);
+
+        });
+    }
+
+    public void DoClassFlyingUnReady()
+    {
+        m_classFlyingReady = false;
+        if (ManaFull)
+            EffectOutlineMana(null);
+        else
+            EffectOutlineNormal(null);
+    }
 
 
     public void DoSpellActive(Action OnComplete) { OnComplete?.Invoke(); }

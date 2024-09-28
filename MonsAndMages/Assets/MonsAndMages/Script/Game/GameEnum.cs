@@ -64,4 +64,5 @@ public enum ChoiceType
     CardFullMana,
     CardOriginGhost,
     CardClassMagicAddict,
+    CardClassFlying,
 }

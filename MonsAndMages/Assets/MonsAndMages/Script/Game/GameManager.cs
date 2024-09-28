@@ -267,6 +267,21 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void CardClassFlyingDoChoice(ICard Card)
+    {
+        m_playerChoice = ChoiceType.CardClassFlying;
+        GameEvent.UiChoiceCardClassFlying();
+    } //Do Choice
+
+    public void CardClassFlyingStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        Card.MoveBack(() => Card.DoClassFlyingStart());
+    }
+
+
     private void PlayerEnd(IPlayer Player)
     {
         Player.DoEnd(() =>
