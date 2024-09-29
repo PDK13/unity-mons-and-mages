@@ -427,7 +427,9 @@ public class CardStage : MonoBehaviour, ICard
 
     public void DoOriginActive(Action OnComplete) { OnComplete?.Invoke(); } //Origin Event
 
+
     public void DoOriginDragonActive(int DragonLeft, Action OnComplete) { OnComplete?.Invoke(); } //Origin Dragon Event
+
 
     public void DoOriginGhostActive(int GhostCount) { } //Origin Ghost Event
 
@@ -479,11 +481,15 @@ public class CardStage : MonoBehaviour, ICard
             EffectOutlineNormal(null);
     }
 
+
     public void DoOriginInsectActive(Action OnComplete) { OnComplete?.Invoke(); } //Origin Insect Event
+
 
     public void DoOriginSirenActive(Action OnComplete) { OnComplete?.Invoke(); } //Origin Siren Event
 
+
     public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete) { OnComplete?.Invoke(); } //Origin Woodland Event
+
 
     public void DoOriginNeutralActive(Action OnComplete) { OnComplete?.Invoke(); } //Origin Neutral Active
 
@@ -508,7 +514,9 @@ public class CardStage : MonoBehaviour, ICard
 
     public void DoClassActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Event
 
+
     public void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete) { OnComplete?.Invoke(); } //Class Fighter Event
+
 
     public void DoClassMagicAddictActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Magic Addict Event
 
@@ -537,11 +545,15 @@ public class CardStage : MonoBehaviour, ICard
             EffectOutlineNormal(null);
     }
 
+
     public void DoClassSingerActive(int SingerCount, Action OnComplete) { OnComplete?.Invoke(); } //Class Singer Event
+
 
     public void DoClassCareTakerActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Care Taker Event
 
+
     public void DoClassDiffuserActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Diffuser Event
+
 
     public void DoClassFlyingActive(Action OnComplete) { OnComplete?.Invoke(); } //Class Flying Event
 
@@ -565,11 +577,17 @@ public class CardStage : MonoBehaviour, ICard
             var CardFromIndex = Player.CardQueue.ToList().IndexOf(Player.CardManaActiveCurrent);
             var CardToIndex = Player.CardQueue.ToList().IndexOf(this);
             var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
-            Player.Swap(CardFromIndex, CardToIndex + (MoveDirection * -1), () => DoManaFill(1, () =>
+            Player.DoCardSwap(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
             {
-                Player.DoCardSpecialActiveCurrent(null);
-                GameManager.instance.CardManaCheck(Player);
-            }));
+                Rumble(() =>
+                {
+                    DoManaFill(1, () =>
+                    {
+                        Player.DoCardSpecialActiveCurrent(null);
+                        GameManager.instance.CardManaCheck(Player);
+                    });
+                });
+            });
         });
     }
 

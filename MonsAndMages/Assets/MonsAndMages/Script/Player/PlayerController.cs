@@ -40,9 +40,9 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     [Space]
     [SerializeField] private RectTransform m_staff;
-    [SerializeField] private RectTransform m_staffMoveTo;
 
     private ICard m_cardManaActiveCurrent = null;
+    private RectTransform m_staffCentre;
 
     private RectTransform Pointer => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
 
@@ -285,11 +285,16 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCardPointerReRange()
     {
+        //Card
         for (int i = 0; i < CardQueue.Length; i++)
         {
             var Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
             CardQueue[i].Pointer(Pointer, Centre, true, true);
         }
+        //Staff
+        m_staff.SetParent(Pointer, true);
+        m_staff.SetSiblingIndex(Pointer.childCount - 1);
+        m_staffCentre = m_cardContent.GetChild(m_data.StaffStep).GetComponent<RectTransform>();
     }
 
 
@@ -297,25 +302,53 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         DoCardPointerReRange();
 
-        //Update staff Parent to Last
-        m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
-        m_staffMoveTo.SetParent(m_staff.parent);
-        m_staffMoveTo.position = m_staff.position;
-
         //Start Move staff to Point
         var StaffIndexLast = m_data.StaffStep;
         var StaffIndexNext = StaffIndexLast + 1 > CardQueue.Length - 1 ? 0 : StaffIndexLast + 1;
-
         m_data.StaffStep = StaffIndexNext;
 
-        var PointLast = m_cardContent.GetChild(StaffIndexLast);
-        var PointNext = m_cardContent.GetChild(StaffIndexNext);
+        //Update staff Parent to Last
+        m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
+        m_staffCentre = m_cardContent.GetChild(StaffIndexNext).GetComponent<RectTransform>();
 
-        m_staffMoveTo.position = PointNext.position;
+        var CentreInPointer = Pointer.InverseTransformPoint(m_staffCentre.position);
+
         m_staff
-            .DOLocalJump(m_staffMoveTo.localPosition, 45f, 1, 1f)
+            .DOLocalJump(CentreInPointer, 45f, 1, 1f)
             .SetEase(Ease.InCubic)
             .OnComplete(() => OnComplete?.Invoke());
+    }
+
+    private void DoStaffMoveCentreLinear(RectTransform Centre, Action OnComplete)
+    {
+        var CentreInPointer = Pointer.InverseTransformPoint(Centre.position);
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        m_staff
+            .DOLocalMove(CentreInPointer, MoveDuration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+            });
+    }
+
+    private void DoStaffMoveCentreJump(RectTransform Centre, Action OnComplete)
+    {
+        var CentreInPointer = Pointer.InverseTransformPoint(Centre.position);
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        m_staff.SetSiblingIndex(Pointer.childCount - 1);
+
+        Sequence CardTween = DOTween.Sequence();
+        CardTween.Insert(0f, m_staff.DOScale(Vector3.one * 1.35f, MoveDuration * 0.5f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, m_staff.DOLocalJump(CentreInPointer, 50, 1, MoveDuration).SetEase(Ease.Linear));
+        CardTween.Insert(MoveDuration * 0.5f, m_staff.DOScale(Vector3.one, MoveDuration * 0.5f).SetEase(Ease.InCirc));
+        CardTween.OnComplete(() =>
+        {
+            OnComplete?.Invoke();
+        });
+        CardTween.Play();
     }
 
     public void DoStaffActive(Action OnComplete)
@@ -378,10 +411,8 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void Swap(int IndexFrom, int IndexTo, Action OnComplete)
+    public void DoCardSwap(int IndexFrom, int IndexTo, Action OnComplete)
     {
-        DoCardPointerReRange();
-
         var CardFrom = CardQueue[IndexFrom];
         var MoveDirection = IndexFrom < IndexTo ? 1 : -1;
 
@@ -393,6 +424,8 @@ public class PlayerController : MonoBehaviour, IPlayer
                     var CentreLinear = m_cardContent.transform.GetChild(i + 1).GetComponent<RectTransform>();
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i + 1] = CardQueue[i];
+                    if (i == StaffStep)
+                        DoStaffMoveCentreLinear(CentreLinear, null);
                 }
                 break;
             case 1:
@@ -401,6 +434,8 @@ public class PlayerController : MonoBehaviour, IPlayer
                     var CentreLinear = m_cardContent.transform.GetChild(i - 1).GetComponent<RectTransform>();
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i - 1] = CardQueue[i];
+                    if (i == StaffStep)
+                        DoStaffMoveCentreLinear(CentreLinear, null);
                 }
                 break;
         }
@@ -411,6 +446,8 @@ public class PlayerController : MonoBehaviour, IPlayer
             DoCardPointerReRange();
             OnComplete?.Invoke();
         });
+        if (IndexFrom == StaffStep)
+            DoStaffMoveCentreJump(CentreJump, null);
         m_data.CardQueue[IndexTo] = CardFrom;
     }
 }

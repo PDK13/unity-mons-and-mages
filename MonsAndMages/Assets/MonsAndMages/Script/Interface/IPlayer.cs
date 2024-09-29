@@ -53,6 +53,8 @@ public interface IPlayer
 
     void DoCollect(ICard Card, Action OnComplete);
 
+    void DoCardPointerReRange();
+
 
     void DoStaffNext(Action OnComplete); //Move staff Next
 
@@ -72,5 +74,5 @@ public interface IPlayer
     void DoCardSpecialActiveCurrent(ICard Card);
 
 
-    void Swap(int IndexStart, int IndexTo, Action OnComplete);
+    void DoCardSwap(int IndexStart, int IndexTo, Action OnComplete);
 }
