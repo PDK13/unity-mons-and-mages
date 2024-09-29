@@ -114,6 +114,12 @@ public class WildView : MonoBehaviour
 
         for (int i = 0; i < m_cardContent.childCount; i++)
         {
+            if (!m_wildFillFirstTime)
+            {
+                if (GetCardIndexExist(i))
+                    continue;
+            }
+
             var Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
 
             var Card = m_cardDeck.GetChild(m_cardDeck.childCount - 1).GetComponent<ICard>();
@@ -130,5 +136,16 @@ public class WildView : MonoBehaviour
         OnComplete?.Invoke();
 
         m_wildFillFirstTime = false;
+    }
+
+    private bool GetCardIndexExist(int Index)
+    {
+        for (int i = 0; i < PointerLast.childCount; i++)
+        {
+            if (PointerLast.GetChild(i).GetComponent<ICard>().Index != Index)
+                continue;
+            return true;
+        }
+        return false;
     }
 }

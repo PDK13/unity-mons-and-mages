@@ -26,6 +26,9 @@ public class CardController : MonoBehaviour, ICard
     private GameObject m_originIcon;
     private GameObject m_classIcon;
 
+    private RectTransform m_pointer;
+    private RectTransform m_centre;
+
     private bool m_avaible = false;
     private bool m_flip = false;
     private bool m_ready = false;
@@ -36,11 +39,11 @@ public class CardController : MonoBehaviour, ICard
     private bool m_effectOutline = false;
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
-    private RectTransform m_pointer;
-    private RectTransform m_centre;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
     private bool m_classFlyingReady = false;
+
+    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
 
     //
 
@@ -103,6 +106,9 @@ public class CardController : MonoBehaviour, ICard
 
     //ICard
 
+    public IPlayer Player => m_data.Player;
+
+
     public CardNameType Name => m_data.Name;
 
     public CardOriginType Origin => m_data.Origin;
@@ -125,13 +131,12 @@ public class CardController : MonoBehaviour, ICard
 
     public int AttackCombine => m_data.AttackPoint + Growth;
 
-    public IPlayer Player => m_data.Player;
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
-    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
-
     public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
+
+    public int Index => m_centre.GetSiblingIndex();
 
 
     public void Init(CardData Data)
@@ -262,6 +267,7 @@ public class CardController : MonoBehaviour, ICard
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
 
         transform.SetParent(PlayerView.instance.InfoView, true);
+        Renderer.maskable = false;
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.35f, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
@@ -269,6 +275,7 @@ public class CardController : MonoBehaviour, ICard
         CardTween.OnComplete(() =>
         {
             m_move = false;
+            Renderer.maskable = true;
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -285,6 +292,7 @@ public class CardController : MonoBehaviour, ICard
 
         transform.SetParent(m_pointer, true);
         transform.SetSiblingIndex(m_pointer.childCount - 1);
+        Renderer.maskable = false;
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
@@ -293,14 +301,56 @@ public class CardController : MonoBehaviour, ICard
         {
             m_move = false;
             transform.SetSiblingIndex(m_centre.GetSiblingIndex());
+            Renderer.maskable = true;
             OnComplete?.Invoke();
         });
         CardTween.Play();
     }
 
-    public void MoveHorizontal(Action OnComplete)
+    public void MoveCentreLinear(RectTransform Centre, Action OnComplete)
     {
+        if (!m_top || m_move)
+            Debug.Log("Card move (linear) not done yet");
+        m_centre = Centre;
+        m_move = true;
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        transform
+            .DOLocalMove(CentreInPointer, MoveDuration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                m_move = false;
+                transform.SetSiblingIndex(m_centre.GetSiblingIndex());
+                OnComplete?.Invoke();
+            });
+    }
+
+    public void MoveCentreJump(RectTransform Centre, Action OnComplete)
+    {
+        if (!m_top || m_move)
+            Debug.Log("Card move (back) not done yet");
+        m_centre = Centre;
+        m_move = true;
+
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
+        Renderer.maskable = false;
+
+        Sequence CardTween = DOTween.Sequence();
+        CardTween.Insert(0f, transform.DOScale(Vector3.one * 1.35f, MoveDuration * 0.5f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOLocalJump(CentreInPointer, 50, 1, MoveDuration).SetEase(Ease.Linear));
+        CardTween.Insert(MoveDuration * 0.5f, transform.DOScale(Vector3.one, MoveDuration * 0.5f).SetEase(Ease.InCirc));
+        CardTween.OnComplete(() =>
+        {
+            m_move = false;
+            transform.SetSiblingIndex(m_centre.GetSiblingIndex());
+            Renderer.maskable = true;
+            OnComplete?.Invoke();
+        });
+        CardTween.Play();
     }
 
 
@@ -308,10 +358,10 @@ public class CardController : MonoBehaviour, ICard
     {
         if (m_rumble)
             Debug.Log("Card rumble not done yet");
+        m_rumble = true;
 
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
-        m_rumble = true;
         transform.SetSiblingIndex(m_pointer.childCount - 1);
         Renderer.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
@@ -504,7 +554,13 @@ public class CardController : MonoBehaviour, ICard
         }
     } //Origin Event
 
-    public void DoOriginDragonActive(int DragonLeft, Action OnComplete)
+
+    public void DoOriginDragonActive(int DragonCount, Action OnComplete)
+    {
+        DoOriginDragonProgess(DragonCount, OnComplete);
+    } //Origin Dragon Event
+
+    private void DoOriginDragonProgess(int DragonLeft, Action OnComplete)
     {
         var DiceQueue = GameManager.instance.DiceConfig.Data;
         var DiceCount = DiceQueue.Count;
@@ -524,7 +580,7 @@ public class CardController : MonoBehaviour, ICard
                         PlayerQueue[i].HealthChange(-DiceFace.Bite, () =>
                         {
                             if (DragonLeft > 0)
-                                DoOriginDragonActive(DragonLeft, OnComplete);
+                                DoOriginDragonProgess(DragonLeft, OnComplete);
                             else
                                 OnComplete?.Invoke();
                         });
@@ -533,7 +589,8 @@ public class CardController : MonoBehaviour, ICard
                 }
             }));
         });
-    } //Origin Dragon Event
+    }
+
 
     public void DoOriginGhostActive(int GhostCount)
     {
@@ -563,11 +620,16 @@ public class CardController : MonoBehaviour, ICard
     {
         foreach (var Card in Player.CardQueue)
             Card.DoOriginGhostUnReady();
+        DoOriginGhostProgess();
+    }
+
+    private void DoOriginGhostProgess()
+    {
         EffectAlpha(() =>
         {
             Player.DoStaffNext(() =>
             {
-                if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
+                if (Player.CardStaffCurrent.Equals(this.GetComponent<ICard>()))
                     //Active staff when land on card choosed
                     Player.DoStaffActive(() =>
                     {
@@ -579,7 +641,7 @@ public class CardController : MonoBehaviour, ICard
                     });
                 else
                     //Continue move staff if not land on chossed card
-                    DoOriginGhostStart();
+                    DoOriginGhostProgess();
             });
         });
     }
@@ -593,15 +655,19 @@ public class CardController : MonoBehaviour, ICard
             EffectOutlineNormal(null);
     }
 
+
     public void DoOriginInsectActive(Action OnComplete) { EffectOrigin(OnComplete); } //Origin Insect Event
 
+
     public void DoOriginSirenActive(Action OnComplete) { EffectOrigin(OnComplete); } //Origin Siren Event
+
 
     public void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete)
     {
         var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
         EffectOrigin(() => DoManaFill((int)ManaGainValue, OnComplete));
     } //Origin Woodland Event
+
 
     public void DoOriginNeutralActive(Action OnComplete)
     {
@@ -697,6 +763,7 @@ public class CardController : MonoBehaviour, ICard
         }
     } //Class Event
 
+
     public void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete)
     {
         var DiceQueue = GameManager.instance.DiceConfig.Data;
@@ -737,6 +804,7 @@ public class CardController : MonoBehaviour, ICard
 
     } //Class Fighter Event
 
+
     public void DoClassMagicAddictActive(Action OnComplete)
     {
         bool CardGotMana = false;
@@ -770,7 +838,7 @@ public class CardController : MonoBehaviour, ICard
             Card.DoClassMagicAddictUnReady();
         EffectAlpha(() => DoManaFill(-1, () =>
         {
-            Player.CardCurrent.DoSpellActive(() => Player.CardCurrent.DoSpellActive(() =>
+            Player.CardStaffCurrent.DoSpellActive(() => Player.CardStaffCurrent.DoSpellActive(() =>
             {
                 GameManager.instance.CardManaCheck(Player);
             }));
@@ -785,6 +853,7 @@ public class CardController : MonoBehaviour, ICard
         else
             EffectOutlineNormal(null);
     }
+
 
     public void DoClassSingerActive(int SingerCount, Action OnComplete)
     {
@@ -808,7 +877,9 @@ public class CardController : MonoBehaviour, ICard
         }));
     } //Class Singer Event
 
+
     public void DoClassCareTakerActive(Action OnComplete) { EffectClass(OnComplete); } //Class Care Taker Event
+
 
     public void DoClassDiffuserActive(Action OnComplete)
     {
@@ -828,9 +899,17 @@ public class CardController : MonoBehaviour, ICard
         }));
     } //Class Diffuser Event
 
+
     public void DoClassFlyingActive(Action OnComplete)
     {
-        EffectClass(OnComplete);
+        var CardIndex = Player.CardQueue.ToList().IndexOf(this);
+        for (int i = 0; i < Player.CardQueue.Length; i++)
+        {
+            if (Mathf.Abs(CardIndex - i) <= 1)
+                continue;
+            Player.CardQueue[i].DoClassFlyingReady();
+        }
+        GameManager.instance.CardClassFlyingDoChoice(this);
     } //Class Flying Event
 
     public void DoClassFlyingReady()
@@ -848,9 +927,13 @@ public class CardController : MonoBehaviour, ICard
             Card.DoClassFlyingUnReady();
         EffectAlpha(() =>
         {
-            var CardCurrentIndex = Player.CardQueue.ToList().IndexOf(this);
-            var CardTargetIndex = Player.CardQueue.ToList().IndexOf(Player.CardCurrent);
-
+            var CardFromIndex = Player.CardQueue.ToList().IndexOf(Player.CardStaffCurrent);
+            var CardToIndex = Player.CardQueue.ToList().IndexOf(this);
+            var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
+            Player.Swap(CardFromIndex, CardToIndex + (MoveDirection * -1), () => DoManaFill(1, () =>
+            {
+                GameManager.instance.CardManaCheck(Player);
+            }));
         });
     }
 

@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public interface ICard
 {
+    IPlayer Player { get; }
+
+
     CardNameType Name { get; } //Tên bài
 
     CardOriginType Origin { get; } //Tộc bài
@@ -24,13 +27,12 @@ public interface ICard
 
     int AttackCombine { get; } //Tổng sát thương khi tấn công thường
 
-    IPlayer Player { get; }
 
     Image Renderer { get; }
 
-    Vector2 CentreInPointer { get; }
-
     bool Avaible { get; }
+
+    int Index { get; }
 
 
     void Init(CardData Data); //Khởi tạo bài
@@ -52,7 +54,9 @@ public interface ICard
 
     void MoveBack(Action OnComplete);
 
-    void MoveHorizontal(Action OnComplete);
+    void MoveCentreLinear(RectTransform Centre, Action OnComplete);
+
+    void MoveCentreJump(RectTransform Centre, Action OnComplete);
 
 
     void Rumble(Action OnComplete);

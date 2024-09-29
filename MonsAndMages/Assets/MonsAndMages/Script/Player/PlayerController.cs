@@ -42,6 +42,12 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private RectTransform m_staff;
     [SerializeField] private RectTransform m_staffMoveTo;
 
+    private ICard m_cardManaActiveCurrent = null;
+
+    private RectTransform Pointer => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+
+    //
+
     private IEnumerator Start()
     {
         m_cardPoint.SetActive(false);
@@ -107,19 +113,17 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public bool Stuned => m_data.Stuned;
 
-    public ICard[] CardQueue => m_data.CardQueue.ToArray();
-
-    public int StaffStep => m_data.StaffStep;
-
-    public ICard CardCurrent => CardQueue[StaffStep];
-
     public int[] Mediation => m_data.Mediation;
 
     public bool MediationEmty => m_data.MediationEmty;
 
-    public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+    public ICard[] CardQueue => m_data.CardQueue.ToArray();
 
-    public PlayerController Controller => this;
+    public int StaffStep => m_data.StaffStep;
+
+    public ICard CardStaffCurrent => CardQueue[StaffStep];
+
+    public ICard CardManaActiveCurrent => m_cardManaActiveCurrent;
 
 
     public void Init(PlayerData Data)
@@ -282,7 +286,10 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoCardPointerReRange()
     {
         for (int i = 0; i < CardQueue.Length; i++)
-            CardQueue[i].Pointer(PointerLast, m_cardContent.GetChild(i).GetComponent<RectTransform>(), true, true);
+        {
+            var Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
+            CardQueue[i].Pointer(Pointer, Centre, true, true);
+        }
     }
 
 
@@ -313,15 +320,13 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStaffActive(Action OnComplete)
     {
-        var Card = m_cardContent.GetChild(StaffStep).GetComponentInChildren<ICard>();
-
-        if (Card == null)
+        if (CardStaffCurrent == null)
         {
+            Debug.LogError("Not found card for staff active");
             OnComplete?.Invoke();
             return;
         }
-
-        Card.DostaffActive(OnComplete);
+        CardStaffCurrent.DostaffActive(OnComplete);
     }
 
 
@@ -364,5 +369,48 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         m_data.HealthCurrent += Value;
         InfoHealthUpdate(OnComplete);
+    }
+
+
+    public void DoCardSpecialActiveCurrent(ICard Card)
+    {
+        m_cardManaActiveCurrent = Card;
+    }
+
+
+    public void Swap(int IndexFrom, int IndexTo, Action OnComplete)
+    {
+        DoCardPointerReRange();
+
+        var CardFrom = CardQueue[IndexFrom];
+        var MoveDirection = IndexFrom < IndexTo ? 1 : -1;
+
+        switch (MoveDirection)
+        {
+            case -1:
+                for (int i = IndexFrom - 1; i >= IndexTo; i--)
+                {
+                    var CentreLinear = m_cardContent.transform.GetChild(i + 1).GetComponent<RectTransform>();
+                    m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
+                    m_data.CardQueue[i + 1] = CardQueue[i];
+                }
+                break;
+            case 1:
+                for (int i = IndexFrom + 1; i <= IndexTo; i++)
+                {
+                    var CentreLinear = m_cardContent.transform.GetChild(i - 1).GetComponent<RectTransform>();
+                    m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
+                    m_data.CardQueue[i - 1] = CardQueue[i];
+                }
+                break;
+        }
+
+        var CentreJump = m_cardContent.transform.GetChild(IndexTo).GetComponent<RectTransform>();
+        CardFrom.MoveCentreJump(CentreJump, () =>
+        {
+            DoCardPointerReRange();
+            OnComplete?.Invoke();
+        });
+        m_data.CardQueue[IndexTo] = CardFrom;
     }
 }

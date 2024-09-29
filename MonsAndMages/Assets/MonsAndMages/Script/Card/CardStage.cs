@@ -25,6 +25,10 @@ public class CardStage : MonoBehaviour, ICard
     private GameObject m_originIcon;
     private GameObject m_classIcon;
 
+    private RectTransform m_pointer;
+    private RectTransform m_centre;
+    private int m_index = 0;
+
     private bool m_avaible = false;
     private bool m_flip = false;
     private bool m_ready = false;
@@ -35,11 +39,11 @@ public class CardStage : MonoBehaviour, ICard
     private bool m_effectOutline = false;
     private bool m_effectOrigin = false;
     private bool m_effectClass = false;
-    private RectTransform m_pointer;
-    private RectTransform m_centre;
     private bool m_originGhostReady = false;
     private bool m_classMagicAddictReady = false;
     private bool m_classFlyingReady = false;
+
+    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
 
     //
 
@@ -99,6 +103,8 @@ public class CardStage : MonoBehaviour, ICard
 
     //ICard
 
+    public IPlayer Player => GetComponentInParent<IPlayer>();
+
     public CardNameType Name => CardNameType.Stage;
 
     public CardOriginType Origin => CardOriginType.None;
@@ -121,13 +127,12 @@ public class CardStage : MonoBehaviour, ICard
 
     public int AttackCombine => 0;
 
-    public IPlayer Player => GetComponentInParent<IPlayer>();
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
-    public Vector2 CentreInPointer => m_pointer.InverseTransformPoint(m_centre.position);
-
     public bool Avaible => m_avaible && !m_flip && m_ready && !m_move && !m_top && !m_effectAlpha;
+
+    public int Index => m_centre.GetSiblingIndex();
 
 
     public void Init(CardData Data)
@@ -283,9 +288,50 @@ public class CardStage : MonoBehaviour, ICard
         CardTween.Play();
     }
 
-    public void MoveHorizontal(Action OnComplete)
+    public void MoveCentreLinear(RectTransform Centre, Action OnComplete)
     {
+        if (!m_top || m_move)
+            Debug.Log("Card move (linear) not done yet");
+        m_centre = Centre;
+        m_move = true;
 
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        transform
+            .DOLocalMove(CentreInPointer, MoveDuration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                m_move = false;
+                transform.SetSiblingIndex(m_centre.GetSiblingIndex());
+                OnComplete?.Invoke();
+            });
+    }
+
+    public void MoveCentreJump(RectTransform Centre, Action OnComplete)
+    {
+        if (!m_top || m_move)
+            Debug.Log("Card move (back) not done yet");
+        m_centre = Centre;
+        m_move = true;
+
+        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
+
+        transform.SetSiblingIndex(m_pointer.childCount - 1);
+        Renderer.maskable = false;
+
+        Sequence CardTween = DOTween.Sequence();
+        CardTween.Insert(0f, transform.DOScale(Vector3.one * 1.35f, MoveDuration * 0.5f).SetEase(Ease.OutQuad));
+        CardTween.Insert(0f, transform.DOLocalJump(CentreInPointer, 50, 1, MoveDuration).SetEase(Ease.Linear));
+        CardTween.Insert(MoveDuration * 0.5f, transform.DOScale(Vector3.one, MoveDuration * 0.5f).SetEase(Ease.InCirc));
+        CardTween.OnComplete(() =>
+        {
+            m_move = false;
+            transform.SetSiblingIndex(m_centre.GetSiblingIndex());
+            Renderer.maskable = true;
+            OnComplete?.Invoke();
+        });
+        CardTween.Play();
     }
 
 
@@ -293,21 +339,21 @@ public class CardStage : MonoBehaviour, ICard
     {
         if (m_rumble)
             Debug.Log("Card rumble not done yet");
+        m_rumble = true;
 
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
-        m_rumble = true;
         transform.SetSiblingIndex(m_pointer.childCount - 1);
         Renderer.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             Renderer.transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete(() =>
             {
+                transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                 GameEvent.CardRumble(this, () =>
                 {
                     m_rumble = false;
                     Renderer.maskable = true;
-                    transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                     OnComplete?.Invoke();
                 });
             });
@@ -398,11 +444,16 @@ public class CardStage : MonoBehaviour, ICard
     {
         foreach (var Card in Player.CardQueue)
             Card.DoOriginGhostUnReady();
+        DoOriginGhostProgess();
+    }
+
+    private void DoOriginGhostProgess()
+    {
         EffectAlpha(() =>
         {
             Player.DoStaffNext(() =>
             {
-                if (Player.CardCurrent.Equals(this.GetComponent<ICard>()))
+                if (Player.CardStaffCurrent.Equals(this.GetComponent<ICard>()))
                     //Active staff when land on card choosed
                     Player.DoStaffActive(() =>
                     {
@@ -414,7 +465,7 @@ public class CardStage : MonoBehaviour, ICard
                     });
                 else
                     //Continue move staff if not land on chossed card
-                    DoOriginGhostStart();
+                    DoOriginGhostProgess();
             });
         });
     }
@@ -510,7 +561,7 @@ public class CardStage : MonoBehaviour, ICard
         EffectAlpha(() =>
         {
             var CardCurrentIndex = Player.CardQueue.ToList().IndexOf(this);
-            var CardTargetIndex = Player.CardQueue.ToList().IndexOf(Player.CardCurrent);
+            var CardTargetIndex = Player.CardQueue.ToList().IndexOf(Player.CardStaffCurrent);
 
         });
     }

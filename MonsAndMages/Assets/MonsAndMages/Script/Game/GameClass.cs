@@ -12,9 +12,9 @@ public class PlayerData
     [Min(0)] public int RuneStone; //Use to get monsters from wild
     [Min(0)] public int StunPoint; //Max 3 to get 1 skip turn
     [Min(0)] public int StunCurrent;
+    public int[] Mediation = { 0, 0 };
     public List<ICard> CardQueue = new List<ICard>();
     [Min(0)] public int StaffStep;
-    public int[] Mediation = { 0, 0 };
 
     public IPlayer Player;
 

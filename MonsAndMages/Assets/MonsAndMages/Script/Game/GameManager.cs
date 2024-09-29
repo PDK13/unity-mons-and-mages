@@ -246,6 +246,9 @@ public class GameManager : MonoBehaviour
     public void CardManaActiveStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
+
+        PlayerCurrent.DoCardSpecialActiveCurrent(Card);
+
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
         GameEvent.CardActiveMana(Card, () => Card.MoveBack(() => Card.DoManaActive(() => CardManaCheck(Card.Player))));

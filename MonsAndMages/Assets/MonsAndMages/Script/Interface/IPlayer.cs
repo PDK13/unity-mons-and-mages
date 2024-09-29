@@ -20,19 +20,17 @@ public interface IPlayer
 
     bool Stuned { get; }
 
-    ICard[] CardQueue { get; }
-
-    int StaffStep { get; }
-
-    ICard CardCurrent { get; }
-
     int[] Mediation { get; }
 
     bool MediationEmty { get; }
 
-    RectTransform PointerLast { get; }
+    ICard[] CardQueue { get; }
 
-    PlayerController Controller { get; }
+    int StaffStep { get; }
+
+    ICard CardStaffCurrent { get; }
+
+    ICard CardManaActiveCurrent { get; }
 
 
     void Init(PlayerData Data);
@@ -69,4 +67,10 @@ public interface IPlayer
     void StunChange(int Value, Action OnComplete);
 
     void HealthChange(int Value, Action OnComplete);
+
+
+    void DoCardSpecialActiveCurrent(ICard Card);
+
+
+    void Swap(int IndexStart, int IndexTo, Action OnComplete);
 }
