@@ -74,8 +74,9 @@ public class CardController : MonoBehaviour, ICard
         {
             case ChoiceType.MediateOrCollect:
                 if (Player != null)
-                    return;
-                GameEvent.UiInfoCollect(this);
+                    Rumble(null);
+                else
+                    GameEvent.UiInfoCollect(this);
                 break;
             case ChoiceType.CardFullMana:
                 if (Player != GameManager.instance.PlayerCurrent || !ManaFull)
@@ -317,11 +318,11 @@ public class CardController : MonoBehaviour, ICard
         {
             Renderer.transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete(() =>
             {
+                transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                 GameEvent.CardRumble(this, () =>
                 {
                     m_rumble = false;
                     Renderer.maskable = true;
-                    transform.SetSiblingIndex(m_centre.GetSiblingIndex());
                     OnComplete?.Invoke();
                 });
             });

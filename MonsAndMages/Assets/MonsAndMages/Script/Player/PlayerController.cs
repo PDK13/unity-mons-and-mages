@@ -42,10 +42,14 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private RectTransform m_staff;
     [SerializeField] private RectTransform m_staffMoveTo;
 
-    private void Start()
+    private IEnumerator Start()
     {
         m_cardPoint.SetActive(false);
         m_runeStoneIcon.SetActive(false);
+
+        yield return null;
+
+        DoCardPointerReRange();
     }
 
     //
@@ -140,7 +144,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStart(Action OnComplete)
     {
-        DoCardPointerReRange(); //Check this in Start
         GameEvent.PlayerStart(this, OnComplete);
     }
 
@@ -285,6 +288,8 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStaffNext(Action OnComplete)
     {
+        DoCardPointerReRange();
+
         //Update staff Parent to Last
         m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
         m_staffMoveTo.SetParent(m_staff.parent);
