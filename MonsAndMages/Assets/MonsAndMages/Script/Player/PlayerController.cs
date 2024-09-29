@@ -425,7 +425,10 @@ public class PlayerController : MonoBehaviour, IPlayer
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i + 1] = CardQueue[i];
                     if (i == StaffStep)
+                    {
+                        m_data.StaffStep = i + 1;
                         DoStaffMoveCentreLinear(CentreLinear, null);
+                    }
                 }
                 break;
             case 1:
@@ -435,7 +438,10 @@ public class PlayerController : MonoBehaviour, IPlayer
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i - 1] = CardQueue[i];
                     if (i == StaffStep)
+                    {
+                        m_data.StaffStep = i - 1;
                         DoStaffMoveCentreLinear(CentreLinear, null);
+                    }
                 }
                 break;
         }
@@ -447,7 +453,10 @@ public class PlayerController : MonoBehaviour, IPlayer
             OnComplete?.Invoke();
         });
         if (IndexFrom == StaffStep)
+        {
+            m_data.StaffStep = IndexTo;
             DoStaffMoveCentreJump(CentreJump, null);
+        }
         m_data.CardQueue[IndexTo] = CardFrom;
     }
 }
