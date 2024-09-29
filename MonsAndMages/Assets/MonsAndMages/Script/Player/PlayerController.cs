@@ -416,6 +416,8 @@ public class PlayerController : MonoBehaviour, IPlayer
         var CardFrom = CardQueue[IndexFrom];
         var MoveDirection = IndexFrom < IndexTo ? 1 : -1;
 
+        bool StaffMoved = false;
+
         switch (MoveDirection)
         {
             case -1:
@@ -424,8 +426,9 @@ public class PlayerController : MonoBehaviour, IPlayer
                     var CentreLinear = m_cardContent.transform.GetChild(i + 1).GetComponent<RectTransform>();
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i + 1] = CardQueue[i];
-                    if (i == StaffStep)
+                    if (!StaffMoved && i == StaffStep)
                     {
+                        StaffMoved = true;
                         m_data.StaffStep = i + 1;
                         DoStaffMoveCentreLinear(CentreLinear, null);
                     }
@@ -437,8 +440,9 @@ public class PlayerController : MonoBehaviour, IPlayer
                     var CentreLinear = m_cardContent.transform.GetChild(i - 1).GetComponent<RectTransform>();
                     m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
                     m_data.CardQueue[i - 1] = CardQueue[i];
-                    if (i == StaffStep)
+                    if (!StaffMoved && i == StaffStep)
                     {
+                        StaffMoved = true;
                         m_data.StaffStep = i - 1;
                         DoStaffMoveCentreLinear(CentreLinear, null);
                     }
@@ -452,7 +456,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             DoCardPointerReRange();
             OnComplete?.Invoke();
         });
-        if (IndexFrom == StaffStep)
+        if (!StaffMoved && IndexFrom == StaffStep)
         {
             m_data.StaffStep = IndexTo;
             DoStaffMoveCentreJump(CentreJump, null);
