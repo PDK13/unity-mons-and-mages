@@ -838,8 +838,9 @@ public class CardController : MonoBehaviour, ICard
             Card.DoClassMagicAddictUnReady();
         EffectAlpha(() => DoManaFill(-1, () =>
         {
-            Player.CardStaffCurrent.DoSpellActive(() => Player.CardStaffCurrent.DoSpellActive(() =>
+            Player.CardManaActiveCurrent.DoSpellActive(() => Player.CardManaActiveCurrent.DoSpellActive(() =>
             {
+                Player.DoCardSpecialActiveCurrent(null);
                 GameManager.instance.CardManaCheck(Player);
             }));
         }));
@@ -914,6 +915,8 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoClassFlyingReady()
     {
+        if (Name == CardNameType.Stage)
+            return;
         m_classFlyingReady = true;
         m_effectOutline = true;
         var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
@@ -927,11 +930,12 @@ public class CardController : MonoBehaviour, ICard
             Card.DoClassFlyingUnReady();
         EffectAlpha(() =>
         {
-            var CardFromIndex = Player.CardQueue.ToList().IndexOf(Player.CardStaffCurrent);
+            var CardFromIndex = Player.CardQueue.ToList().IndexOf(Player.CardManaActiveCurrent);
             var CardToIndex = Player.CardQueue.ToList().IndexOf(this);
             var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
             Player.Swap(CardFromIndex, CardToIndex + (MoveDirection * -1), () => DoManaFill(1, () =>
             {
+                Player.DoCardSpecialActiveCurrent(null);
                 GameManager.instance.CardManaCheck(Player);
             }));
         });
