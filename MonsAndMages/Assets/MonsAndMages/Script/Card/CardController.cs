@@ -468,13 +468,14 @@ public class CardController : MonoBehaviour, ICard
     {
         m_tmpGrowth.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            var ManaText = Value.ToString() + GameConstant.TMP_ICON_GROW;
-            m_tmpGrowth.text = ManaText;
+            var ValueText = Value.ToString() + GameConstant.TMP_ICON_GROW;
+            m_tmpGrowth.text = ValueText;
             m_tmpGrowth.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
                 EffectOutlineMana(() => EffectOutlineNormal(OnComplete));
             });
         });
+        InfoDamageUpdate(AttackCombine, null);
     }
 
     private void InfoManaUpdate(int Value, int Max, Action OnComplete)
@@ -483,8 +484,8 @@ public class CardController : MonoBehaviour, ICard
         {
             m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
             {
-                var ManaText = string.Format("{0}/{1} {2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
-                m_tmpMana.text = ManaText;
+                var ValueText = string.Format("{0}/{1} {2}", Mana, ManaPoint, GameConstant.TMP_ICON_Mana);
+                m_tmpMana.text = ValueText;
                 m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
             });
         }));
@@ -494,8 +495,8 @@ public class CardController : MonoBehaviour, ICard
     {
         m_tmpDamage.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            var ManaText = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
-            m_tmpDamage.text = ManaText;
+            var ValueText = GameConstant.TMP_ICON_DAMAGE + " " + Value.ToString();
+            m_tmpDamage.text = ValueText;
             m_tmpDamage.transform.DOScale(Vector2.one, 0.1f).OnComplete(() =>
             {
                 EffectOutlineMana(() => EffectOutlineNormal(OnComplete));
@@ -724,6 +725,12 @@ public class CardController : MonoBehaviour, ICard
             InfoManaUpdate(Mana, ManaPoint, () => EffectOutlineMana(OnComplete));
         else
             InfoManaUpdate(Mana, ManaPoint, OnComplete);
+    }
+
+    public void DoGrowthAdd(int Value, Action OnComplete)
+    {
+        Growth += Value;
+        InfoGrowUpdate(Growth, () => OnComplete());
     }
 
 

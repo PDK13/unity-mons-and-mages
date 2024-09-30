@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CardOneTail : MonoBehaviour
+public class CardFlowOfTheEssential : MonoBehaviour
 {
     private CardController m_controller;
 
@@ -43,6 +45,6 @@ public class CardOneTail : MonoBehaviour
 
     private void OnSpellActive(Action OnComplete)
     {
-        m_controller.DoGrowthAdd(1, () => m_controller.DoAttackActive(OnComplete));
+        OnComplete?.Invoke();
     }
 }
