@@ -9,8 +9,6 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
-    private PlayerData m_data;
-
     [SerializeField] private TextMeshProUGUI m_playerName;
 
     [Space]
@@ -39,12 +37,21 @@ public class PlayerController : MonoBehaviour, IPlayer
     [SerializeField] private GameObject m_runeStoneIcon;
 
     [Space]
-    [SerializeField] private RectTransform m_staff;
+    [SerializeField] private StaffController m_staff;
 
+    //
+
+    private int m_index = 0;
+    private bool m_base = false;
+    private int m_healthPoint = 0;
+    private int m_healthCurrent = 0;
+    private int m_runeStone = 0;
+    private int m_stunPoint = 0;
+    private int m_stunCurrent = 0;
+    private int[] m_mediation = new int[2] { 0, 0 };
+    private List<ICard> m_cardQueue = new List<ICard>();
+    private int m_staffStep = 0;
     private ICard m_cardManaActiveCurrent = null;
-    private RectTransform m_staffCentre;
-
-    private RectTransform Pointer => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
 
     //
 
@@ -54,8 +61,10 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_runeStoneIcon.SetActive(false);
 
         yield return null;
+        yield return null;
+        yield return null;
 
-        DoCardPointerReRange();
+        DoBoardReRange();
     }
 
     //
@@ -92,44 +101,59 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     private void InfoMediationUpdate(int Index, Action OnComplete)
     {
-        m_cardMediation[Index].InfoRuneStoneUpdate(m_data.Mediation[Index], OnComplete);
+        m_cardMediation[Index].InfoRuneStoneUpdate(m_mediation[Index], OnComplete);
     }
 
     //IPlayer
 
-    public int Index => m_data.Index;
+    public int Index => m_index;
 
-    public bool Base => m_data.Base;
+    public bool Base => m_base;
 
-    public int HealthPoint => m_data.HealthPoint;
+    public int HealthPoint => m_healthPoint;
 
-    public int HealthCurrent => m_data.HealthCurrent;
+    public int HealthCurrent => m_healthCurrent;
 
-    public int RuneStone => m_data.RuneStone;
+    public int RuneStone => m_runeStone;
 
-    public int StunPoint => m_data.StunPoint;
+    public int StunPoint => m_stunPoint;
 
-    public int StunCurrent => m_data.StunCurrent;
+    public int StunCurrent => m_stunCurrent;
 
-    public bool Stuned => m_data.Stuned;
+    public bool Stuned => m_stunCurrent >= m_stunPoint;
 
-    public int[] Mediation => m_data.Mediation;
+    public int[] Mediation => m_mediation;
 
-    public bool MediationEmty => m_data.MediationEmty;
+    public bool MediationEmty => m_mediation[0] == 0 || m_mediation[1] == 0;
 
-    public ICard[] CardQueue => m_data.CardQueue.ToArray();
+    public ICard[] CardQueue => m_cardQueue.ToArray();
 
-    public int StaffStep => m_data.StaffStep;
+    public int StaffStep => m_staffStep;
 
-    public ICard CardStaffCurrent => CardQueue[StaffStep];
+    public ICard CardStaffCurrent => m_cardQueue[StaffStep];
 
     public ICard CardManaActiveCurrent => m_cardManaActiveCurrent;
 
 
     public void Init(PlayerData Data)
     {
-        m_data = Data;
-        m_data.Player = this;
+        m_index = Data.Index;
+        m_base = Data.Base;
+        m_healthPoint = Data.HealthPoint;
+        m_healthCurrent = Data.HealthCurrent;
+        m_runeStone = Data.RuneStone;
+        m_stunPoint = Data.StunPoint;
+        m_stunCurrent = Data.StunCurrent;
+        m_mediation = Data.Mediation;
+        for (int i = 0; i < m_cardContent.childCount; i++)
+        {
+            var CardStage = new CardData();
+            CardStage.Named = "Stage";
+            CardStage.Name = CardNameType.Stage;
+            var Card = m_cardContent.GetChild(i).GetComponentInChildren<ICard>();
+            Card.Init(CardStage);
+            m_cardQueue.Add(Card);
+        }
 
         m_playerName.text = "P" + (Index + 1).ToString();
 
@@ -138,9 +162,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         InfoHealthUpdate(null);
         InfoMediationUpdate(0, null);
         InfoMediationUpdate(1, null);
-
-        for (int i = 0; i < m_cardContent.childCount; i++)
-            m_data.CardQueue.Add(m_cardContent.GetChild(i).GetComponentInChildren<ICard>());
 
         GameManager.instance.PlayerJoin(this);
     }
@@ -160,7 +181,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             return;
         }
 
-        m_data.RuneStone += Value;
+        m_runeStone += Value;
 
         var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
         var RuneStoneFx = RuneStone.Find("fx-glow");
@@ -191,14 +212,14 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoTakeRuneStoneFromMediation(Action OnComplete)
     {
         var RuneStoneTake = false;
-        for (int i = 0; i < m_data.Mediation.Length; i++)
+        for (int i = 0; i < m_mediation.Length; i++)
         {
-            if (m_data.Mediation[i] > 0)
+            if (m_mediation[i] > 0)
             {
                 RuneStoneTake = true;
 
-                m_data.Mediation[i] -= 2;
-                m_data.RuneStone += 2;
+                m_mediation[i] -= 2;
+                m_runeStone += 2;
 
                 InfoMediationUpdate(i, () =>
                 {
@@ -235,24 +256,24 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStunnedCheck(Action<bool> OnComplete)
     {
-        InfoStunUpdate(() => OnComplete?.Invoke(m_data.Stuned));
+        InfoStunUpdate(() => OnComplete?.Invoke(Stuned));
         GameEvent.PlayerStunnedCheck(this, null);
     }
 
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
-        m_data.RuneStone -= RuneStoneAdd;
+        m_runeStone -= RuneStoneAdd;
         InfoRuneStoneUpdate(() =>
         {
-            if (m_data.Mediation[0] == 0)
+            if (m_mediation[0] == 0)
             {
-                m_data.Mediation[0] = RuneStoneAdd * 2;
+                m_mediation[0] = RuneStoneAdd * 2;
                 InfoMediationUpdate(0, OnComplete);
             }
             else
-            if (m_data.Mediation[1] == 0)
+            if (m_mediation[1] == 0)
             {
-                m_data.Mediation[1] = RuneStoneAdd * 2;
+                m_mediation[1] = RuneStoneAdd * 2;
                 InfoMediationUpdate(1, OnComplete);
             }
             else
@@ -263,11 +284,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public (RectTransform Pointer, RectTransform Centre) DoCollectReady()
     {
-        if (m_data.CardQueue.Count >= 5 && CardQueue[0] == null)
+        if (m_cardQueue.Count >= 5 && CardQueue[0] == null)
         {
             //staff still stay at emty position after remove stage card
             //Destroy(m_cardContent.GetChild(0).gameObject);
-            //m_data.CardQueue.RemoveAt(0);
+            //m_cardQueue.RemoveAt(0);
         }
 
         var CardPoint = Instantiate(m_cardPoint, m_cardContent);
@@ -280,75 +301,38 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void DoCollect(ICard Card, Action OnComplete)
     {
         RuneStoneChange(-Card.RuneStoneCost, () => OnComplete?.Invoke());
-        m_data.CardQueue.Add(Card);
+        m_cardQueue.Add(Card);
     }
 
-    public void DoCardPointerReRange()
+    public void DoBoardReRange()
     {
         //Card
         for (int i = 0; i < CardQueue.Length; i++)
         {
-            var Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
-            CardQueue[i].Pointer(Pointer, Centre, true, true);
+            CardQueue[i].Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+            CardQueue[i].Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
+            CardQueue[i].DoFixed();
         }
         //Staff
-        m_staff.SetParent(Pointer, true);
-        m_staff.SetSiblingIndex(Pointer.childCount - 1);
-        m_staffCentre = m_cardContent.GetChild(m_data.StaffStep).GetComponent<RectTransform>();
+        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+        m_staff.DoFixed();
     }
 
 
     public void DoStaffNext(Action OnComplete)
     {
-        DoCardPointerReRange();
+        DoBoardReRange();
 
         //Start Move staff to Point
-        var StaffIndexLast = m_data.StaffStep;
+        var StaffIndexLast = m_staffStep;
         var StaffIndexNext = StaffIndexLast + 1 > CardQueue.Length - 1 ? 0 : StaffIndexLast + 1;
-        m_data.StaffStep = StaffIndexNext;
+        m_staffStep = StaffIndexNext;
 
         //Update staff Parent to Last
-        m_staff.SetParent(m_cardContent.GetChild(m_cardContent.childCount - 1), true);
-        m_staffCentre = m_cardContent.GetChild(StaffIndexNext).GetComponent<RectTransform>();
-
-        var CentreInPointer = Pointer.InverseTransformPoint(m_staffCentre.position);
-
-        m_staff
-            .DOLocalJump(CentreInPointer, 45f, 1, 1f)
-            .SetEase(Ease.InCubic)
-            .OnComplete(() => OnComplete?.Invoke());
-    }
-
-    private void DoStaffMoveCentreLinear(RectTransform Centre, Action OnComplete)
-    {
-        var CentreInPointer = Pointer.InverseTransformPoint(Centre.position);
-        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
-
-        m_staff
-            .DOLocalMove(CentreInPointer, MoveDuration)
-            .SetEase(Ease.Linear)
-            .OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
-    }
-
-    private void DoStaffMoveCentreJump(RectTransform Centre, Action OnComplete)
-    {
-        var CentreInPointer = Pointer.InverseTransformPoint(Centre.position);
-        var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
-
-        m_staff.SetSiblingIndex(Pointer.childCount - 1);
-
-        Sequence CardTween = DOTween.Sequence();
-        CardTween.Insert(0f, m_staff.DOScale(Vector3.one * 1.35f, MoveDuration * 0.5f).SetEase(Ease.OutQuad));
-        CardTween.Insert(0f, m_staff.DOLocalJump(CentreInPointer, 50, 1, MoveDuration).SetEase(Ease.Linear));
-        CardTween.Insert(MoveDuration * 0.5f, m_staff.DOScale(Vector3.one, MoveDuration * 0.5f).SetEase(Ease.InCirc));
-        CardTween.OnComplete(() =>
-        {
-            OnComplete?.Invoke();
-        });
-        CardTween.Play();
+        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+        m_staff.DoMoveNextJump(OnComplete);
     }
 
     public void DoStaffActive(Action OnComplete)
@@ -362,10 +346,15 @@ public class PlayerController : MonoBehaviour, IPlayer
         CardStaffCurrent.DostaffActive(OnComplete);
     }
 
+    public void DoStaffRumble(Action OnComplete)
+    {
+        m_staff.DoRumble(OnComplete);
+    }
+
 
     public void DoEnd(Action OnComplete)
     {
-        m_data.StunCurrent = 0;
+        m_stunCurrent = 0;
         GameEvent.PlayerEnd(this, OnComplete);
     }
 
@@ -377,7 +366,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             OnComplete?.Invoke();
             return;
         }
-        m_data.RuneStone += Value;
+        m_runeStone += Value;
         InfoRuneStoneUpdate(OnComplete);
     }
 
@@ -388,8 +377,8 @@ public class PlayerController : MonoBehaviour, IPlayer
             OnComplete?.Invoke();
             return;
         }
-        m_data.StunCurrent += Value;
-        m_data.StunCurrent = Mathf.Clamp(m_data.StunCurrent, 0, m_data.StunPoint);
+        m_stunCurrent += Value;
+        m_stunCurrent = Mathf.Clamp(m_stunCurrent, 0, m_stunPoint);
         InfoStunUpdate(OnComplete);
     }
 
@@ -400,7 +389,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             OnComplete?.Invoke();
             return;
         }
-        m_data.HealthCurrent += Value;
+        m_healthCurrent += Value;
         InfoHealthUpdate(OnComplete);
     }
 
@@ -424,13 +413,15 @@ public class PlayerController : MonoBehaviour, IPlayer
                 for (int i = IndexFrom - 1; i >= IndexTo; i--)
                 {
                     var CentreLinear = m_cardContent.transform.GetChild(i + 1).GetComponent<RectTransform>();
-                    m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
-                    m_data.CardQueue[i + 1] = CardQueue[i];
+                    m_cardQueue[i].DoMoveCentreLinear(CentreLinear, null);
+                    m_cardQueue[i + 1] = CardQueue[i];
                     if (!StaffMoved && i == StaffStep)
                     {
                         StaffMoved = true;
-                        m_data.StaffStep = i + 1;
-                        DoStaffMoveCentreLinear(CentreLinear, null);
+                        m_staffStep = i + 1;
+                        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+                        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+                        m_staff.DoMoveCentreLinear(null);
                     }
                 }
                 break;
@@ -438,29 +429,33 @@ public class PlayerController : MonoBehaviour, IPlayer
                 for (int i = IndexFrom + 1; i <= IndexTo; i++)
                 {
                     var CentreLinear = m_cardContent.transform.GetChild(i - 1).GetComponent<RectTransform>();
-                    m_data.CardQueue[i].MoveCentreLinear(CentreLinear, null);
-                    m_data.CardQueue[i - 1] = CardQueue[i];
+                    m_cardQueue[i].DoMoveCentreLinear(CentreLinear, null);
+                    m_cardQueue[i - 1] = CardQueue[i];
                     if (!StaffMoved && i == StaffStep)
                     {
                         StaffMoved = true;
-                        m_data.StaffStep = i - 1;
-                        DoStaffMoveCentreLinear(CentreLinear, null);
+                        m_staffStep = i - 1;
+                        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+                        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+                        m_staff.DoMoveCentreLinear(null);
                     }
                 }
                 break;
         }
 
         var CentreJump = m_cardContent.transform.GetChild(IndexTo).GetComponent<RectTransform>();
-        CardFrom.MoveCentreJump(CentreJump, () =>
+        CardFrom.DoMoveCentreJump(CentreJump, () =>
         {
-            DoCardPointerReRange();
+            DoBoardReRange();
             OnComplete?.Invoke();
         });
         if (!StaffMoved && IndexFrom == StaffStep)
         {
-            m_data.StaffStep = IndexTo;
-            DoStaffMoveCentreJump(CentreJump, null);
+            m_staffStep = IndexTo;
+            m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+            m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+            m_staff.DoMoveCentreJump(null);
         }
-        m_data.CardQueue[IndexTo] = CardFrom;
+        m_cardQueue[IndexTo] = CardFrom;
     }
 }

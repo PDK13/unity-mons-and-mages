@@ -47,7 +47,7 @@ public class CardMediate : MonoBehaviour
     public void EffectAlpha(Action OnComplete)
     {
         if (m_effect)
-            Debug.Log("Card effect alpha not done yet");
+            Debug.Log("Card m_effect alpha not done yet");
         m_effect = true;
 
         var AlphaDuration = GameManager.instance.TweenConfig.CardAction.AlphaDuration;

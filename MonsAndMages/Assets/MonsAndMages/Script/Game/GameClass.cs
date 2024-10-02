@@ -16,11 +16,7 @@ public class PlayerData
     public List<ICard> CardQueue = new List<ICard>();
     [Min(0)] public int StaffStep;
 
-    public IPlayer Player;
-
-    public bool Stuned => StunCurrent >= StunPoint;
-
-    public bool MediationEmty => Mediation[0] == 0 || Mediation[1] == 0;
+    public PlayerData() { }
 
     public PlayerData(int Index, bool Base, int HealthPoint, int RuneStone)
     {
@@ -55,10 +51,9 @@ public class CardData
     [Min(0)] public int AttackPoint;
     [Min(0)] public int GrowthStart;
 
-    public IPlayer Player;
-    public ICard Card;
+    public CardData() { }
 
-    public CardData(CardData Data, IPlayer Player, ICard Card)
+    public CardData(CardData Data)
     {
         this.Named = Data.Named;
         this.Name = Data.Name;
@@ -71,7 +66,5 @@ public class CardData
         this.ManaStart = Data.ManaStart;
         this.AttackPoint = Data.AttackPoint;
         this.GrowthStart = Data.GrowthStart;
-        this.Player = Player;
-        this.Card = Card;
     }
 }

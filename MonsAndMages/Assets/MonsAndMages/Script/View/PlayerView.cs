@@ -491,7 +491,7 @@ public class PlayerView : MonoBehaviour
         if (m_cardView != null)
         {
             if (CardBack)
-                m_cardView.MoveBack(null);
+                m_cardView.DoMoveBack(null);
             m_cardView = null;
         }
 
@@ -508,7 +508,7 @@ public class PlayerView : MonoBehaviour
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
         m_cardView = Card;
-        m_cardView.MoveTop(null);
+        m_cardView.DoMoveTop(null);
 
         var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
 
@@ -536,7 +536,7 @@ public class PlayerView : MonoBehaviour
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
         m_cardView = Card;
-        m_cardView.MoveTop(null);
+        m_cardView.DoMoveTop(null);
 
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
@@ -545,14 +545,14 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
         m_tmpExplainClass.gameObject.SetActive(true);
-    } //Info Full Mana
+    } //Info Full ManaCurrent
 
     private void OnUiInfoOriginGhost(ICard Card)
     {
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
         m_cardView = Card;
-        m_cardView.MoveTop(null);
+        m_cardView.DoMoveTop(null);
 
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
@@ -564,7 +564,7 @@ public class PlayerView : MonoBehaviour
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
         m_cardView = Card;
-        m_cardView.MoveTop(null);
+        m_cardView.DoMoveTop(null);
 
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
@@ -576,7 +576,7 @@ public class PlayerView : MonoBehaviour
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
         m_cardView = Card;
-        m_cardView.MoveTop(null);
+        m_cardView.DoMoveTop(null);
 
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);

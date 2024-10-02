@@ -17,7 +17,7 @@ public interface ICard
 
     int ManaPoint { get; } //Năng lượng
 
-    int Mana { get; } //Năng lượng hiện tại
+    int ManaCurrent { get; } //Năng lượng hiện tại
 
     bool ManaFull { get; }
 
@@ -28,49 +28,48 @@ public interface ICard
     int AttackCombine { get; } //Tổng sát thương khi tấn công thường
 
 
-    Image Renderer { get; }
+    RectTransform Pointer { get; set; }
 
-    bool Avaible { get; }
+    RectTransform Centre { get; set; }
+
+    Image Renderer { get; }
 
     int Index { get; }
 
 
     void Init(CardData Data); //Khởi tạo bài
 
-    void Fill(RectTransform Point, RectTransform Centre); //Thêm bài vào khu vực chung
+    void DoFill(RectTransform Point, RectTransform Centre); //Thêm bài vào khu vực chung
+
+    void DoFixed();
 
 
-    void Ready();
+    void DoFlipOpen(Action OnComplete);
 
-    public void Pointer(RectTransform Point, RectTransform Centre, bool PointChange, bool CentreChange);
-
-
-    void FlipOpen(Action OnComplete);
-
-    void FlipClose(Action OnComplete);
+    void DoFlipClose(Action OnComplete);
 
 
-    void MoveTop(Action OnComplete);
+    void DoMoveTop(Action OnComplete);
 
-    void MoveBack(Action OnComplete);
+    void DoMoveBack(Action OnComplete);
 
-    void MoveCentreLinear(RectTransform Centre, Action OnComplete);
+    void DoMoveCentreLinear(RectTransform Centre, Action OnComplete);
 
-    void MoveCentreJump(RectTransform Centre, Action OnComplete);
-
-
-    void Rumble(Action OnComplete);
+    void DoMoveCentreJump(RectTransform Centre, Action OnComplete);
 
 
-    void EffectAlpha(Action OnComplete);
+    void DoRumble(Action OnComplete);
 
-    void EffectOutlineNormal(Action OnComplete);
 
-    void EffectOutlineMana(Action OnComplete);
+    void DoEffectAlpha(Action OnComplete);
 
-    void EffectOrigin(Action OnComplete);
+    void DoEffectOutlineNormal(Action OnComplete);
 
-    void EffectClass(Action OnComplete);
+    void DoEffectOutlineMana(Action OnComplete);
+
+    void DoEffectOrigin(Action OnComplete);
+
+    void DoEffectClass(Action OnComplete);
 
 
     void InfoShow(bool Show);

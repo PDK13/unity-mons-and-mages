@@ -264,7 +264,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6579715562159598248}
   - component: {fileID: 5090766707334347801}
-  - component: {fileID: 3309139029959933911}
+  - component: {fileID: 4734231806416867964}
   m_Layer: 5
   m_Name: card-stage
   m_TagString: Untagged
@@ -343,8 +343,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3309139029959933911}
-        m_TargetAssemblyTypeName: CardStage, Assembly-CSharp
+      - m_Target: {fileID: 4734231806416867964}
+        m_TargetAssemblyTypeName: CardController, Assembly-CSharp
         m_MethodName: BtnTap
         m_Mode: 1
         m_Arguments:
@@ -355,7 +355,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3309139029959933911
+--- !u!114 &4734231806416867964
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4790769038840088764}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbaac0b3fd431c54a9001d6a012d500a, type: 3}
+  m_Script: {fileID: 11500000, guid: 46c215777b7b2144f9052941a9d42cb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5929511111547356332

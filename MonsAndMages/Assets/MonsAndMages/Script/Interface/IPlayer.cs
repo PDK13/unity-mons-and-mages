@@ -53,12 +53,14 @@ public interface IPlayer
 
     void DoCollect(ICard Card, Action OnComplete);
 
-    void DoCardPointerReRange();
+    void DoBoardReRange();
 
 
     void DoStaffNext(Action OnComplete); //Move staff Next
 
     void DoStaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
+
+    void DoStaffRumble(Action OnComplete);
 
 
     void DoEnd(Action OnComplete);

@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9137255, g: 0.7137255, b: 0.77548486, a: 1}
+  m_Color: {r: 1, g: 0.53333336, b: 0.53333336, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -911,7 +911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6556604, g: 0.7791966, b: 1, a: 1}
+  m_Color: {r: 0.53333336, g: 0.9529412, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1164,6 +1164,7 @@ GameObject:
   - component: {fileID: 2550650501106109346}
   - component: {fileID: 1904188552959898102}
   - component: {fileID: 3420785150638956177}
+  - component: {fileID: 8206554411397175434}
   m_Layer: 5
   m_Name: staff
   m_TagString: Untagged
@@ -1189,7 +1190,7 @@ RectTransform:
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 83.3, y: 141.3}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.25}
 --- !u!222 &2550650501106109346
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1243,6 +1244,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.99215686}
   m_EffectDistance: {x: 2, y: 2}
   m_UseGraphicAlpha: 1
+--- !u!114 &8206554411397175434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899374646499088467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46c50f6c7e1b3014ba6c2f283b4c40d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2040889777323691534
 GameObject:
   m_ObjectHideFlags: 0
@@ -2056,7 +2069,6 @@ RectTransform:
   m_Children:
   - {fileID: 4770611718499897187}
   - {fileID: 7607550422064173687}
-  - {fileID: 5463272360336922506}
   m_Father: {fileID: 8251891717430459947}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2157,41 +2169,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 5, y: 5}
   m_UseGraphicAlpha: 1
---- !u!1 &5353597594483242278
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5463272360336922506}
-  m_Layer: 5
-  m_Name: staff-move-to
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &5463272360336922506
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5353597594483242278}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 8539530753578410875}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5511893579027108482
 GameObject:
   m_ObjectHideFlags: 0
@@ -3184,8 +3161,7 @@ MonoBehaviour:
   m_healthBox: {fileID: 592306005136328576}
   m_tmpHealth: {fileID: 6427976990759561715}
   m_runeStoneIcon: {fileID: 2058086290617309697}
-  m_staff: {fileID: 7607550422064173687}
-  m_staffMoveTo: {fileID: 5463272360336922506}
+  m_staff: {fileID: 8206554411397175434}
 --- !u!1 &7163252748347950870
 GameObject:
   m_ObjectHideFlags: 0
