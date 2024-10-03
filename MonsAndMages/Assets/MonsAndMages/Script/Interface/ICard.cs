@@ -44,6 +44,11 @@ public interface ICard
     void DoFixed();
 
 
+    void DoChoiceReady();
+
+    void DoChoiceUnReady();
+
+
     void DoFlipOpen(Action OnComplete);
 
     void DoFlipClose(Action OnComplete);
@@ -67,6 +72,9 @@ public interface ICard
 
     void DoEffectOutlineMana(Action OnComplete);
 
+    void DoEffectOutlineChoice(Action OnComplete);
+
+
     void DoEffectOrigin(Action OnComplete);
 
     void DoEffectClass(Action OnComplete);
@@ -79,22 +87,6 @@ public interface ICard
 
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
-
-    void DoOriginDragonActive(int DragonLeft, Action OnComplete);
-
-    void DoOriginGhostActive(int GhostCount);
-
-    void DoOriginGhostReady();
-
-    void DoOriginGhostStart();
-
-    void DoOriginGhostUnReady();
-
-    void DoOriginInsectActive(Action OnComplete);
-
-    void DoOriginSirenActive(Action OnComplete);
-
-    void DoOriginWoodlandActive(int WoodlandCount, Action OnComplete);
 
 
     void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
@@ -113,31 +105,6 @@ public interface ICard
 
 
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
-
-    void DoClassFighterActive(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete);
-
-    void DoClassMagicAddictActive(Action OnComplete);
-
-    void DoClassMagicAddictReady();
-
-    void DoClassMagicAddictStart();
-
-    void DoClassMagicAddictUnReady();
-
-    void DoClassSingerActive(int SingerCount, Action OnComplete);
-
-    void DoClassCareTakerActive(Action OnComplete);
-
-    void DoClassDiffuserActive(Action OnComplete);
-
-    void DoClassFlyingActive(Action OnComplete);
-
-    void DoClassFlyingReady();
-
-    void DoClassFlyingStart();
-
-    void DoClassFlyingUnReady();
-
 
     void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }

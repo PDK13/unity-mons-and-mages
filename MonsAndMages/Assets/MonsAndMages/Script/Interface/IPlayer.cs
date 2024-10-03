@@ -30,7 +30,7 @@ public interface IPlayer
 
     ICard CardStaffCurrent { get; }
 
-    ICard CardManaActiveCurrent { get; }
+    ICard CardActiveCurrent { get; }
 
 
     void Init(PlayerData Data);
@@ -56,11 +56,43 @@ public interface IPlayer
     void DoBoardReRange();
 
 
+    void DoOriginDragon(ICard Card, Action OnComplete);
+
+    void DoOriginWoodland(ICard Card, Action OnComplete);
+
+    void DoOriginGhostReady(ICard Card);
+
+    void DoOriginGhostStart(ICard CardChoice, Action OnComplete);
+
+    void DoOriginInsect(ICard Card, Action OnComplete);
+
+    void DoOriginSiren(ICard Card, Action OnComplete);
+
+    void DoOriginNeutral(ICard Card, Action OnComplete);
+
+
     void DoStaffNext(Action OnComplete); //Move staff Next
 
     void DoStaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
 
     void DoStaffRumble(Action OnComplete);
+
+
+    void DoClassFighter(ICard Card, Action OnComplete);
+
+    void DoClassMagicAddictReady(ICard Card, Action OnComplete);
+
+    void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete);
+
+    void DoClassSinger(ICard Card, Action OnComplete);
+
+    void DoClassCareTaker(ICard Card, Action OnComplete);
+
+    void DoClassDiffuser(ICard Card, Action OnComplete);
+
+    void DoClassFlyingReady(ICard Card);
+
+    void DoClassFlyingStart(ICard CardChoice, Action OnComplete);
 
 
     void DoEnd(Action OnComplete);
@@ -71,9 +103,6 @@ public interface IPlayer
     void StunChange(int Value, Action OnComplete);
 
     void HealthChange(int Value, Action OnComplete);
-
-
-    void DoCardSpecialActiveCurrent(ICard Card);
 
 
     void DoCardSwap(int IndexStart, int IndexTo, Action OnComplete);

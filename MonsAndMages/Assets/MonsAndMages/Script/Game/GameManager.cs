@@ -199,7 +199,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.DoOriginGhostStart());
+        Card.DoMoveBack(() => Card.Player.DoOriginGhostStart(Card, () => PlayerDoStaffNext(Card.Player, true)));
     }
 
 
@@ -247,9 +247,6 @@ public class GameManager : MonoBehaviour
     public void CardManaActiveStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
-
-        PlayerCurrent.DoCardSpecialActiveCurrent(Card);
-
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
         GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => CardManaCheck(Card.Player))));
@@ -267,7 +264,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.DoClassMagicAddictStart());
+        Card.DoMoveBack(() => Card.Player.DoClassMagicAddictStart(Card, () => CardManaCheck(Card.Player)));
     }
 
 
@@ -282,7 +279,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.DoClassFlyingStart());
+        Card.DoMoveBack(() => Card.Player.DoClassFlyingStart(Card, () => CardManaCheck(Card.Player)));
     }
 
 
