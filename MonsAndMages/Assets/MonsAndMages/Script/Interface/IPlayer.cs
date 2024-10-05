@@ -103,7 +103,4 @@ public interface IPlayer
     void StunChange(int Value, Action OnComplete);
 
     void HealthChange(int Value, Action OnComplete);
-
-
-    void DoCardSwap(int IndexStart, int IndexTo, Action OnComplete);
 }

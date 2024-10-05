@@ -595,7 +595,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             var CardFromIndex = m_cardQueue.ToList().IndexOf(CardActiveCurrent);
             var CardToIndex = m_cardQueue.ToList().IndexOf(CardChoice);
             var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
-            DoCardSwap(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
+            DoClassFlyingProgess(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
             {
                 CardActiveCurrent.DoRumble(() => CardChoice.DoManaFill(1, () =>
                 {
@@ -606,50 +606,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         });
     }
 
-
-    public void DoEnd(Action OnComplete)
-    {
-        m_stunCurrent = 0;
-        GameEvent.PlayerEnd(this, OnComplete);
-    }
-
-
-    public void RuneStoneChange(int Value, Action OnComplete)
-    {
-        if (Value == 0)
-        {
-            OnComplete?.Invoke();
-            return;
-        }
-        m_runeStone += Value;
-        InfoRuneStoneUpdate(OnComplete);
-    }
-
-    public void StunChange(int Value, Action OnComplete)
-    {
-        if (Value == 0)
-        {
-            OnComplete?.Invoke();
-            return;
-        }
-        m_stunCurrent += Value;
-        m_stunCurrent = Mathf.Clamp(m_stunCurrent, 0, m_stunPoint);
-        InfoStunUpdate(OnComplete);
-    }
-
-    public void HealthChange(int Value, Action OnComplete)
-    {
-        if (Value == 0)
-        {
-            OnComplete?.Invoke();
-            return;
-        }
-        m_healthCurrent += Value;
-        InfoHealthUpdate(OnComplete);
-    }
-
-
-    public void DoCardSwap(int IndexFrom, int IndexTo, Action OnComplete)
+    private void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete)
     {
         var CardFrom = m_cardQueue[IndexFrom];
         var MoveDirection = IndexFrom < IndexTo ? 1 : -1;
@@ -706,5 +663,47 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_staff.DoMoveCentreJump(null);
         }
         m_cardQueue[IndexTo] = CardFrom;
+    }
+
+
+    public void DoEnd(Action OnComplete)
+    {
+        m_stunCurrent = 0;
+        GameEvent.PlayerEnd(this, OnComplete);
+    }
+
+
+    public void RuneStoneChange(int Value, Action OnComplete)
+    {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+        m_runeStone += Value;
+        InfoRuneStoneUpdate(OnComplete);
+    }
+
+    public void StunChange(int Value, Action OnComplete)
+    {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+        m_stunCurrent += Value;
+        m_stunCurrent = Mathf.Clamp(m_stunCurrent, 0, m_stunPoint);
+        InfoStunUpdate(OnComplete);
+    }
+
+    public void HealthChange(int Value, Action OnComplete)
+    {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+        m_healthCurrent += Value;
+        InfoHealthUpdate(OnComplete);
     }
 }
