@@ -36,7 +36,6 @@ public class StaffController : MonoBehaviour
         m_recTransform.SetSiblingIndex(Pointer.childCount - 1);
     }
 
-
     public void DoMoveNextJump(Action OnComplete)
     {
         m_recTransform.SetParent(Pointer, true);

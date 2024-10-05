@@ -34,6 +34,8 @@ public interface ICard
 
     RectTransform Centre { get; set; }
 
+    RectTransform Body { get; }
+
     Image Renderer { get; }
 
     int Index { get; }

@@ -33,6 +33,9 @@ public interface IPlayer
     ICard CardActiveCurrent { get; }
 
 
+    RectTransform PointerLast { get; }
+
+
     void Init(PlayerData Data);
 
 
@@ -49,11 +52,9 @@ public interface IPlayer
     void DoMediate(int RuneStoneAdd, Action OnComplete);
 
 
-    public (RectTransform Pointer, RectTransform Centre) DoCollectReady();
-
     void DoCollect(ICard Card, Action OnComplete);
 
-    void DoBoardReRange();
+    void DoBoardReRange(params ICard[] CardIgnore);
 
 
     void DoOriginDragon(ICard Card, Action OnComplete); //Origin Dragon Event

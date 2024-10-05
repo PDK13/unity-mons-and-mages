@@ -61,8 +61,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_runeStoneIcon.SetActive(false);
 
         yield return null;
-        yield return null;
-        yield return null;
 
         DoBoardReRange();
     }
@@ -137,6 +135,9 @@ public class PlayerController : MonoBehaviour, IPlayer
     public int CardManaFillCurrent { get; private set; } = 0;
 
 
+    public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+
+
     public void Init(PlayerData Data)
     {
         m_index = Data.Index;
@@ -154,6 +155,8 @@ public class PlayerController : MonoBehaviour, IPlayer
             CardStage.Name = CardNameType.Stage;
             var Card = m_cardContent.GetChild(i).GetComponentInChildren<ICard>();
             Card.Init(CardStage);
+            Card.Pointer = PointerLast;
+            Card.Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
             m_cardQueue.Add(Card);
         }
 
@@ -284,39 +287,39 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public (RectTransform Pointer, RectTransform Centre) DoCollectReady()
-    {
-        if (m_cardQueue.Count >= 5 && m_cardQueue[0] == null)
-        {
-            //staff still stay at emty position after remove stage card
-            //Destroy(m_cardContent.GetChild(0).gameObject);
-            //m_cardQueue.RemoveAt(0);
-        }
-
-        var CardPoint = Instantiate(m_cardPoint, m_cardContent);
-        CardPoint.SetActive(true);
-        CardPoint.name = "card-point";
-
-        return (CardPoint.GetComponent<RectTransform>(), CardPoint.GetComponent<RectTransform>());
-    }
-
     public void DoCollect(ICard Card, Action OnComplete)
     {
         RuneStoneChange(-Card.RuneStoneCost, () => OnComplete?.Invoke());
+
         m_cardQueue.Add(Card);
+
+        if (m_cardQueue[0].Name == CardNameType.Stage && m_cardQueue.Count > 5)
+        {
+            Destroy(m_cardQueue[0].Body.gameObject);
+            m_cardQueue.RemoveAt(0);
+            m_staffStep -= 1;
+        }
+        else
+        {
+            var Centre = Instantiate(m_cardPoint, m_cardContent).GetComponent<RectTransform>();
+            Centre.gameObject.name = "card-point";
+            Centre.gameObject.SetActive(true);
+        }
     }
 
-    public void DoBoardReRange()
+    public void DoBoardReRange(params ICard[] CardIgnore)
     {
         //Card
         for (int i = 0; i < m_cardQueue.Count; i++)
         {
-            m_cardQueue[i].Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+            if (CardIgnore.ToList().Exists(t => t.Equals(m_cardQueue[i])))
+                continue;
+            m_cardQueue[i].Pointer = PointerLast;
             m_cardQueue[i].Centre = m_cardContent.GetChild(i).GetComponent<RectTransform>();
             m_cardQueue[i].DoFixed();
         }
         //Staff
-        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+        m_staff.Pointer = PointerLast;
         m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
         m_staff.DoFixed();
     }
@@ -479,7 +482,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_staffStep = StaffIndexNext;
 
         //Update staff Parent to Last
-        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+        m_staff.Pointer = PointerLast;
         m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
         m_staff.DoMoveNextJump(OnComplete);
     }
@@ -681,7 +684,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                     {
                         StaffMoved = true;
                         m_staffStep = i + 1;
-                        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+                        m_staff.Pointer = PointerLast;
                         m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
                         m_staff.DoMoveCentreLinear(null);
                     }
@@ -697,7 +700,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                     {
                         StaffMoved = true;
                         m_staffStep = i - 1;
-                        m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+                        m_staff.Pointer = PointerLast;
                         m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
                         m_staff.DoMoveCentreLinear(null);
                     }
@@ -714,7 +717,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         if (!StaffMoved && IndexFrom == StaffStep)
         {
             m_staffStep = IndexTo;
-            m_staff.Pointer = m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+            m_staff.Pointer = PointerLast;
             m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
             m_staff.DoMoveCentreJump(null);
         }

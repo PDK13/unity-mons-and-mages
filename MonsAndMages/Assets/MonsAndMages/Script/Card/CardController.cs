@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -152,6 +153,8 @@ public class CardController : MonoBehaviour, ICard
     public RectTransform Pointer { get; set; }
 
     public RectTransform Centre { get; set; }
+
+    public RectTransform Body => this.GetComponent<RectTransform>();
 
     public Image Renderer => m_renderer.GetComponent<Image>();
 
