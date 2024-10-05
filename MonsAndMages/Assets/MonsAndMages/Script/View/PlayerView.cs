@@ -23,9 +23,14 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnInfoCancel;
 
     [Space]
-    [SerializeField] private GameObject m_hintChoiceMediate;
-    [SerializeField] private GameObject m_hintCollectAccept;
+    //Field
+    [SerializeField] private GameObject m_hintMediateAction;
+    [SerializeField] private GameObject m_hintMediateUnEmty;
+    [SerializeField] private GameObject m_hintCollectAction;
+    [SerializeField] private GameObject m_hintPlayerContent;
     [SerializeField] private GameObject m_hintManaActive;
+    //Info
+    [SerializeField] private GameObject m_hintCollectAccept;
     [SerializeField] private GameObject m_hintOriginWoodland;
     [SerializeField] private GameObject m_hintOriginGhost;
     [SerializeField] private GameObject m_hintClassMagicAddict;
@@ -142,19 +147,22 @@ public class PlayerView : MonoBehaviour
 
     private void Start()
     {
-        m_btnMediate.SetActive(false);
-        m_hintChoiceMediate.gameObject.SetActive(false);
-        m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
-
-        m_infoMask.gameObject.SetActive(false);
-        m_btnInfoAccept.SetActive(false);
-        m_btnInfoCancel.SetActive(false);
-        m_mediateOptionContent.gameObject.SetActive(false);
-        m_hintCollectAccept.SetActive(false);
+        m_btnMediate.SetActive(false);
+        m_btnCollect.SetActive(false);
+        m_hintMediateAction.SetActive(false);
+        m_hintMediateUnEmty.SetActive(false);
+        m_hintCollectAction.SetActive(false);
+        m_hintPlayerContent.SetActive(false);
         m_hintManaActive.SetActive(false);
         m_hintOriginWoodland.SetActive(false);
         m_hintOriginGhost.SetActive(false);
+
+        m_mediateOptionContent.gameObject.SetActive(false);
+        m_infoMask.gameObject.SetActive(false);
+        m_btnInfoAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(false);
+        m_hintCollectAccept.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
         m_tmpExplainClass.gameObject.SetActive(false);
 
@@ -335,7 +343,10 @@ public class PlayerView : MonoBehaviour
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
         m_playerContent.gameObject.SetActive(Type == ViewType.Field);
-        m_hintChoiceMediate.SetActive(false);
+        m_hintMediateAction.SetActive(false);
+        m_hintMediateUnEmty.SetActive(false);
+        m_hintCollectAction.SetActive(false);
+        m_hintPlayerContent.SetActive(false);
         m_hintManaActive.SetActive(false);
         m_hintOriginWoodland.SetActive(false);
         m_hintOriginGhost.SetActive(false);
@@ -384,7 +395,10 @@ public class PlayerView : MonoBehaviour
                 m_btnMediate.GetComponent<Button>().interactable = MediateAvaible;
                 m_btnMediate.SetActive(true);
                 m_btnCollect.SetActive(true);
-                m_hintChoiceMediate.SetActive(!MediateAvaible);
+                m_hintMediateAction.SetActive(MediateAvaible);
+                m_hintMediateUnEmty.SetActive(!MediateAvaible);
+                m_hintCollectAction.SetActive(true);
+                m_hintPlayerContent.SetActive(true);
                 break;
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
