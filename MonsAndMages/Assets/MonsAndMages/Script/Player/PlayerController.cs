@@ -52,7 +52,6 @@ public class PlayerController : MonoBehaviour, IPlayer
     private int[] m_mediation = new int[2] { 0, 0 };
     private List<ICard> m_cardQueue = new List<ICard>();
     private int m_staffStep = 0;
-    private ICard m_cardActiveCurrent = null;
 
     //
 
@@ -133,7 +132,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public ICard CardStaffCurrent => m_cardQueue[StaffStep];
 
-    public ICard CardActiveCurrent => m_cardActiveCurrent;
+    public ICard CardActiveCurrent { get; private set; }
 
 
     public void Init(PlayerData Data)
@@ -506,7 +505,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             if (CardGotMana)
             {
                 //Found monster(s) got mana for this monster cast spell once more time
-                m_cardActiveCurrent = Card;
+                CardActiveCurrent = Card;
                 GameManager.instance.CardClassMagicAddictDoChoice(Card);
             }
             else
@@ -517,14 +516,17 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete)
     {
-        var CharActive = m_cardActiveCurrent;
-        m_cardActiveCurrent = null;
-
         foreach (var Card in m_cardQueue)
             Card.DoChoiceUnReady();
 
         CardChoice.DoEffectAlpha(() => CardChoice.DoManaFill(-1, () =>
-            CharActive.DoSpellActive(() => CharActive.DoSpellActive(() => OnComplete?.Invoke()))));
+        {
+            CardActiveCurrent.DoSpellActive(() => CardActiveCurrent.DoSpellActive(() =>
+            {
+                CardActiveCurrent = null;
+                OnComplete?.Invoke();
+            }));
+        }));
     }
 
     public void DoClassSinger(ICard Card, Action OnComplete)
@@ -573,8 +575,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoClassFlyingReady(ICard Card)
     {
-        m_cardActiveCurrent = Card;
-
         var CardIndex = m_cardQueue.ToList().IndexOf(Card);
         for (int i = 0; i < m_cardQueue.Count; i++)
         {
@@ -582,24 +582,26 @@ public class PlayerController : MonoBehaviour, IPlayer
                 continue;
             m_cardQueue[i].DoChoiceReady();
         }
+        CardActiveCurrent = Card;
         GameManager.instance.CardClassFlyingDoChoice(Card);
     } //Class Flying Event
 
     public void DoClassFlyingStart(ICard CardChoice, Action OnComplete)
     {
-        var CharActive = m_cardActiveCurrent;
-        m_cardActiveCurrent = null;
-
         foreach (var Card in m_cardQueue)
             Card.DoChoiceUnReady();
         CardChoice.DoEffectAlpha(() =>
         {
-            var CardFromIndex = m_cardQueue.ToList().IndexOf(CharActive);
+            var CardFromIndex = m_cardQueue.ToList().IndexOf(CardActiveCurrent);
             var CardToIndex = m_cardQueue.ToList().IndexOf(CardChoice);
             var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
             DoCardSwap(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
             {
-                CharActive.DoRumble(() => CardChoice.DoManaFill(1, () => OnComplete?.Invoke()));
+                CardActiveCurrent.DoRumble(() => CardChoice.DoManaFill(1, () =>
+                {
+                    CardActiveCurrent = null;
+                    OnComplete?.Invoke();
+                }));
             });
         });
     }
