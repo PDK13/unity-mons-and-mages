@@ -320,7 +320,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         //Staff
         m_staff.Pointer = PointerLast;
-        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+        m_staff.Centre = m_cardContent.GetChild(Mathf.Max(0, m_staffStep)).GetComponent<RectTransform>();
         m_staff.DoFixed();
     }
 
