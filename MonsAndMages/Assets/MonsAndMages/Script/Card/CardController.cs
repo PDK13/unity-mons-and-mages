@@ -124,6 +124,8 @@ public class CardController : MonoBehaviour, ICard
 
     public CardClassType Class => m_class;
 
+    public CardType Type => m_name == CardNameType.Stage ? CardType.None : m_manaPoint != 0 ? CardType.Mons : CardType.Landmark;
+
     public int RuneStoneCost => m_runeStoneCost;
 
     public int RuneStoneTake => m_runeStoneTake;
@@ -512,9 +514,9 @@ public class CardController : MonoBehaviour, ICard
 
     public void InfoShow(bool Show)
     {
-        m_tmpGrowth.gameObject.SetActive(Show);
-        m_tmpMana.gameObject.SetActive(Show);
-        m_tmpDamage.gameObject.SetActive(Show);
+        m_tmpGrowth.gameObject.SetActive(Type == CardType.Mons && Show);
+        m_tmpMana.gameObject.SetActive(Type == CardType.Mons && Show);
+        m_tmpDamage.gameObject.SetActive(Type == CardType.Mons && Show);
     }
 
     private void InfoGrowUpdate(int Value, Action OnComplete)
@@ -627,11 +629,21 @@ public class CardController : MonoBehaviour, ICard
 
     public void DostaffActive(Action OnComplete)
     {
+        if (m_name == CardNameType.Stage)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         DoEffectAlpha(() => DoAttackActive(() => DoManaFill(1, OnComplete)));
     }
 
     public void DoAttackActive(Action OnComplete)
     {
+        if (Type != CardType.Mons)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         DoRumble(() =>
         {
             var PlayerQueue = GameManager.instance.PlayerQueue;
@@ -647,6 +659,11 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoManaFill(int Value, Action OnComplete)
     {
+        if (Type != CardType.Mons)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         m_manaCurrent += Value;
         if (m_manaCurrent > m_manaPoint)
             m_manaCurrent = m_manaPoint;
@@ -658,6 +675,11 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoGrowthAdd(int Value, Action OnComplete)
     {
+        if (Type != CardType.Mons)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         m_growthCurrent += Value;
         InfoGrowUpdate(m_growthCurrent, () => OnComplete());
     }
@@ -665,6 +687,11 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoManaActive(Action OnComplete)
     {
+        if (Type != CardType.Mons)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
         m_manaCurrent = 0;
         InfoManaUpdate(m_manaCurrent, m_manaPoint, () => DoEffectOutlineNormal(() =>
         {

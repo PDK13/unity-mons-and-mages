@@ -1,3 +1,10 @@
+public enum CardType
+{
+    None,
+    Mons,
+    Landmark,
+}
+
 public enum CardOriginType
 {
     None,

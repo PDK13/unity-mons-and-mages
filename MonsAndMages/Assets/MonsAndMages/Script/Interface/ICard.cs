@@ -13,6 +13,8 @@ public interface ICard
 
     CardClassType Class { get; } //Hệ bài
 
+    CardType Type { get; } //Loại bài
+
     int RuneStoneCost { get; } //Giá tiền mua bài
 
     int ManaPoint { get; } //Năng lượng
