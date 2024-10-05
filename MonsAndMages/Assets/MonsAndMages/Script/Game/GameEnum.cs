@@ -69,6 +69,7 @@ public enum ChoiceType
     None,
     MediateOrCollect,
     CardFullMana,
+    CardOriginWoodland,
     CardOriginGhost,
     CardClassMagicAddict,
     CardClassFlying,

@@ -49,6 +49,7 @@ public class GameEvent
     public static Action onUiChoiceCurrent { get; set; }
     public static Action onUiChoiceMediateOrCollect { get; set; }
     public static Action onUiChoiceCardFullMana { get; set; }
+    public static Action onUiChoiceCardOriginWoodland { get; set; }
     public static Action onUiChoiceCardOriginGhost { get; set; }
     public static Action onUiChoiceCardClassMagicAddict { get; set; }
     public static Action onUiChoiceCardClassFlying { get; set; }
@@ -73,6 +74,11 @@ public class GameEvent
         onUiChoiceCardFullMana?.Invoke();
     }
 
+    public static void UiChoiceCardOriginWoodland()
+    {
+        onUiChoiceCardOriginWoodland?.Invoke();
+    }
+
     public static void UiChoiceCardOriginGhost()
     {
         onUiChoiceCardOriginGhost?.Invoke();
@@ -94,6 +100,7 @@ public class GameEvent
     public static Action<ICard> onUiInfoCollect { get; set; }
     public static Action onUiInfoMediate { get; set; }
     public static Action<ICard> onUiInfoFullMana { get; set; }
+    public static Action<ICard> onUiInfoOriginWoodland { get; set; }
     public static Action<ICard> onUiInfoOriginGhost { get; set; }
     public static Action<ICard> onUiInfoClassMagicAddict { get; set; }
     public static Action<ICard> onUiInfoClassFlying { get; set; }
@@ -116,6 +123,11 @@ public class GameEvent
     public static void UiInfoFullMana(ICard Card)
     {
         onUiInfoFullMana?.Invoke(Card);
+    }
+
+    public static void UiInfoOriginWoodland(ICard Card)
+    {
+        onUiInfoOriginGhost?.Invoke(Card);
     }
 
     public static void UiInfoOriginGhost(ICard Card)
@@ -248,36 +260,18 @@ public class GameEvent
     //Origin
 
     public static Action<Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
-    public static Action<ICard> onOriginGhost { get; set; }
 
     public static void OriginDragon(Action OnComplete)
     {
         onOriginDragon?.Invoke(OnComplete);
     }
 
-    public static void OriginGhost(ICard Card)
-    {
-        onOriginGhost?.Invoke(Card);
-    }
-
     //Class
 
     public static Action<Action> onClassFighter { get; set; } //Roll a Dice for Fighter
-    public static Action<ICard> onClassMagicAddict { get; set; }
-    public static Action<ICard> onClassFlying { get; set; }
 
     public static void ClassFighter(Action OnComplete)
     {
         onClassFighter?.Invoke(OnComplete);
-    }
-
-    public static void ClassMagicAddict(ICard Card)
-    {
-        onClassMagicAddict?.Invoke(Card);
-    }
-
-    public static void ClassFlying(ICard Card)
-    {
-        onClassFlying?.Invoke(Card);
     }
 }

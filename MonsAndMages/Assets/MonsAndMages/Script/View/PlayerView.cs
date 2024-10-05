@@ -26,6 +26,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_hintChoiceMediate;
     [SerializeField] private GameObject m_hintCollectAccept;
     [SerializeField] private GameObject m_hintManaActive;
+    [SerializeField] private GameObject m_hintOriginWoodland;
     [SerializeField] private GameObject m_hintOriginGhost;
     [SerializeField] private GameObject m_hintClassMagicAddict;
     [SerializeField] private GameObject m_hintClassFlying;
@@ -67,6 +68,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCurrent += OnUiChoiceCurrent;
         GameEvent.onUiChoiceMediateOrCollect += OnUiChoiceMediateOrCollect;
         GameEvent.onUiChoiceCardFullMana += OnUiChoiceCardFullMana;
+        GameEvent.onUiChoiceCardOriginWoodland += OnUiChoiceCardOriginWoodland;
         GameEvent.onUiChoiceCardOriginGhost += OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict += OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying += OnUiChoiceCardClassFlying;
@@ -75,6 +77,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoCollect += OnUiInfoCollect;
         GameEvent.onUiInfoMediate += OnUiInfoMediate;
         GameEvent.onUiInfoFullMana += OnUiInfoFullMana;
+        GameEvent.onUiInfoOriginWoodland += OnUiInfoOriginWoodland;
         GameEvent.onUiInfoOriginGhost += OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict += OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying += OnUiInfoClassFlying;
@@ -91,11 +94,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
         //Origin
         GameEvent.onOriginDragon += OnOriginDragon;
-        GameEvent.onOriginGhost += OnOriginGhost;
         //Class
         GameEvent.onClassFighter += OnClassFighter;
-        GameEvent.onClassMagicAddict += OnClassMagicAddict;
-        GameEvent.onClassFlying += OnClassFlying;
     }
 
     private void OnDisable()
@@ -110,6 +110,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCurrent -= OnUiChoiceCurrent;
         GameEvent.onUiChoiceMediateOrCollect -= OnUiChoiceMediateOrCollect;
         GameEvent.onUiChoiceCardFullMana -= OnUiChoiceCardFullMana;
+        GameEvent.onUiChoiceCardOriginWoodland -= OnUiChoiceCardOriginWoodland;
         GameEvent.onUiChoiceCardOriginGhost -= OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict -= OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying -= OnUiChoiceCardClassFlying;
@@ -118,6 +119,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoCollect -= OnUiInfoCollect;
         GameEvent.onUiInfoMediate -= OnUiInfoMediate;
         GameEvent.onUiInfoFullMana -= OnUiInfoFullMana;
+        GameEvent.onUiInfoOriginWoodland -= OnUiInfoOriginWoodland;
         GameEvent.onUiInfoOriginGhost -= OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict -= OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying -= OnUiInfoClassFlying;
@@ -134,11 +136,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerStunnedChange -= OnPlayerStunnedChange;
         //Origin
         GameEvent.onOriginDragon -= OnOriginDragon;
-        GameEvent.onOriginGhost -= OnOriginGhost;
         //Class
         GameEvent.onClassFighter -= OnClassFighter;
-        GameEvent.onClassMagicAddict -= OnClassMagicAddict;
-        GameEvent.onClassFlying -= OnClassFlying;
     }
 
     private void Start()
@@ -154,6 +153,7 @@ public class PlayerView : MonoBehaviour
         m_mediateOptionContent.gameObject.SetActive(false);
         m_hintCollectAccept.SetActive(false);
         m_hintManaActive.SetActive(false);
+        m_hintOriginWoodland.SetActive(false);
         m_hintOriginGhost.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
         m_tmpExplainClass.gameObject.SetActive(false);
@@ -212,6 +212,9 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardFullMana:
                 GameManager.instance.CardManaActiveStart(m_cardView);
                 break;
+            case ChoiceType.CardOriginWoodland:
+                GameManager.instance.CardOriginWoodlandDoStart(m_cardView);
+                break;
             case ChoiceType.CardOriginGhost:
                 GameManager.instance.CardOriginGhostDoStart(m_cardView);
                 break;
@@ -240,6 +243,7 @@ public class PlayerView : MonoBehaviour
                 }
                 break;
             case ChoiceType.CardFullMana:
+            case ChoiceType.CardOriginWoodland:
             case ChoiceType.CardOriginGhost:
             case ChoiceType.CardClassMagicAddict:
             case ChoiceType.CardClassFlying:
@@ -333,6 +337,7 @@ public class PlayerView : MonoBehaviour
         m_playerContent.gameObject.SetActive(Type == ViewType.Field);
         m_hintChoiceMediate.SetActive(false);
         m_hintManaActive.SetActive(false);
+        m_hintOriginWoodland.SetActive(false);
         m_hintOriginGhost.SetActive(false);
         m_hintClassMagicAddict.SetActive(false);
         m_hintClassFlying.SetActive(false);
@@ -351,6 +356,9 @@ public class PlayerView : MonoBehaviour
                 break;
             case ChoiceType.CardFullMana:
                 OnUiChoiceCardFullMana();
+                break;
+            case ChoiceType.CardOriginWoodland:
+                OnUiChoiceCardOriginWoodland();
                 break;
             case ChoiceType.CardOriginGhost:
                 OnUiChoiceCardOriginGhost();
@@ -394,6 +402,23 @@ public class PlayerView : MonoBehaviour
         {
             case ViewType.Field:
                 m_hintManaActive.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnUiChoiceCardOriginWoodland()
+    {
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintOriginWoodland.SetActive(true);
                 break;
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
@@ -547,6 +572,18 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainClass.gameObject.SetActive(true);
     } //Info Full ManaCurrent
 
+    private void OnUiInfoOriginWoodland(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.DoMoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+    } //Info Origin Woodland
+
     private void OnUiInfoOriginGhost(ICard Card)
     {
         OnUiInfoHide(false, false);
@@ -682,27 +719,12 @@ public class PlayerView : MonoBehaviour
     private void OnOriginDragon(Action OnComplete)
     {
         OnComplete?.Invoke();
-    }
-
-    private void OnOriginGhost(ICard Card)
-    {
-        GameEvent.UiChoiceCardOriginGhost();
-    }
+    } //Roll a Dice for Dragon
 
     //GameEvent - Class
 
     private void OnClassFighter(Action OnComplete)
     {
         OnComplete?.Invoke();
-    }
-
-    private void OnClassMagicAddict(ICard Card)
-    {
-        GameEvent.UiChoiceCardClassMagicAddict();
-    }
-
-    private void OnClassFlying(ICard Card)
-    {
-        GameEvent.UiChoiceCardClassFlying();
-    }
+    } //Roll a Dice for Fighter
 }

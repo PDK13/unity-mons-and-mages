@@ -29,7 +29,8 @@ public class CardController : MonoBehaviour, ICard
 
     private bool m_open = false;
     private bool m_top = false; //Card view on top of screen
-    private bool m_ready = false; //Ready for choice in special case
+    private bool m_choice = false; //Choice in special situation
+    private bool m_choiceOnce = false; //Choice once time only in special situation
     private bool m_flip = false;
     private bool m_move = false;
     private bool m_effect = false;
@@ -96,18 +97,23 @@ public class CardController : MonoBehaviour, ICard
                     return;
                 GameEvent.UiInfoFullMana(this);
                 break;
+            case ChoiceType.CardOriginWoodland:
+                if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
+                    return;
+                GameEvent.UiInfoOriginWoodland(this);
+                break;
             case ChoiceType.CardOriginGhost:
-                if (m_player != GameManager.instance.PlayerCurrent || !m_ready)
+                if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
                     return;
                 GameEvent.UiInfoOriginGhost(this);
                 break;
             case ChoiceType.CardClassMagicAddict:
-                if (m_player != GameManager.instance.PlayerCurrent || !m_ready)
+                if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
                     return;
                 GameEvent.UiInfoClassMagicAddict(this);
                 break;
             case ChoiceType.CardClassFlying:
-                if (m_player != GameManager.instance.PlayerCurrent || !m_ready)
+                if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
                     return;
                 GameEvent.UiInfoClassFlying(this);
                 break;
@@ -225,17 +231,24 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoChoiceReady()
     {
-        m_ready = true;
+        if (m_choiceOnce)
+            return;
+        m_choice = true;
         DoEffectOutlineChoice(null);
     }
 
     public void DoChoiceUnReady()
     {
-        m_ready = false;
+        m_choice = false;
         if (ManaFull)
             DoEffectOutlineMana(null);
         else
             DoEffectOutlineNormal(null);
+    }
+
+    public void DoChoiceOnce(bool Stage)
+    {
+        m_choiceOnce = Stage;
     }
 
 
@@ -589,7 +602,7 @@ public class CardController : MonoBehaviour, ICard
                     m_player.DoOriginDragon(this, OnComplete);
                     break;
                 case CardOriginType.Woodland:
-                    m_player.DoOriginWoodland(this, OnComplete);
+                    m_player.DoOriginWoodlandReady(this);
                     break;
                 case CardOriginType.Ghost:
                     m_player.DoOriginGhostReady(this);
@@ -665,8 +678,8 @@ public class CardController : MonoBehaviour, ICard
             return;
         }
         m_manaCurrent += Value;
-        if (m_manaCurrent > m_manaPoint)
-            m_manaCurrent = m_manaPoint;
+        //if (m_manaCurrent > m_manaPoint)
+        //    m_manaCurrent = m_manaPoint;
         if (ManaFull)
             InfoManaUpdate(m_manaCurrent, m_manaPoint, () => DoEffectOutlineMana(OnComplete));
         else
@@ -692,7 +705,7 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
             return;
         }
-        m_manaCurrent = 0;
+        m_manaCurrent -= m_manaPoint;
         InfoManaUpdate(m_manaCurrent, m_manaPoint, () => DoEffectOutlineNormal(() =>
         {
             DoClassActive(() => DoSpellActive(OnComplete));

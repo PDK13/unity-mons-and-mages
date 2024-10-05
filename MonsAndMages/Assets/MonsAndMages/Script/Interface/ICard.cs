@@ -50,6 +50,8 @@ public interface ICard
 
     void DoChoiceUnReady();
 
+    void DoChoiceOnce(bool Stage);
+
 
     void DoFlipOpen(Action OnComplete);
 

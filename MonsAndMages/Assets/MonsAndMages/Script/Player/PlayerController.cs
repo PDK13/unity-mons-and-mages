@@ -132,7 +132,9 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public ICard CardStaffCurrent => m_cardQueue[StaffStep];
 
-    public ICard CardActiveCurrent { get; private set; }
+    public ICard CardActiveCurrent { get; private set; } = null;
+
+    public int CardManaFillCurrent { get; private set; } = 0;
 
 
     public void Init(PlayerData Data)
@@ -357,12 +359,61 @@ public class PlayerController : MonoBehaviour, IPlayer
         });
     }
 
-    public void DoOriginWoodland(ICard Card, Action OnComplete)
+    public void DoOriginWoodlandReady(ICard Card)
     {
+        foreach (var CardCheck in m_cardQueue)
+        {
+            if (CardCheck.Origin != CardOriginType.Woodland)
+                continue;
+            CardCheck.DoChoiceReady();
+        }
+
         var WoodlandCount = m_cardQueue.Count(t => t.Origin == CardOriginType.Woodland);
         var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
-        Card.DoManaFill((int)ManaGainValue, () => OnComplete?.Invoke());
+        CardManaFillCurrent = Mathf.Max(1, (int)ManaGainValue);
+
+        CardActiveCurrent = Card;
+        GameManager.instance.CardOriginWoodlandDoChoice(Card);
     } //Origin Woodland Event
+
+    public void DoOriginWoodlandStart(ICard CardChoice)
+    {
+        CardManaFillCurrent -= 1;
+
+        if (CardManaFillCurrent > 0)
+        {
+            foreach (var Card in m_cardQueue)
+                Card.DoChoiceUnReady();
+            CardChoice.DoChoiceOnce(true);
+        }
+        else
+        {
+            foreach (var Card in m_cardQueue)
+            {
+                Card.DoChoiceUnReady();
+                Card.DoChoiceOnce(false);
+            }
+        }
+
+        CardChoice.DoEffectAlpha(() => CardChoice.DoManaFill(1, () =>
+        {
+            if (CardManaFillCurrent > 0)
+            {
+                foreach (var CardCheck in m_cardQueue)
+                {
+                    if (CardCheck.Origin != CardOriginType.Woodland)
+                        continue;
+                    CardCheck.DoChoiceReady();
+                }
+                GameManager.instance.CardOriginWoodlandDoChoice(CardActiveCurrent);
+            }
+            else
+            {
+                CardActiveCurrent = null;
+                GameManager.instance.PlayerDoStaffNext(this, true);
+            }
+        }));
+    }
 
     public void DoOriginGhostReady(ICard Card)
     {
@@ -377,6 +428,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_cardQueue[StaffCurrent].DoChoiceReady();
             StaffAvaible--;
         }
+        CardActiveCurrent = Card;
         GameManager.instance.CardOriginGhostDoChoice(Card);
     } //Origin Ghost Event
 
@@ -384,7 +436,11 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         foreach (var Card in m_cardQueue)
             Card.DoChoiceUnReady();
-        CardChoice.DoEffectAlpha(() => DoOriginGhostProgess(CardChoice, OnComplete));
+        CardChoice.DoEffectAlpha(() => DoOriginGhostProgess(CardChoice, () =>
+        {
+            CardActiveCurrent = null;
+            OnComplete?.Invoke();
+        }));
     }
 
     private void DoOriginGhostProgess(ICard CardChoice, Action OnComplete)
@@ -495,7 +551,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         bool CardGotMana = false;
         for (int i = 0; i < m_cardQueue.Count; i++)
         {
-            if (m_cardQueue[i].Equals(this) || m_cardQueue[i].ManaCurrent == 0)
+            if (m_cardQueue[i].Equals(Card) || m_cardQueue[i].ManaCurrent == 0)
                 continue;
             CardGotMana = true;
             m_cardQueue[i].DoChoiceReady();
@@ -663,6 +719,43 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_staff.DoMoveCentreJump(null);
         }
         m_cardQueue[IndexTo] = CardFrom;
+    }
+
+
+    public void DoCardChoiceManaFillReady()
+    {
+        foreach (var Card in m_cardQueue)
+        {
+            if (Card.Type != CardType.Mons)
+                continue;
+            Card.DoChoiceReady();
+        }
+    }
+
+    public void DoCardChoiceManaFillReady(CardOriginType Origin)
+    {
+        foreach (var Card in m_cardQueue)
+        {
+            if (Card.Type != CardType.Mons || Card.Origin != Origin)
+                continue;
+            Card.DoChoiceReady();
+        }
+    }
+
+    public void DoCardChoiceManaFillStart(ICard Card, int Value, Action OnComplete)
+    {
+        if (!m_cardQueue.Exists(t => t.Equals(Card)))
+            Debug.LogErrorFormat("Card {0} not belongs to current player {1}", Card.Name, Index);
+        Card.DoManaFill(Value, OnComplete);
+    } //Fill Mana for another progess
+
+
+    public void CardManaCheckEnd()
+    {
+        if (m_cardQueue.Exists(t => t.ManaFull))
+            GameManager.instance.PlayerDoCardManaActiveDoChoice(this);
+        else
+            GameManager.instance.PlayerEnd(this);
     }
 
 

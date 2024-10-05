@@ -56,19 +56,21 @@ public interface IPlayer
     void DoBoardReRange();
 
 
-    void DoOriginDragon(ICard Card, Action OnComplete);
+    void DoOriginDragon(ICard Card, Action OnComplete); //Origin Dragon Event
 
-    void DoOriginWoodland(ICard Card, Action OnComplete);
+    void DoOriginWoodlandReady(ICard Card); //Origin Woodland Event
 
-    void DoOriginGhostReady(ICard Card);
+    void DoOriginWoodlandStart(ICard CardChoice);
+
+    void DoOriginGhostReady(ICard Card); //Origin Ghost Event
 
     void DoOriginGhostStart(ICard CardChoice, Action OnComplete);
 
-    void DoOriginInsect(ICard Card, Action OnComplete);
+    void DoOriginInsect(ICard Card, Action OnComplete); //Origin Insect Event
 
-    void DoOriginSiren(ICard Card, Action OnComplete);
+    void DoOriginSiren(ICard Card, Action OnComplete); //Origin Siren Event
 
-    void DoOriginNeutral(ICard Card, Action OnComplete);
+    void DoOriginNeutral(ICard Card, Action OnComplete); //Origin Neutral Event
 
 
     void DoStaffNext(Action OnComplete); //Move staff Next
@@ -93,6 +95,16 @@ public interface IPlayer
     void DoClassFlyingReady(ICard Card);
 
     void DoClassFlyingStart(ICard CardChoice, Action OnComplete);
+
+
+    void DoCardChoiceManaFillReady();
+
+    void DoCardChoiceManaFillReady(CardOriginType Origin);
+
+    void DoCardChoiceManaFillStart(ICard Card, int Value, Action OnComplete); //Fill Mana for another progess
+
+
+    void CardManaCheckEnd();
 
 
     void DoEnd(Action OnComplete);

@@ -188,6 +188,21 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void CardOriginWoodlandDoChoice(ICard Card)
+    {
+        m_playerChoice = ChoiceType.CardOriginWoodland;
+        GameEvent.UiChoiceCardOriginWoodland();
+    } //Do Choice
+
+    public void CardOriginWoodlandDoStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        Card.DoMoveBack(() => Card.Player.DoOriginWoodlandStart(Card));
+    }
+
+
     public void CardOriginGhostDoChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginGhost;
@@ -208,37 +223,14 @@ public class GameManager : MonoBehaviour
         Player.DoStaffNext(() =>
         {
             if (CardActive)
-                Player.DoStaffActive(() => CardManaCheck(Player));
+                Player.DoStaffActive(() => Player.CardManaCheckEnd());
             else
                 PlayerEnd(Player);
         });
     }
 
-    public void CardManaCheck(IPlayer Player)
-    {
-        bool CardManaActive = false;
-        foreach (var Card in Player.CardQueue)
-        {
-            if (Card == null)
-                continue;
 
-            if (!Card.ManaFull)
-                continue;
-
-            if (!CardManaActive)
-            {
-                Card.DoEffectOutlineMana(() => PlayerDoCardManaActiveDoChoice(Player));
-                CardManaActive = true;
-            }
-            else
-                Card.DoEffectOutlineMana(null);
-        }
-        if (!CardManaActive)
-            PlayerEnd(Player);
-    }
-
-
-    private void PlayerDoCardManaActiveDoChoice(IPlayer Player)
+    public void PlayerDoCardManaActiveDoChoice(IPlayer Player)
     {
         m_playerChoice = ChoiceType.CardFullMana;
         GameEvent.UiChoiceCardFullMana();
@@ -249,7 +241,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => CardManaCheck(Card.Player))));
+        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.CardManaCheckEnd())));
     }
 
 
@@ -264,7 +256,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassMagicAddictStart(Card, () => CardManaCheck(Card.Player)));
+        Card.DoMoveBack(() => Card.Player.DoClassMagicAddictStart(Card, () => Card.Player.CardManaCheckEnd()));
     }
 
 
@@ -279,11 +271,11 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassFlyingStart(Card, () => CardManaCheck(Card.Player)));
+        Card.DoMoveBack(() => Card.Player.DoClassFlyingStart(Card, () => Card.Player.CardManaCheckEnd()));
     }
 
 
-    private void PlayerEnd(IPlayer Player)
+    public void PlayerEnd(IPlayer Player)
     {
         Player.DoEnd(() =>
         {
