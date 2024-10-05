@@ -559,18 +559,15 @@ public class PlayerController : MonoBehaviour, IPlayer
             CardGotMana = true;
             m_cardQueue[i].DoChoiceReady();
         }
-        Card.DoEffectClass(() =>
+        if (CardGotMana)
         {
-            if (CardGotMana)
-            {
-                //Found monster(s) got mana for this monster cast spell once more time
-                CardActiveCurrent = Card;
-                GameManager.instance.CardClassMagicAddictDoChoice(Card);
-            }
-            else
-                //If no monster got mana for this monster cast spell once more time, skip this
-                OnComplete?.Invoke();
-        });
+            //Found monster(s) got mana for this monster cast spell once more time
+            CardActiveCurrent = Card;
+            GameManager.instance.CardClassMagicAddictDoChoice(Card);
+        }
+        else
+            //If no monster got mana for this monster cast spell once more time, skip this
+            OnComplete?.Invoke();
     } //Class Magic Addict Event
 
     public void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete)
