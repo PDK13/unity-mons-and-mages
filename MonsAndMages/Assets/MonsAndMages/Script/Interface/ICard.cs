@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public interface ICard
 {
-    IPlayer Player { get; }
-
+    IPlayer Player { get; } //Người chơi sở hữu
 
     CardNameType Name { get; } //Tên bài
 

@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,9 +29,9 @@ public class CardController : MonoBehaviour, ICard
     private GameObject m_classIcon;
 
     private bool m_open = false;
-    private bool m_top = false; //Card view on top of screen
-    private bool m_choice = false; //Choice in special situation
-    private bool m_choiceOnce = false; //Choice once time only in special situation
+    private bool m_top = false; //Đang được hiển thị trên cùng của màn hình
+    private bool m_choice = false; //Có thể được lựa chọn trong trường hợp đặc biệt
+    private bool m_choiceOnce = false; //Chỉ có thể được lựa chọn một lần duy nhật trong trường hợp đặc biệt
     private bool m_flip = false;
     private bool m_move = false;
     private bool m_effect = false;
@@ -49,7 +49,7 @@ public class CardController : MonoBehaviour, ICard
     private CardClassType m_class;
     private Sprite m_image;
     private int m_runeStoneCost;
-    private int m_runeStoneTake; //When staff move to card, get Rune Stone
+    private int m_runeStoneTake; //Khi gật phép tiến vào, nhận xu triệu hồi
     private int m_manaPoint;
     private int m_manaCurrent;
     private int m_attackPoint;
@@ -713,7 +713,7 @@ public class CardController : MonoBehaviour, ICard
         {
             DoClassActive(() => DoSpellActive(OnComplete));
         }));
-    } //Invoke from GameManager
+    }
 
 
     public void DoClassActive(Action OnComplete)
