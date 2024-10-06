@@ -17,8 +17,8 @@ MonoBehaviour:
     Text: Roll a dice equal to the number of Dragon on your board, deal damage to
       opponents or yourself if unlucky.
   - Type: 2
-    Text: Gain energy equal to half the number of Woodland on your board, rounded
-      up. Each monster can only gain 1 energy this way.
+    Text: Gain mana equal to half the number of Woodland on your board, rounded up.
+      Each monster can only gain 1 mana this way.
   - Type: 3
     Text: Move the staff forward spaces up to number of Ghost on your board and activate
       the card it lands on. You must move the staff at least 1 space.
@@ -42,7 +42,7 @@ MonoBehaviour:
     Text: Place 1 growth on an adjacent monster. If this is the first growth on that
       monster, also place 1 rune stone on it.
   - Type: 5
-    Text: Two monster next to it gain 1 energy.
+    Text: Two monster next to it gain 1 mana.
   - Type: 6
     Text: This monster moves forward or backward any number of spaces, then place
       1 mana on an adjacent monster that it doesn't move past during this movement.
