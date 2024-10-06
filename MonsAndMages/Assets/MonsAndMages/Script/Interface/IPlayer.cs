@@ -30,8 +30,6 @@ public interface IPlayer
 
     ICard CardStaffCurrent { get; }
 
-    ICard CardActiveCurrent { get; }
-
 
     RectTransform PointerLast { get; }
 
@@ -39,14 +37,7 @@ public interface IPlayer
     void Init(PlayerData Data);
 
 
-    void DoStart(Action OnComplete); //Start turn
-
-
-    void DoTakeRuneStoneFromSupply(int Value, Action OnComplete); //Take 1 rune stone from supply
-
-    void DoTakeRuneStoneFromMediation(Action OnComplete); //Take rune stone from mediation
-
-    void DoStunnedCheck(Action<bool> OnComplete); //Check stun stage
+    void DoStart(); //Start turn
 
 
     void DoMediate(int RuneStoneAdd, Action OnComplete);
@@ -65,7 +56,7 @@ public interface IPlayer
 
     void DoOriginGhostReady(ICard Card); //Origin Ghost Event
 
-    void DoOriginGhostStart(ICard CardChoice, Action OnComplete);
+    void DoOriginGhostStart(ICard CardChoice);
 
     void DoOriginInsect(ICard Card, Action OnComplete); //Origin Insect Event
 
@@ -74,6 +65,8 @@ public interface IPlayer
     void DoOriginNeutral(ICard Card, Action OnComplete); //Origin Neutral Event
 
 
+    void DoStaffNext(bool Active); //Move staff Next
+
     void DoStaffNext(Action OnComplete); //Move staff Next
 
     void DoStaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
@@ -81,28 +74,28 @@ public interface IPlayer
     void DoStaffRumble(Action OnComplete);
 
 
-    void DoClassFighter(ICard Card, Action OnComplete);
+    void DoClassFighter(ICard Card, Action OnComplete); //Class Fighter Event
 
-    void DoClassMagicAddictReady(ICard Card, Action OnComplete);
+    void DoClassMagicAddictReady(ICard Card, Action OnComplete); //Class Magic Addict Event
 
-    void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete);
+    void DoClassMagicAddictStart(ICard CardChoice);
 
-    void DoClassSinger(ICard Card, Action OnComplete);
+    void DoClassSinger(ICard Card, Action OnComplete); //Class Singer Event
 
-    void DoClassCareTaker(ICard Card, Action OnComplete);
+    void DoClassCareTaker(ICard Card, Action OnComplete); //Class Care Taker Event
 
-    void DoClassDiffuser(ICard Card, Action OnComplete);
+    void DoClassDiffuser(ICard Card, Action OnComplete); //Class Diffuser Event
 
-    void DoClassFlyingReady(ICard Card);
+    void DoClassFlyingReady(ICard Card); //Class Flying Event
 
-    void DoClassFlyingStart(ICard CardChoice, Action OnComplete);
+    void DoClassFlyingStart(ICard CardChoice);
 
 
-    void DoCardChoiceManaFillReady();
+    void DoCardManaFillReady(ICard Card, int Mana);
 
-    void DoCardChoiceManaFillReady(CardOriginType Origin);
+    void DoCardManaFillReady(ICard Card, CardOriginType Origin, int Mana);
 
-    void DoCardChoiceManaFillStart(ICard Card, int Value, Action OnComplete); //Fill Mana for another progess
+    void DoCardManaFillStart(ICard CardChoice); //Fill Mana for another progess
 
 
     void CardManaCheckEnd();

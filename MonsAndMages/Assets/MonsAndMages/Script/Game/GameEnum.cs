@@ -73,4 +73,24 @@ public enum ChoiceType
     CardOriginGhost,
     CardClassMagicAddict,
     CardClassFlying,
+    CardManaFill,
+}
+
+public enum ProgessCollectType
+{
+    None,
+    Start,
+    Origin,
+    Enter,
+    Passive,
+    End,
+}
+
+public enum ProgessManaType
+{
+    None,
+    Start,
+    Class,
+    Spell,
+    End,
 }

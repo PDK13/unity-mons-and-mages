@@ -90,6 +90,8 @@ public interface ICard
 
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
 
+    void DoCollectProgess(); //Tiếp tục tiến trình khi lên sân
+
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
@@ -107,6 +109,8 @@ public interface ICard
 
 
     void DoManaActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
+
+    void DoManaProgess(); //Tiếp tục tiến trình khi đủ năng lượng
 
 
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng

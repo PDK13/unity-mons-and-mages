@@ -35,6 +35,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_hintOriginGhost;
     [SerializeField] private GameObject m_hintClassMagicAddict;
     [SerializeField] private GameObject m_hintClassFlying;
+    [SerializeField] private GameObject m_hintManaFill;
 
     [Space]
     [SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
@@ -77,6 +78,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardOriginGhost += OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict += OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying += OnUiChoiceCardClassFlying;
+        GameEvent.onUiChoiceCardManaFill += OnUiChoiceCardManaFill;
         //Ui-Info
         GameEvent.onUiInfoHide += OnUiInfoHide;
         GameEvent.onUiInfoCollect += OnUiInfoCollect;
@@ -86,6 +88,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost += OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict += OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying += OnUiInfoClassFlying;
+        GameEvent.onUiInfoManaFill += OnUiInfoManaFill;
         //Player
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
@@ -94,9 +97,9 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoCollect += OnPlayerDoCollect;
         GameEvent.onCardManaActive += OnCardManaActive;
         GameEvent.onPlayerEnd += OnPlayerEnd;
-        GameEvent.onPlayerRuneStoneChange += OnPlayerRuneStoneChange;
-        GameEvent.onPlayerHealthChange += OnPlayerHealthChange;
-        GameEvent.onPlayerStunnedChange += OnPlayerStunnedChange;
+        GameEvent.onPlayerRuneStoneUpdate += OnPlayerRuneStoneUpdate;
+        GameEvent.onPlayerHealthUpdate += OnPlayerHealthUpdate;
+        GameEvent.onPlayerStunnedUpdate += OnPlayerStunnedUpdate;
         //Origin
         GameEvent.onOriginDragon += OnOriginDragon;
         //Class
@@ -119,6 +122,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardOriginGhost -= OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict -= OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying -= OnUiChoiceCardClassFlying;
+        GameEvent.onUiChoiceCardManaFill -= OnUiChoiceCardManaFill;
         //Ui-Info
         GameEvent.onUiInfoHide -= OnUiInfoHide;
         GameEvent.onUiInfoCollect -= OnUiInfoCollect;
@@ -128,6 +132,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost -= OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict -= OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying -= OnUiInfoClassFlying;
+        GameEvent.onUiInfoManaFill -= OnUiInfoManaFill;
         //Player
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
@@ -136,9 +141,9 @@ public class PlayerView : MonoBehaviour
         GameEvent.onPlayerDoCollect -= OnPlayerDoCollect;
         GameEvent.onCardManaActive -= OnCardManaActive;
         GameEvent.onPlayerEnd -= OnPlayerEnd;
-        GameEvent.onPlayerRuneStoneChange -= OnPlayerRuneStoneChange;
-        GameEvent.onPlayerHealthChange -= OnPlayerHealthChange;
-        GameEvent.onPlayerStunnedChange -= OnPlayerStunnedChange;
+        GameEvent.onPlayerRuneStoneUpdate -= OnPlayerRuneStoneUpdate;
+        GameEvent.onPlayerHealthUpdate -= OnPlayerHealthUpdate;
+        GameEvent.onPlayerStunnedUpdate -= OnPlayerStunnedUpdate;
         //Origin
         GameEvent.onOriginDragon -= OnOriginDragon;
         //Class
@@ -232,6 +237,9 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardClassFlying:
                 GameManager.instance.CardClassFlyingStart(m_cardView);
                 break;
+            case ChoiceType.CardManaFill:
+                GameManager.instance.CardManaFillStart(m_cardView);
+                break;
         }
     }
 
@@ -255,6 +263,7 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardOriginGhost:
             case ChoiceType.CardClassMagicAddict:
             case ChoiceType.CardClassFlying:
+            case ChoiceType.CardManaFill:
                 GameEvent.UiInfoHide(true, true);
                 break;
         }
@@ -352,6 +361,7 @@ public class PlayerView : MonoBehaviour
         m_hintOriginGhost.SetActive(false);
         m_hintClassMagicAddict.SetActive(false);
         m_hintClassFlying.SetActive(false);
+        m_hintManaFill.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
     }
 
@@ -379,6 +389,9 @@ public class PlayerView : MonoBehaviour
                 break;
             case ChoiceType.CardClassFlying:
                 OnUiChoiceCardClassFlying();
+                break;
+            case ChoiceType.CardManaFill:
+                OnUiChoiceCardManaFill();
                 break;
         }
     }
@@ -484,6 +497,23 @@ public class PlayerView : MonoBehaviour
         {
             case ViewType.Field:
                 m_hintClassFlying.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnUiChoiceCardManaFill()
+    {
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintManaFill.SetActive(true);
                 break;
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
@@ -634,6 +664,18 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(true);
     } //Info Class Magic Addict
 
+    private void OnUiInfoManaFill(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.DoMoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+    } //Info Class Magic Addict
+
     //GameEvent - Player
 
     private void OnPlayerStart(IPlayer Player, Action OnComplete)
@@ -652,15 +694,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
-        var PlayerStun = PlayerCurrent.Find("stun");
-        PlayerStun.DOScale(Vector2.one * 1.2f, 0.2f).OnComplete(() =>
-        {
-            PlayerStun.DOScale(Vector2.one, 0.2f).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
-        });
+        OnPlayerStunnedUpdate(Player, OnComplete);
     }
 
     private void OnPlayerDoChoice(IPlayer Player, Action OnComplete)
@@ -689,7 +723,7 @@ public class PlayerView : MonoBehaviour
         });
     }
 
-    private void OnPlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
+    private void OnPlayerRuneStoneUpdate(IPlayer Player, Action OnComplete)
     {
         m_runeStoneBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
@@ -698,7 +732,7 @@ public class PlayerView : MonoBehaviour
         });
     }
 
-    private void OnPlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
+    private void OnPlayerHealthUpdate(IPlayer Player, Action OnComplete)
     {
         var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
         var PlayerHealth = PlayerCurrent.Find("health");
@@ -706,14 +740,11 @@ public class PlayerView : MonoBehaviour
         PlayerHealth.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
         {
             PlayerHealthTmp.text = Player.HealthCurrent.ToString();
-            PlayerHealth.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
+            PlayerHealth.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() => OnComplete?.Invoke());
         });
     }
 
-    private void OnPlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
+    private void OnPlayerStunnedUpdate(IPlayer Player, Action OnComplete)
     {
         var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
         var PlayerStun = PlayerCurrent.Find("stun");
@@ -721,10 +752,7 @@ public class PlayerView : MonoBehaviour
         PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
         {
             PlayerStunTmp.text = Player.StunCurrent.ToString();
-            PlayerStun.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() =>
-            {
-                OnComplete?.Invoke();
-            });
+            PlayerStun.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() => OnComplete?.Invoke());
         });
     }
 

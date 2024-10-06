@@ -55,6 +55,10 @@ public class CardController : MonoBehaviour, ICard
     private int m_attackPoint;
     private int m_growthCurrent;
 
+    private Action m_progessEvent;
+    private ProgessCollectType m_progessCollect = ProgessCollectType.None;
+    private ProgessManaType m_progessMana = ProgessManaType.None;
+
     //
 
     private void Awake()
@@ -118,6 +122,11 @@ public class CardController : MonoBehaviour, ICard
                     return;
                 GameEvent.UiInfoClassFlying(this);
                 break;
+            case ChoiceType.CardManaFill:
+                if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
+                    return;
+                GameEvent.UiInfoManaFill(this);
+                break;
         }
     }
 
@@ -166,6 +175,8 @@ public class CardController : MonoBehaviour, ICard
         !m_effect;
 
     public int Index => Centre.GetSiblingIndex();
+
+    public ProgessCollectType ProgessCollect => m_progessCollect;
 
 
     public void Init(CardData Data)
@@ -581,18 +592,43 @@ public class CardController : MonoBehaviour, ICard
         m_player = Player;
         DoEffectAlpha(() =>
         {
-            DoOriginActive(() =>
-            {
-                DoEnterActive(() =>
-                {
-                    DoPassiveActive(() =>
-                    {
-                        OnComplete?.Invoke();
-                    });
-                });
-            });
+            m_progessCollect = ProgessCollectType.Start;
+            m_progessEvent = OnComplete;
+            DoCollectProgess();
         });
     } //Collect Event
+
+    public void DoCollectProgess()
+    {
+        Debug.LogFormat("{0} Collect {1}", Name.ToString(), m_progessCollect.ToString());
+        switch (m_progessCollect)
+        {
+            case ProgessCollectType.None:
+
+                break;
+            case ProgessCollectType.Start:
+                m_progessCollect = ProgessCollectType.Origin;
+                DoCollectProgess();
+                break;
+            case ProgessCollectType.Origin:
+                m_progessCollect = ProgessCollectType.Enter;
+                DoOriginActive(() => DoCollectProgess());
+                break;
+            case ProgessCollectType.Enter:
+                m_progessCollect = ProgessCollectType.Passive;
+                DoEnterActive(() => DoCollectProgess());
+                break;
+            case ProgessCollectType.Passive:
+                m_progessCollect = ProgessCollectType.End;
+                DoPassiveActive(() => DoCollectProgess());
+                break;
+            case ProgessCollectType.End:
+                m_progessCollect = ProgessCollectType.None;
+                m_progessEvent?.Invoke();
+                m_progessEvent = null;
+                break;
+        }
+    }
 
 
     public void DoOriginActive(Action OnComplete)
@@ -711,8 +747,35 @@ public class CardController : MonoBehaviour, ICard
         m_manaCurrent -= m_manaPoint;
         InfoManaUpdate(m_manaCurrent, m_manaPoint, () => DoEffectOutlineNormal(() =>
         {
-            DoClassActive(() => DoSpellActive(OnComplete));
+            m_progessMana = ProgessManaType.Start;
+            m_progessEvent = OnComplete;
+            DoManaProgess();
         }));
+    }
+
+    public void DoManaProgess()
+    {
+        Debug.LogFormat("{0} Mana {1}", Name.ToString(), m_progessMana.ToString());
+        switch (m_progessMana)
+        {
+            case ProgessManaType.Start:
+                m_progessMana = ProgessManaType.Class;
+                DoManaProgess();
+                break;
+            case ProgessManaType.Class:
+                m_progessMana = ProgessManaType.Spell;
+                DoClassActive(() => DoManaProgess());
+                break;
+            case ProgessManaType.Spell:
+                m_progessMana = ProgessManaType.End;
+                DoSpellActive(() => DoManaProgess());
+                break;
+            case ProgessManaType.End:
+                m_progessMana = ProgessManaType.None;
+                m_progessEvent?.Invoke();
+                m_progessEvent = null;
+                break;
+        }
     }
 
 
