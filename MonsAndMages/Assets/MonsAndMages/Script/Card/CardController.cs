@@ -361,7 +361,7 @@ public class CardController : MonoBehaviour, ICard
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
 
         transform.SetParent(Pointer, true);
-        transform.SetSiblingIndex(Pointer.childCount - 2);
+        transform.SetSiblingIndex(Pointer.childCount - 1);
         Renderer.maskable = false;
 
         Sequence CardTween = DOTween.Sequence();
@@ -370,7 +370,7 @@ public class CardController : MonoBehaviour, ICard
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            transform.SetSiblingIndex(Centre.GetSiblingIndex());
+            transform.SetSiblingIndex(0);
             Renderer.maskable = true;
             OnComplete?.Invoke();
         });
@@ -386,13 +386,16 @@ public class CardController : MonoBehaviour, ICard
 
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration;
 
+        transform.SetSiblingIndex(0);
+        Renderer.maskable = false;
+
         transform
             .DOLocalMove(CentreInPointer, MoveDuration)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
                 m_move = false;
-                transform.SetSiblingIndex(Centre.GetSiblingIndex());
+                transform.SetSiblingIndex(0);
                 OnComplete?.Invoke();
             });
     }
@@ -416,7 +419,7 @@ public class CardController : MonoBehaviour, ICard
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            transform.SetSiblingIndex(Centre.GetSiblingIndex());
+            transform.SetSiblingIndex(0);
             Renderer.maskable = true;
             OnComplete?.Invoke();
         });
