@@ -53,6 +53,7 @@ public class GameEvent
     public static Action onUiChoiceCardOriginGhost { get; set; }
     public static Action onUiChoiceCardClassMagicAddict { get; set; }
     public static Action onUiChoiceCardClassFlying { get; set; }
+    public static Action onUiChoiceCardManaFill { get; set; }
 
     public static void UiChoiceHide()
     {
@@ -94,6 +95,11 @@ public class GameEvent
         onUiChoiceCardClassFlying?.Invoke();
     }
 
+    public static void UiChoiceCardManaFill()
+    {
+        onUiChoiceCardManaFill?.Invoke();
+    }
+
     //Ui-Info
 
     public static Action<bool, bool> onUiInfoHide { get; set; }
@@ -104,6 +110,7 @@ public class GameEvent
     public static Action<ICard> onUiInfoOriginGhost { get; set; }
     public static Action<ICard> onUiInfoClassMagicAddict { get; set; }
     public static Action<ICard> onUiInfoClassFlying { get; set; }
+    public static Action<ICard> onUiInfoManaFill { get; set; }
 
     public static void UiInfoHide(bool MaskTween, bool CardBack)
     {
@@ -145,6 +152,11 @@ public class GameEvent
         onUiInfoClassFlying?.Invoke(Card);
     }
 
+    public static void UiInfoManaFill(ICard Card)
+    {
+        onUiInfoManaFill?.Invoke(Card);
+    }
+
     //Button
 
     public static Action<bool> onButtonInteractable { get; set; }
@@ -172,9 +184,9 @@ public class GameEvent
     public static Action<IPlayer, Action> onPlayerCardManaActiveDoChoice { get; set; }
     public static Action<ICard, Action> onCardManaActive { get; set; }
     public static Action<IPlayer, Action> onPlayerEnd { get; set; }
-    public static Action<IPlayer, int, Action> onPlayerRuneStoneChange { get; set; }
-    public static Action<IPlayer, int, Action> onPlayerHealthChange { get; set; }
-    public static Action<IPlayer, int, Action> onPlayerStunnedChange { get; set; }
+    public static Action<IPlayer, Action> onPlayerRuneStoneUpdate { get; set; }
+    public static Action<IPlayer, Action> onPlayerHealthUpdate { get; set; }
+    public static Action<IPlayer, Action> onPlayerStunnedUpdate { get; set; }
 
     public static void PlayerStart(IPlayer Player, Action OnComplete)
     {
@@ -226,19 +238,19 @@ public class GameEvent
         onPlayerEnd?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerRuneStoneChange(IPlayer Player, int Value, Action OnComplete)
+    public static void PlayerRuneStoneUpdate(IPlayer Player, Action OnComplete)
     {
-        onPlayerRuneStoneChange?.Invoke(Player, Value, OnComplete);
+        onPlayerRuneStoneUpdate?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerHealthChange(IPlayer Player, int Value, Action OnComplete)
+    public static void PlayerHealthUpdate(IPlayer Player, Action OnComplete)
     {
-        onPlayerHealthChange?.Invoke(Player, Value, OnComplete);
+        onPlayerHealthUpdate?.Invoke(Player, OnComplete);
     }
 
-    public static void PlayerStunnedChange(IPlayer Player, int Value, Action OnComplete)
+    public static void PlayerStunnedUpdate(IPlayer Player, Action OnComplete)
     {
-        onPlayerStunnedChange?.Invoke(Player, Value, OnComplete);
+        onPlayerStunnedUpdate?.Invoke(Player, OnComplete);
     }
 
     //Card

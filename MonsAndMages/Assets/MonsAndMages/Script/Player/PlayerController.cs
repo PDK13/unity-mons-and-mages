@@ -53,6 +53,9 @@ public class PlayerController : MonoBehaviour, IPlayer
     private List<ICard> m_cardQueue = new List<ICard>();
     private int m_staffStep = 0;
 
+    private List<ICard> m_progessCard = new List<ICard>();
+    private bool m_progessStaff = false;
+
     //
 
     private IEnumerator Start()
@@ -74,7 +77,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_tmpRuneStone.text = RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
             m_runeStoneBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
-        GameEvent.PlayerRuneStoneChange(this, 0, null);
+        GameEvent.PlayerRuneStoneUpdate(this, null);
     }
 
     private void InfoStunUpdate(Action OnComplete)
@@ -84,7 +87,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_tmpStun.text = StunCurrent.ToString();
             m_stunBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
-        GameEvent.PlayerStunnedChange(this, 0, null);
+        GameEvent.PlayerStunnedUpdate(this, null);
     }
 
     private void InfoHealthUpdate(Action OnComplete)
@@ -94,7 +97,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_tmpHealth.text = HealthCurrent.ToString();
             m_healthBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
-        GameEvent.PlayerHealthChange(this, 0, null);
+        GameEvent.PlayerHealthUpdate(this, null);
     }
 
     private void InfoMediationUpdate(int Index, Action OnComplete)
@@ -130,12 +133,12 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public ICard CardStaffCurrent => m_cardQueue[StaffStep];
 
-    public ICard CardActiveCurrent { get; private set; } = null;
-
-    public int CardManaFillCurrent { get; private set; } = 0;
-
 
     public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
+
+    public ICard ProgessCardChoice { get; set; }
+
+    public int ProgessMana { get; set; }
 
 
     public void Init(PlayerData Data)
@@ -172,13 +175,23 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoStart(Action OnComplete)
+    public void DoStart()
     {
-        GameEvent.PlayerStart(this, OnComplete);
+        m_progessStaff = false;
+
+        GameEvent.PlayerStart(this, () =>
+        {
+            DoTakeRuneStoneFromSupply(1, () =>
+            {
+                DoTakeRuneStoneFromMediation(() =>
+                {
+                    DoStunnedCheck();
+                });
+            });
+        });
     }
 
-
-    public void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
+    private void DoTakeRuneStoneFromSupply(int Value, Action OnComplete)
     {
         if (Value == 0)
         {
@@ -214,7 +227,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         RuneStoneIconTween.Play();
     }
 
-    public void DoTakeRuneStoneFromMediation(Action OnComplete)
+    private void DoTakeRuneStoneFromMediation(Action OnComplete)
     {
         var RuneStoneTake = false;
         for (int i = 0; i < m_mediation.Length; i++)
@@ -259,11 +272,17 @@ public class PlayerController : MonoBehaviour, IPlayer
             OnComplete?.Invoke();
     }
 
-    public void DoStunnedCheck(Action<bool> OnComplete)
+    private void DoStunnedCheck()
     {
-        InfoStunUpdate(() => OnComplete?.Invoke(Stuned));
-        GameEvent.PlayerStunnedCheck(this, null);
+        GameEvent.PlayerStunnedCheck(this, () =>
+        {
+            if (Stuned)
+                StunChange(m_stunCurrent, () => DoStaffNext(false));
+            else
+                GameManager.instance.PlayerDoChoiceMediateOrCollect(this);
+        });
     }
+
 
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
@@ -289,8 +308,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoCollect(ICard Card, Action OnComplete)
     {
-        RuneStoneChange(-Card.RuneStoneCost, () => OnComplete?.Invoke());
-
         m_cardQueue.Add(Card);
 
         if (m_cardQueue[0].Name == CardNameType.Stage && m_cardQueue.Count > 5)
@@ -305,11 +322,37 @@ public class PlayerController : MonoBehaviour, IPlayer
             Centre.gameObject.name = "card-point";
             Centre.gameObject.SetActive(true);
         }
+
+        RuneStoneChange(-Card.RuneStoneCost, () =>
+        {
+            Card.Renderer.maskable = false;
+
+            DoBoardReRange(Card);
+
+            GameEvent.ViewArea(ViewType.Field, () =>
+            {
+                GameEvent.WildCardFill(null);
+                GameEvent.ViewPlayer(this, () =>
+                {
+                    Card.Pointer = PointerLast;
+                    Card.Centre = PointerLast;
+                    Card.DoMoveBack(() => Card.DoRumble(() =>
+                    {
+                        Card.Renderer.maskable = true;
+                        Card.InfoShow(true);
+                        Card.DoCollectActive(this, OnComplete);
+                    }));
+                    //Move card first before active card collect event!
+                });
+                //Go back to field and player's area!
+            });
+            //After player's rune stone updated, start progess ui!
+        });
     }
 
     public void DoBoardReRange(params ICard[] CardIgnore)
     {
-        //Card
+        //CardCheck
         for (int i = 0; i < m_cardQueue.Count; i++)
         {
             if (CardIgnore.ToList().Exists(t => t.Equals(m_cardQueue[i])))
@@ -325,152 +368,28 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoOriginDragon(ICard Card, Action OnComplete)
+    public void DoStaffNext(bool Active)
     {
-        var DragonCount = m_cardQueue.Count(t => t.Origin == CardOriginType.Dragon);
-        DoOriginDragonProgess(Card, DragonCount, OnComplete);
-    } //Origin Dragon Event
+        m_progessStaff = true;
 
-    private void DoOriginDragonProgess(ICard Card, int DragonLeft, Action OnComplete)
-    {
-        var DiceQueue = GameManager.instance.DiceConfig.Data;
-        var DiceCount = DiceQueue.Count;
-        var DiceIndex = UnityEngine.Random.Range(0, (DiceCount * 10) - 1) / 10;
-        var DiceFace = DiceQueue[DiceIndex];
+        DoBoardReRange();
 
-        DragonLeft--;
+        //Start Move staff to Point
+        var StaffIndexLast = m_staffStep;
+        var StaffIndexNext = StaffIndexLast + 1 > m_cardQueue.Count - 1 ? 0 : StaffIndexLast + 1;
+        m_staffStep = StaffIndexNext;
 
-        GameEvent.OriginDragon(() =>
+        //Update staff Parent to Last
+        m_staff.Pointer = PointerLast;
+        m_staff.Centre = m_cardContent.GetChild(m_staffStep).GetComponent<RectTransform>();
+        m_staff.DoMoveNextJump(() =>
         {
-            Card.DoRumble(() =>
-            {
-                var PlayerQueue = GameManager.instance.PlayerQueue;
-                for (int i = 0; i < PlayerQueue.Length; i++)
-                {
-                    if (PlayerQueue[i].Equals(this))
-                        PlayerQueue[i].HealthChange(-DiceFace.Bite, () =>
-                        {
-                            if (DragonLeft > 0)
-                                DoOriginDragonProgess(Card, DragonLeft, OnComplete);
-                            else
-                                OnComplete?.Invoke();
-                        });
-                    else
-                        PlayerQueue[i].HealthChange(-DiceFace.Dragon, null);
-                }
-            });
+            if (Active)
+                DoStaffActive(() => ProgessCheck());
+            else
+                DoEnd(() => GameManager.instance.PlayerEnd(this));
         });
     }
-
-    public void DoOriginWoodlandReady(ICard Card)
-    {
-        foreach (var CardCheck in m_cardQueue)
-        {
-            if (CardCheck.Origin != CardOriginType.Woodland)
-                continue;
-            CardCheck.DoChoiceReady();
-        }
-
-        var WoodlandCount = m_cardQueue.Count(t => t.Origin == CardOriginType.Woodland);
-        var ManaGainValue = 1.0f * WoodlandCount / 2 + (WoodlandCount % 2 == 0 ? 0 : 0.5f);
-        CardManaFillCurrent = Mathf.Max(1, (int)ManaGainValue);
-
-        CardActiveCurrent = Card;
-        GameManager.instance.CardOriginWoodlandDoChoice(Card);
-    } //Origin Woodland Event
-
-    public void DoOriginWoodlandStart(ICard CardChoice)
-    {
-        CardManaFillCurrent -= 1;
-
-        if (CardManaFillCurrent > 0)
-        {
-            foreach (var Card in m_cardQueue)
-                Card.DoChoiceUnReady();
-            CardChoice.DoChoiceOnce(true);
-        }
-        else
-        {
-            foreach (var Card in m_cardQueue)
-            {
-                Card.DoChoiceUnReady();
-                Card.DoChoiceOnce(false);
-            }
-        }
-
-        CardChoice.DoEffectAlpha(() => CardChoice.DoManaFill(1, () =>
-        {
-            if (CardManaFillCurrent > 0)
-            {
-                foreach (var CardCheck in m_cardQueue)
-                {
-                    if (CardCheck.Origin != CardOriginType.Woodland)
-                        continue;
-                    CardCheck.DoChoiceReady();
-                }
-                GameManager.instance.CardOriginWoodlandDoChoice(CardActiveCurrent);
-            }
-            else
-            {
-                CardActiveCurrent = null;
-                GameManager.instance.PlayerDoStaffNext(this, true);
-            }
-        }));
-    }
-
-    public void DoOriginGhostReady(ICard Card)
-    {
-        var GhostCount = m_cardQueue.ToArray().Count(t => t.Origin == CardOriginType.Ghost);
-        var StaffCurrent = m_staffStep;
-        var StaffAvaible = GhostCount;
-        while (StaffAvaible > 0)
-        {
-            StaffCurrent++;
-            if (StaffCurrent > m_cardQueue.Count - 1)
-                StaffCurrent = 0;
-            m_cardQueue[StaffCurrent].DoChoiceReady();
-            StaffAvaible--;
-        }
-        CardActiveCurrent = Card;
-        GameManager.instance.CardOriginGhostDoChoice(Card);
-    } //Origin Ghost Event
-
-    public void DoOriginGhostStart(ICard CardChoice, Action OnComplete)
-    {
-        foreach (var Card in m_cardQueue)
-            Card.DoChoiceUnReady();
-        CardChoice.DoEffectAlpha(() => DoOriginGhostProgess(CardChoice, () =>
-        {
-            CardActiveCurrent = null;
-            OnComplete?.Invoke();
-        }));
-    }
-
-    private void DoOriginGhostProgess(ICard CardChoice, Action OnComplete)
-    {
-        DoStaffNext(() =>
-        {
-            if (CardStaffCurrent.Equals(CardChoice))
-            {
-                //Active staff when land on card choosed
-                DoStaffActive(() =>
-                {
-                    //Continue resolve current card before return to main progess
-                    CardStaffCurrent.DoEnterActive(() => CardStaffCurrent.DoPassiveActive(OnComplete));
-                });
-            }
-            else
-                //Continue move staff if not land on chossed card
-                DoOriginGhostProgess(CardChoice, OnComplete);
-        });
-    }
-
-    public void DoOriginInsect(ICard Card, Action OnComplete) { } //Origin Insect Event
-
-    public void DoOriginSiren(ICard Card, Action OnComplete) { } //Origin Siren Event
-
-    public void DoOriginNeutral(ICard Card, Action OnComplete) { } //Origin Neutral Event
-
 
     public void DoStaffNext(Action OnComplete)
     {
@@ -489,12 +408,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStaffActive(Action OnComplete)
     {
-        if (CardStaffCurrent == null)
-        {
-            Debug.LogError("Not found card for staff active");
-            OnComplete?.Invoke();
-            return;
-        }
         CardStaffCurrent.DostaffActive(OnComplete);
     }
 
@@ -504,165 +417,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoClassFighter(ICard Card, Action OnComplete)
-    {
-        DoClassFighterProgess(Card, Card.AttackCombine, 0, OnComplete);
-    } //Class Fighter Event
-
-    private void DoClassFighterProgess(ICard Card, int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete)
-    {
-        var DiceQueue = GameManager.instance.DiceConfig.Data;
-        var DiceCount = DiceQueue.Count;
-        var DiceIndex = UnityEngine.Random.Range(0, (DiceCount * 10) - 1) / 10;
-        var DiceFace = DiceQueue[DiceIndex];
-
-        AttackCombineLeft--;
-        DiceDotSumRolled += DiceFace.Dot;
-
-        GameEvent.ClassFighter(() =>
-        {
-            if (AttackCombineLeft > 0)
-                DoClassFighterProgess(Card, AttackCombineLeft, DiceDotSumRolled, OnComplete);
-            else
-            {
-                var DiceDotSumAttack = (int)(DiceDotSumRolled / 2);
-                Card.DoRumble(() =>
-                {
-                    var OnCompleteEvent = false;
-                    var PlayerQueue = GameManager.instance.PlayerQueue;
-                    for (int i = 0; i < PlayerQueue.Length; i++)
-                    {
-                        if (PlayerQueue[i].Equals(this))
-                            continue;
-
-                        if (!OnCompleteEvent)
-                        {
-                            OnCompleteEvent = true;
-                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, OnComplete);
-                        }
-                        else
-                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, null);
-                    }
-                });
-            }
-        });
-
-    }
-
-    public void DoClassMagicAddictReady(ICard Card, Action OnComplete)
-    {
-        bool CardGotMana = false;
-        for (int i = 0; i < m_cardQueue.Count; i++)
-        {
-            if (m_cardQueue[i].Equals(Card) || m_cardQueue[i].ManaCurrent == 0)
-                continue;
-            CardGotMana = true;
-            m_cardQueue[i].DoChoiceReady();
-        }
-        if (CardGotMana)
-        {
-            //Found monster(s) got mana for this monster cast spell once more time
-            CardActiveCurrent = Card;
-            GameManager.instance.CardClassMagicAddictDoChoice(Card);
-        }
-        else
-            //If no monster got mana for this monster cast spell once more time, skip this
-            OnComplete?.Invoke();
-    } //Class Magic Addict Event
-
-    public void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete)
-    {
-        foreach (var Card in m_cardQueue)
-            Card.DoChoiceUnReady();
-
-        CardChoice.DoEffectAlpha(() => CardChoice.DoManaFill(-1, () =>
-        {
-            CardActiveCurrent.DoSpellActive(() => CardActiveCurrent.DoSpellActive(() =>
-            {
-                CardActiveCurrent = null;
-                OnComplete?.Invoke();
-            }));
-        }));
-    }
-
-    public void DoClassSinger(ICard Card, Action OnComplete)
-    {
-        var SingerCount = m_cardQueue.ToArray().Count(t => t.Class == CardClassType.Singer);
-        Card.DoRumble(() =>
-        {
-            var OnCompleteEvent = false;
-            var PlayerQueue = GameManager.instance.PlayerQueue;
-            for (int i = 0; i < PlayerQueue.Length; i++)
-            {
-                if (PlayerQueue[i].Equals(this))
-                    continue;
-
-                if (!OnCompleteEvent)
-                {
-                    OnCompleteEvent = true;
-                    PlayerQueue[i].HealthChange(-SingerCount, OnComplete);
-                }
-                else
-                    PlayerQueue[i].HealthChange(-SingerCount, null);
-            }
-        });
-    } //Class Singer Event
-
-    public void DoClassCareTaker(ICard Card, Action OnComplete) { } //Class Care Taker Event
-
-    public void DoClassDiffuser(ICard Card, Action OnComplete)
-    {
-        var CardCurrentIndex = m_cardQueue.ToList().IndexOf(Card);
-        var CardL = CardCurrentIndex - 1 >= 0 ? m_cardQueue[CardCurrentIndex - 1] : null;
-        var CardR = CardCurrentIndex + 1 <= m_cardQueue.Count - 1 ? m_cardQueue[CardCurrentIndex + 1] : null;
-
-        Card.DoRumble(() =>
-        {
-            Card.DoEffectOutlineMana(() =>
-            {
-                Card.DoEffectOutlineNormal(OnComplete);
-                if (CardL != null)
-                    CardL.DoManaFill(1, null);
-                if (CardR != null)
-                    CardR.DoManaFill(1, null);
-            });
-        });
-    } //Class Diffuser Event
-
-    public void DoClassFlyingReady(ICard Card)
-    {
-        var CardIndex = m_cardQueue.ToList().IndexOf(Card);
-        for (int i = 0; i < m_cardQueue.Count; i++)
-        {
-            if (Mathf.Abs(CardIndex - i) <= 1)
-                continue;
-            m_cardQueue[i].DoChoiceReady();
-        }
-        CardActiveCurrent = Card;
-        GameManager.instance.CardClassFlyingDoChoice(Card);
-    } //Class Flying Event
-
-    public void DoClassFlyingStart(ICard CardChoice, Action OnComplete)
-    {
-        foreach (var Card in m_cardQueue)
-            Card.DoChoiceUnReady();
-        CardChoice.DoEffectAlpha(() =>
-        {
-            var CardFromIndex = m_cardQueue.ToList().IndexOf(CardActiveCurrent);
-            var CardToIndex = m_cardQueue.ToList().IndexOf(CardChoice);
-            var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
-            DoClassFlyingProgess(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
-            {
-                CardActiveCurrent.DoRumble(() => CardChoice.DoManaFill(1, () =>
-                {
-                    CardActiveCurrent = null;
-                    OnComplete?.Invoke();
-                }));
-            });
-        });
-    }
-
-    private void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete)
+    public void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete)
     {
         var CardFrom = m_cardQueue[IndexFrom];
         var MoveDirection = IndexFrom < IndexTo ? 1 : -1;
@@ -722,40 +477,37 @@ public class PlayerController : MonoBehaviour, IPlayer
     }
 
 
-    public void DoCardChoiceManaFillReady()
+    public void ProgessCard(ICard Card)
     {
-        foreach (var Card in m_cardQueue)
-        {
-            if (Card.Type != CardType.Mons)
-                continue;
-            Card.DoChoiceReady();
-        }
+        if (m_progessCard.Exists(t => t.Equals(Card)))
+            return;
+        m_progessCard.Add(Card);
     }
 
-    public void DoCardChoiceManaFillReady(CardOriginType Origin)
+    public void ProgessCardDone(ICard Card)
     {
-        foreach (var Card in m_cardQueue)
-        {
-            if (Card.Type != CardType.Mons || Card.Origin != Origin)
-                continue;
-            Card.DoChoiceReady();
-        }
+        if (!m_progessCard.Exists(t => t.Equals(Card)))
+            return;
+        m_progessCard.Remove(Card);
     }
 
-    public void DoCardChoiceManaFillStart(ICard Card, int Value, Action OnComplete)
-    {
-        if (!m_cardQueue.Exists(t => t.Equals(Card)))
-            Debug.LogErrorFormat("Card {0} not belongs to current player {1}", Card.Name, Index);
-        Card.DoManaFill(Value, OnComplete);
-    } //Fill Mana for another progess
-
-
-    public void CardManaCheckEnd()
+    public void ProgessCheck()
     {
         if (m_cardQueue.Exists(t => t.ManaFull))
-            GameManager.instance.PlayerDoCardManaActiveDoChoice(this);
+            GameManager.instance.PlayerDoCardManaActiveReady(this);
         else
-            GameManager.instance.PlayerEnd(this);
+        if (m_progessCard.Count > 0)
+        {
+            var Progess = m_progessCard[m_progessCard.Count - 1];
+            m_progessCard.RemoveAt(m_progessCard.Count - 1);
+            Progess.DoCollectProgess();
+            Progess.DoManaProgess();
+        }
+        else
+        if (!m_progessStaff)
+            DoStaffNext(true);
+        else
+            DoEnd(() => GameManager.instance.PlayerEnd(this));
     }
 
 

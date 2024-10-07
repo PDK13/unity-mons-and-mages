@@ -30,23 +30,18 @@ public interface IPlayer
 
     ICard CardStaffCurrent { get; }
 
-    ICard CardActiveCurrent { get; }
-
 
     RectTransform PointerLast { get; }
+
+    int ProgessMana { get; set; }
+
+    ICard ProgessCardChoice { get; set; }
 
 
     void Init(PlayerData Data);
 
 
-    void DoStart(Action OnComplete); //Start turn
-
-
-    void DoTakeRuneStoneFromSupply(int Value, Action OnComplete); //Take 1 rune stone from supply
-
-    void DoTakeRuneStoneFromMediation(Action OnComplete); //Take rune stone from mediation
-
-    void DoStunnedCheck(Action<bool> OnComplete); //Check stun stage
+    void DoStart(); //Start turn
 
 
     void DoMediate(int RuneStoneAdd, Action OnComplete);
@@ -57,22 +52,7 @@ public interface IPlayer
     void DoBoardReRange(params ICard[] CardIgnore);
 
 
-    void DoOriginDragon(ICard Card, Action OnComplete); //Origin Dragon Event
-
-    void DoOriginWoodlandReady(ICard Card); //Origin Woodland Event
-
-    void DoOriginWoodlandStart(ICard CardChoice);
-
-    void DoOriginGhostReady(ICard Card); //Origin Ghost Event
-
-    void DoOriginGhostStart(ICard CardChoice, Action OnComplete);
-
-    void DoOriginInsect(ICard Card, Action OnComplete); //Origin Insect Event
-
-    void DoOriginSiren(ICard Card, Action OnComplete); //Origin Siren Event
-
-    void DoOriginNeutral(ICard Card, Action OnComplete); //Origin Neutral Event
-
+    void DoStaffNext(bool Active); //Move staff Next
 
     void DoStaffNext(Action OnComplete); //Move staff Next
 
@@ -81,31 +61,14 @@ public interface IPlayer
     void DoStaffRumble(Action OnComplete);
 
 
-    void DoClassFighter(ICard Card, Action OnComplete);
-
-    void DoClassMagicAddictReady(ICard Card, Action OnComplete);
-
-    void DoClassMagicAddictStart(ICard CardChoice, Action OnComplete);
-
-    void DoClassSinger(ICard Card, Action OnComplete);
-
-    void DoClassCareTaker(ICard Card, Action OnComplete);
-
-    void DoClassDiffuser(ICard Card, Action OnComplete);
-
-    void DoClassFlyingReady(ICard Card);
-
-    void DoClassFlyingStart(ICard CardChoice, Action OnComplete);
+    void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete);
 
 
-    void DoCardChoiceManaFillReady();
+    void ProgessCard(ICard Card);
 
-    void DoCardChoiceManaFillReady(CardOriginType Origin);
+    void ProgessCardDone(ICard Card);
 
-    void DoCardChoiceManaFillStart(ICard Card, int Value, Action OnComplete); //Fill Mana for another progess
-
-
-    void CardManaCheckEnd();
+    void ProgessCheck();
 
 
     void DoEnd(Action OnComplete);

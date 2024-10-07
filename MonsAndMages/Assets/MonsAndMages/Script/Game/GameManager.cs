@@ -107,40 +107,13 @@ public class GameManager : MonoBehaviour
         {
             GameEvent.ViewPlayer(PlayerCurrent, () =>
             {
-                PlayerStart(PlayerCurrent);
+                PlayerCurrent.DoStart();
             });
         });
     } //Camera move to Field and PlayerQueue before start PlayerQueue's turn
 
-    private void PlayerStart(IPlayer Player)
-    {
-        Player.DoStart(() => PlayerTakeRuneStoneFromSupply(Player, 1));
-    }
 
-
-    private void PlayerTakeRuneStoneFromSupply(IPlayer Player, int Value)
-    {
-        Player.DoTakeRuneStoneFromSupply(Value, () => PlayerTakeRuneStoneFromMediation(Player));
-    }
-
-    private void PlayerTakeRuneStoneFromMediation(IPlayer Player)
-    {
-        Player.DoTakeRuneStoneFromMediation(() => PlayerStunnedCheck(Player));
-    }
-
-    private void PlayerStunnedCheck(IPlayer Player)
-    {
-        Player.DoStunnedCheck((Stunned) =>
-        {
-            if (Stunned)
-                PlayerDoStaffNext(Player, false);
-            else
-                PlayerDoChoiceMediateOrCollect(Player);
-        });
-    }
-
-
-    private void PlayerDoChoiceMediateOrCollect(IPlayer Player)
+    public void PlayerDoChoiceMediateOrCollect(IPlayer Player)
     {
         m_playerChoice = ChoiceType.MediateOrCollect;
         GameEvent.UiChoiceMediateOrCollect();
@@ -151,8 +124,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-
-        Player.DoMediate(RuneStoneAdd, () => PlayerDoStaffNext(Player, true));
+        Player.DoMediate(RuneStoneAdd, () => Player.DoStaffNext(true));
     }
 
     public void PlayerDoCollectStart(IPlayer Player, ICard Card)
@@ -160,36 +132,11 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-
-        Player.DoCollect(Card, () =>
-        {
-            Card.Renderer.maskable = false;
-
-            Player.DoBoardReRange(Card);
-
-            GameEvent.ViewArea(ViewType.Field, () =>
-            {
-                GameEvent.WildCardFill(null);
-                GameEvent.ViewPlayer(Player, () =>
-                {
-                    Card.Pointer = Player.PointerLast;
-                    Card.Centre = Player.PointerLast;
-                    Card.DoMoveBack(() => Card.DoRumble(() =>
-                    {
-                        Card.Renderer.maskable = true;
-                        Card.InfoShow(true);
-                        Card.DoCollectActive(Player, () => PlayerDoStaffNext(Card.Player, true));
-                    }));
-                    //Move card first before active card collect event!
-                });
-                //Go back to field and player's area!
-            });
-            //After player's rune stone updated, start progess ui!
-        });
+        Player.DoCollect(Card, () => Player.DoStaffNext(true));
     }
 
 
-    public void CardOriginWoodlandDoChoice(ICard Card)
+    public void CardOriginWoodlandReady(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginWoodland;
         GameEvent.UiChoiceCardOriginWoodland();
@@ -200,11 +147,11 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoOriginWoodlandStart(Card));
+        Card.DoMoveBack(() => Card.DoOriginWoodlandStart());
     }
 
 
-    public void CardOriginGhostDoChoice(ICard Card)
+    public void CardOriginGhostReady(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginGhost;
         GameEvent.UiChoiceCardOriginGhost();
@@ -215,23 +162,11 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoOriginGhostStart(Card, () => PlayerDoStaffNext(Card.Player, true)));
+        Card.DoMoveBack(() => Card.DoOriginGhostStart());
     }
 
 
-    public void PlayerDoStaffNext(IPlayer Player, bool CardActive)
-    {
-        Player.DoStaffNext(() =>
-        {
-            if (CardActive)
-                Player.DoStaffActive(() => Player.CardManaCheckEnd());
-            else
-                PlayerEnd(Player);
-        });
-    }
-
-
-    public void PlayerDoCardManaActiveDoChoice(IPlayer Player)
+    public void PlayerDoCardManaActiveReady(IPlayer Player)
     {
         m_playerChoice = ChoiceType.CardFullMana;
         GameEvent.UiChoiceCardFullMana();
@@ -242,11 +177,11 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.CardManaCheckEnd())));
+        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.ProgessCheck())));
     }
 
 
-    public void CardClassMagicAddictDoChoice(ICard Card)
+    public void CardClassMagicAddictReady(ICard Card)
     {
         m_playerChoice = ChoiceType.CardClassMagicAddict;
         GameEvent.UiChoiceCardClassMagicAddict();
@@ -257,33 +192,45 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassMagicAddictStart(Card, () => Card.Player.CardManaCheckEnd()));
+        Card.DoMoveBack(() => Card.DoClassMagicAddictStart());
     }
 
 
-    public void CardClassFlyingDoChoice(ICard Card)
+    public void CardClassFlyingReady(ICard Card)
     {
         m_playerChoice = ChoiceType.CardClassFlying;
         GameEvent.UiChoiceCardClassFlying();
-    } //Do Choice
+    } //Do Choices
 
     public void CardClassFlyingStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassFlyingStart(Card, () => Card.Player.CardManaCheckEnd()));
+        Card.DoMoveBack(() => Card.DoClassFlyingStart());
+    }
+
+
+    public void CardManaFillReady(ICard Card)
+    {
+        m_playerChoice = ChoiceType.CardManaFill;
+        GameEvent.UiChoiceCardManaFill();
+    } //Do Choice
+
+    public void CardManaFillStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        //Card.DoMoveBack(() => Card.DoCardManaFillStart());
     }
 
 
     public void PlayerEnd(IPlayer Player)
     {
-        Player.DoEnd(() =>
-        {
-            m_playerIndex++;
-            if (m_playerIndex > m_playerQueue.Count - 1)
-                m_playerIndex = 0;
-            PlayerCurrentStart();
-        });
+        m_playerIndex++;
+        if (m_playerIndex > m_playerQueue.Count - 1)
+            m_playerIndex = 0;
+        PlayerCurrentStart();
     }
 }
