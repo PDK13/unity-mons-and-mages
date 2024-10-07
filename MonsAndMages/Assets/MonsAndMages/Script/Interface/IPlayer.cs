@@ -33,6 +33,10 @@ public interface IPlayer
 
     RectTransform PointerLast { get; }
 
+    int ProgessMana { get; set; }
+
+    ICard ProgessCardChoice { get; set; }
+
 
     void Init(PlayerData Data);
 
@@ -48,23 +52,6 @@ public interface IPlayer
     void DoBoardReRange(params ICard[] CardIgnore);
 
 
-    void DoOriginDragon(ICard Card, Action OnComplete); //Origin Dragon Event
-
-    void DoOriginWoodlandReady(ICard Card); //Origin Woodland Event
-
-    void DoOriginWoodlandStart(ICard CardChoice);
-
-    void DoOriginGhostReady(ICard Card); //Origin Ghost Event
-
-    void DoOriginGhostStart(ICard CardChoice);
-
-    void DoOriginInsect(ICard Card, Action OnComplete); //Origin Insect Event
-
-    void DoOriginSiren(ICard Card, Action OnComplete); //Origin Siren Event
-
-    void DoOriginNeutral(ICard Card, Action OnComplete); //Origin Neutral Event
-
-
     void DoStaffNext(bool Active); //Move staff Next
 
     void DoStaffNext(Action OnComplete); //Move staff Next
@@ -74,31 +61,14 @@ public interface IPlayer
     void DoStaffRumble(Action OnComplete);
 
 
-    void DoClassFighter(ICard Card, Action OnComplete); //Class Fighter Event
-
-    void DoClassMagicAddictReady(ICard Card, Action OnComplete); //Class Magic Addict Event
-
-    void DoClassMagicAddictStart(ICard CardChoice);
-
-    void DoClassSinger(ICard Card, Action OnComplete); //Class Singer Event
-
-    void DoClassCareTaker(ICard Card, Action OnComplete); //Class Care Taker Event
-
-    void DoClassDiffuser(ICard Card, Action OnComplete); //Class Diffuser Event
-
-    void DoClassFlyingReady(ICard Card); //Class Flying Event
-
-    void DoClassFlyingStart(ICard CardChoice);
+    void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete);
 
 
-    void DoCardManaFillReady(ICard Card, int Mana);
+    void ProgessCard(ICard Card);
 
-    void DoCardManaFillReady(ICard Card, CardOriginType Origin, int Mana);
+    void ProgessCardDone(ICard Card);
 
-    void DoCardManaFillStart(ICard CardChoice); //Fill Mana for another progess
-
-
-    void CardManaCheckEnd();
+    void ProgessCheck();
 
 
     void DoEnd(Action OnComplete);

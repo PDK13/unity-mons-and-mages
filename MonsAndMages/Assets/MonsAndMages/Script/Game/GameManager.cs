@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoOriginWoodlandStart(Card));
+        Card.DoMoveBack(() => Card.DoOriginWoodlandStart());
     }
 
 
@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoOriginGhostStart(Card));
+        Card.DoMoveBack(() => Card.DoOriginGhostStart());
     }
 
 
@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.CardManaCheckEnd())));
+        GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.ProgessCheck())));
     }
 
 
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassMagicAddictStart(Card));
+        Card.DoMoveBack(() => Card.DoClassMagicAddictStart());
     }
 
 
@@ -200,14 +200,14 @@ public class GameManager : MonoBehaviour
     {
         m_playerChoice = ChoiceType.CardClassFlying;
         GameEvent.UiChoiceCardClassFlying();
-    } //Do Choice
+    } //Do Choices
 
     public void CardClassFlyingStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoClassFlyingStart(Card));
+        Card.DoMoveBack(() => Card.DoClassFlyingStart());
     }
 
 
@@ -222,7 +222,7 @@ public class GameManager : MonoBehaviour
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        Card.DoMoveBack(() => Card.Player.DoCardManaFillStart(Card));
+        //Card.DoMoveBack(() => Card.DoCardManaFillStart());
     }
 
 

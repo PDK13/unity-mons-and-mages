@@ -238,7 +238,7 @@ public class PlayerView : MonoBehaviour
                 GameManager.instance.CardClassFlyingStart(m_cardView);
                 break;
             case ChoiceType.CardManaFill:
-                GameManager.instance.CardManaFillStart(m_cardView);
+                //GameManager.instance.CardManaFillStart(m_cardView);
                 break;
         }
     }

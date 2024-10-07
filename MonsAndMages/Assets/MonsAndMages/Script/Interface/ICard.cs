@@ -95,6 +95,22 @@ public interface ICard
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
+    void DoOriginDragon(Action OnComplete); //Origin Dragon Event
+
+    void DoOriginWoodlandReady(); //Origin Woodland Event
+
+    void DoOriginWoodlandStart();
+
+    void DoOriginGhostReady(); //Origin Ghost Event
+
+    void DoOriginGhostStart();
+
+    void DoOriginInsect(Action OnComplete); //Origin Insect Event
+
+    void DoOriginSiren(Action OnComplete); //Origin Siren Event
+
+    void DoOriginNeutral(Action OnComplete); //Origin Neutral Event
+
 
     void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
@@ -114,6 +130,22 @@ public interface ICard
 
 
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
+
+    void DoClassFighter(Action OnComplete); //Class Fighter Event
+
+    void DoClassMagicAddictReady(Action OnComplete); //Class Magic Addict Event
+
+    void DoClassMagicAddictStart();
+
+    void DoClassSinger(Action OnComplete); //Class Singer Event
+
+    void DoClassCareTaker(Action OnComplete); //Class Care Taker Event
+
+    void DoClassDiffuser(Action OnComplete); //Class Diffuser Event
+
+    void DoClassFlyingReady(); //Class Flying Event
+
+    void DoClassFlyingStart();
 
     void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
 }
