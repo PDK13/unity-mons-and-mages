@@ -73,7 +73,7 @@ public enum ChoiceType
     CardOriginGhost,
     CardClassMagicAddict,
     CardClassFlying,
-    CardManaFill,
+    CardSpell,
 }
 
 public enum ProgessCollectType

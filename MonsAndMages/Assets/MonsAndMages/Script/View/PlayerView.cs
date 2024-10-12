@@ -35,7 +35,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_hintOriginGhost;
     [SerializeField] private GameObject m_hintClassMagicAddict;
     [SerializeField] private GameObject m_hintClassFlying;
-    [SerializeField] private GameObject m_hintManaFill;
+    [SerializeField] private GameObject m_hintSpell;
 
     [Space]
     [SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
@@ -78,7 +78,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardOriginGhost += OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict += OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying += OnUiChoiceCardClassFlying;
-        GameEvent.onUiChoiceCardManaFill += OnUiChoiceCardManaFill;
+        GameEvent.onUiChoiceCardSpell += OnUiChoiceCardSpell;
         //Ui-Info
         GameEvent.onUiInfoHide += OnUiInfoHide;
         GameEvent.onUiInfoCollect += OnUiInfoCollect;
@@ -88,7 +88,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost += OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict += OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying += OnUiInfoClassFlying;
-        GameEvent.onUiInfoManaFill += OnUiInfoManaFill;
+        GameEvent.onUiInfoSpell += OnUiInfoSpell;
         //Player
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
@@ -122,7 +122,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardOriginGhost -= OnUiChoiceCardOriginGhost;
         GameEvent.onUiChoiceCardClassMagicAddict -= OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying -= OnUiChoiceCardClassFlying;
-        GameEvent.onUiChoiceCardManaFill -= OnUiChoiceCardManaFill;
+        GameEvent.onUiChoiceCardSpell -= OnUiChoiceCardSpell;
         //Ui-Info
         GameEvent.onUiInfoHide -= OnUiInfoHide;
         GameEvent.onUiInfoCollect -= OnUiInfoCollect;
@@ -132,7 +132,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost -= OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict -= OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying -= OnUiInfoClassFlying;
-        GameEvent.onUiInfoManaFill -= OnUiInfoManaFill;
+        GameEvent.onUiInfoSpell -= OnUiInfoSpell;
         //Player
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
@@ -237,8 +237,8 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardClassFlying:
                 GameManager.instance.CardClassFlyingStart(m_cardView);
                 break;
-            case ChoiceType.CardManaFill:
-                //GameManager.instance.CardManaFillStart(m_cardView);
+            case ChoiceType.CardSpell:
+                GameManager.instance.CardSpellStart(m_cardView);
                 break;
         }
     }
@@ -263,7 +263,7 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardOriginGhost:
             case ChoiceType.CardClassMagicAddict:
             case ChoiceType.CardClassFlying:
-            case ChoiceType.CardManaFill:
+            case ChoiceType.CardSpell:
                 GameEvent.UiInfoHide(true, true);
                 break;
         }
@@ -361,7 +361,7 @@ public class PlayerView : MonoBehaviour
         m_hintOriginGhost.SetActive(false);
         m_hintClassMagicAddict.SetActive(false);
         m_hintClassFlying.SetActive(false);
-        m_hintManaFill.SetActive(false);
+        m_hintSpell.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(Type == ViewType.Wild);
     }
 
@@ -390,8 +390,8 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardClassFlying:
                 OnUiChoiceCardClassFlying();
                 break;
-            case ChoiceType.CardManaFill:
-                OnUiChoiceCardManaFill();
+            case ChoiceType.CardSpell:
+                OnUiChoiceCardSpell();
                 break;
         }
     }
@@ -505,7 +505,7 @@ public class PlayerView : MonoBehaviour
         }
     }
 
-    private void OnUiChoiceCardManaFill()
+    private void OnUiChoiceCardSpell()
     {
         OnUiChoiceHide();
 
@@ -513,7 +513,7 @@ public class PlayerView : MonoBehaviour
         switch (Type)
         {
             case ViewType.Field:
-                m_hintManaFill.SetActive(true);
+                m_hintSpell.SetActive(true);
                 break;
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
@@ -664,7 +664,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(true);
     } //Info Class Magic Addict
 
-    private void OnUiInfoManaFill(ICard Card)
+    private void OnUiInfoSpell(ICard Card)
     {
         OnUiInfoHide(false, false);
         UiMaskInfo(true);

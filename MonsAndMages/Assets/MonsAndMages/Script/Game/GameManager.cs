@@ -211,18 +211,18 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardManaFillReady(ICard Card)
+    public void CardSpellReady(ICard Card)
     {
-        m_playerChoice = ChoiceType.CardManaFill;
-        GameEvent.UiChoiceCardManaFill();
-    } //Do Choice
+        m_playerChoice = ChoiceType.CardSpell;
+        GameEvent.UiChoiceCardSpell();
+    } //Do Choices
 
-    public void CardManaFillStart(ICard Card)
+    public void CardSpellStart(ICard Card)
     {
         m_playerChoice = ChoiceType.None;
         GameEvent.UiChoiceHide();
         GameEvent.UiInfoHide(true, false);
-        //Card.DoMoveBack(() => Card.DoCardManaFillStart());
+        Card.DoMoveBack(() => Card.DoSpellStart());
     }
 
 

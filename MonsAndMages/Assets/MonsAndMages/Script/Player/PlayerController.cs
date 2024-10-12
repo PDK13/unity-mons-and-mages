@@ -481,6 +481,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         if (m_progessCard.Exists(t => t.Equals(Card)))
             return;
+        Card.DoEffectOutlineProgess(null);
         m_progessCard.Add(Card);
     }
 

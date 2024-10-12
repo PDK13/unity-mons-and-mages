@@ -39,6 +39,12 @@ public interface ICard
 
     int Index { get; }
 
+    int ClassFighterDiceDot { get; set; }
+
+    int ClassFlyingMoveDir { get; set; }
+
+    bool ClassFlyingManaFull { get; set; }
+
 
     void Init(CardData Data); //Khởi tạo bài
 
@@ -78,6 +84,8 @@ public interface ICard
     void DoEffectOutlineMana(Action OnComplete);
 
     void DoEffectOutlineChoice(Action OnComplete);
+
+    void DoEffectOutlineProgess(Action OnComplete);
 
 
     void DoEffectOrigin(Action OnComplete);
@@ -121,7 +129,7 @@ public interface ICard
 
     void DoAttackActive(Action OnComplete); //Tấn công thường khi đặt trượng phép
 
-    void DoManaFill(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
+    void DoManaChange(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
 
 
     void DoManaActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
@@ -148,4 +156,6 @@ public interface ICard
     void DoClassFlyingStart();
 
     void DoSpellActive(Action OnComplete); //Kích hoạt kĩ năng phép khi đủ năng lượng
+
+    void DoSpellStart();
 }

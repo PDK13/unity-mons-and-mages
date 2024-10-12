@@ -9,13 +9,6 @@ using UnityEngine.UI;
 
 public class CardController : MonoBehaviour, ICard
 {
-    public Action<Action> onEnterActive;
-    public Action<Action> onPassiveActive;
-
-    public Action<Action> onSpellActive;
-
-    //
-
     private RectTransform m_recTransform;
     private Button m_button;
     private GameObject m_mask;
@@ -122,10 +115,10 @@ public class CardController : MonoBehaviour, ICard
                     return;
                 GameEvent.UiInfoClassFlying(this);
                 break;
-            case ChoiceType.CardManaFill:
+            case ChoiceType.CardSpell:
                 if (m_player != GameManager.instance.PlayerCurrent || !m_choice)
                     return;
-                GameEvent.UiInfoManaFill(this);
+                GameEvent.UiInfoSpell(this);
                 break;
         }
     }
@@ -176,7 +169,11 @@ public class CardController : MonoBehaviour, ICard
 
     public int Index => Centre.GetSiblingIndex();
 
-    public ProgessCollectType ProgessCollect => m_progessCollectCurrent;
+    public int ClassFighterDiceDot { get; set; }
+
+    public int ClassFlyingMoveDir { get; set; }
+
+    public bool ClassFlyingManaFull { get; set; }
 
 
     public void Init(CardData Data)
@@ -506,6 +503,18 @@ public class CardController : MonoBehaviour, ICard
         }));
     }
 
+    public void DoEffectOutlineProgess(Action OnComplete)
+    {
+        m_effect = true;
+        var OutlineDuration = GameManager.instance.TweenConfig.CardAction.OutlineDuration;
+        m_outline.DOScale(Vector2.one * 5f, OutlineDuration);
+        m_outline.DOColor(Color.red, OutlineDuration).OnComplete((() =>
+        {
+            m_effect = false;
+            OnComplete?.Invoke();
+        }));
+    }
+
 
     public void DoEffectOrigin(Action OnComplete)
     {
@@ -736,7 +745,7 @@ public class CardController : MonoBehaviour, ICard
             }
         }
 
-        DoEffectAlpha(() => DoManaFill(1, () =>
+        DoEffectAlpha(() => DoManaChange(1, () =>
         {
             if (m_player.ProgessMana > 0)
             {
@@ -812,18 +821,12 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoEnterActive(Action OnComplete)
     {
-        if (onEnterActive == null)
-            OnComplete?.Invoke();
-        else
-            DoEffectAlpha(() => onEnterActive.Invoke(OnComplete));
+        OnComplete?.Invoke();
     } //Enter Event
 
     public void DoPassiveActive(Action OnComplete)
     {
-        if (onPassiveActive == null)
-            OnComplete?.Invoke();
-        else
-            DoEffectAlpha(() => onPassiveActive.Invoke(OnComplete));
+        OnComplete?.Invoke();
     } //Passive Event
 
 
@@ -834,7 +837,16 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
             return;
         }
-        DoEffectAlpha(() => DoAttackActive(() => DoManaFill(1, OnComplete)));
+        switch (Type)
+        {
+            case CardType.Mons:
+                DoEffectAlpha(() => DoAttackActive(() => DoManaChange(1, OnComplete)));
+                break;
+            case CardType.Landmark:
+                OnComplete?.Invoke();
+                //DoSpellActive(OnComplete); //Serenity Effect
+                break;
+        }
     }
 
     public void DoAttackActive(Action OnComplete)
@@ -857,7 +869,7 @@ public class CardController : MonoBehaviour, ICard
         });
     }
 
-    public void DoManaFill(int Value, Action OnComplete)
+    public void DoManaChange(int Value, Action OnComplete)
     {
         if (Type != CardType.Mons)
         {
@@ -873,7 +885,7 @@ public class CardController : MonoBehaviour, ICard
             InfoManaUpdate(m_manaCurrent, m_manaPoint, OnComplete);
     }
 
-    public void DoGrowthAdd(int Value, Action OnComplete)
+    public void DoGrowthChange(int Value, Action OnComplete)
     {
         if (Type != CardType.Mons)
         {
@@ -973,6 +985,8 @@ public class CardController : MonoBehaviour, ICard
         AttackCombineLeft--;
         DiceDotSumRolled += DiceFace.Dot;
 
+        ClassFighterDiceDot = DiceFace.Dot;
+
         GameEvent.ClassFighter(() =>
         {
             if (AttackCombineLeft > 0)
@@ -1005,12 +1019,12 @@ public class CardController : MonoBehaviour, ICard
     public void DoClassMagicAddictReady(Action OnComplete)
     {
         bool CardGotMana = false;
-        for (int i = 0; i < m_player.CardQueue.Length; i++)
+        foreach (var CardCheck in m_player.CardQueue)
         {
-            if (m_player.CardQueue[i].Equals(this) || m_player.CardQueue[i].ManaCurrent == 0)
+            if (CardCheck.Equals(this) || CardCheck.ManaCurrent == 0)
                 continue;
             CardGotMana = true;
-            m_player.CardQueue[i].DoChoiceReady();
+            CardCheck.DoChoiceReady();
         }
         if (CardGotMana)
         {
@@ -1029,7 +1043,7 @@ public class CardController : MonoBehaviour, ICard
         foreach (var Card in m_player.CardQueue)
             Card.DoChoiceUnReady();
 
-        DoEffectAlpha(() => DoManaFill(-1, () =>
+        DoEffectAlpha(() => DoManaChange(-1, () =>
         {
             m_player.ProgessCardChoice.DoSpellActive(() =>
             {
@@ -1074,9 +1088,9 @@ public class CardController : MonoBehaviour, ICard
         {
             DoEffectOutlineMana(() => DoEffectOutlineNormal(OnComplete));
             if (CardL != null)
-                CardL.DoManaFill(1, null);
+                CardL.DoManaChange(1, null);
             if (CardR != null)
-                CardR.DoManaFill(1, null);
+                CardR.DoManaChange(1, null);
         });
     } //Class Diffuser Event
 
@@ -1086,7 +1100,7 @@ public class CardController : MonoBehaviour, ICard
 
         for (int i = 0; i < m_player.CardQueue.Length; i++)
         {
-            if (Mathf.Abs(CardIndex - i) <= 1)
+            if (m_player.CardQueue[i].Equals(this) || Mathf.Abs(CardIndex - i) <= 1)
                 continue;
             m_player.CardQueue[i].DoChoiceReady();
         }
@@ -1105,11 +1119,14 @@ public class CardController : MonoBehaviour, ICard
         {
             var CardFromIndex = m_player.CardQueue.ToList().IndexOf(m_player.ProgessCardChoice);
             var CardToIndex = m_player.CardQueue.ToList().IndexOf(this);
-            var MoveDirection = CardFromIndex < CardToIndex ? 1 : -1;
-            m_player.DoClassFlyingProgess(CardFromIndex, CardToIndex + (MoveDirection * -1), () =>
+            var CardMoveDir = CardFromIndex < CardToIndex ? 1 : -1;
+            m_player.ProgessCardChoice.ClassFlyingMoveDir = CardMoveDir;
+            m_player.DoClassFlyingProgess(CardFromIndex, CardToIndex + (CardMoveDir * -1), () =>
              {
-                 m_player.ProgessCardChoice.DoRumble(() => DoManaFill(1, () =>
+                 m_player.ProgessCardChoice.DoRumble(() => DoManaChange(1, () =>
                  {
+                     if (this.ManaFull)
+                         this.ClassFlyingManaFull = true;
                      m_player.ProgessCardChoice = null;
                      m_player.ProgessCheck();
                  }));
@@ -1117,11 +1134,149 @@ public class CardController : MonoBehaviour, ICard
         });
     }
 
+
     public void DoSpellActive(Action OnComplete)
     {
-        if (onSpellActive == null)
-            OnComplete?.Invoke();
-        else
-            DoEffectAlpha(() => onSpellActive.Invoke(OnComplete));
+        DoEffectAlpha(() =>
+        {
+            switch (Name)
+            {
+                case CardNameType.Cornibus:
+                    DoSpellCornibus();
+                    break;
+                case CardNameType.Duchess:
+                    DoAttackActive(OnComplete);
+                    break;
+                case CardNameType.DragonEgg:
+                    Player.HealthChange(3, OnComplete);
+                    break;
+                case CardNameType.Eversor:
+                    Player.HealthChange(ClassFighterDiceDot / 4, () =>
+                    {
+                        ClassFighterDiceDot = 0;
+                        OnComplete?.Invoke();
+                    });
+                    break;
+                case CardNameType.FlowOfTheEssential:
+                    DoSpellFlowOfTheEssential(OnComplete);
+                    break;
+                case CardNameType.Forestwing:
+                    DoSpellForestwing(OnComplete);
+                    break;
+                case CardNameType.OneTail:
+                    DoGrowthChange(1, () => DoAttackActive(OnComplete));
+                    break;
+                case CardNameType.Pott:
+                    DoSpellPott();
+                    break;
+                case CardNameType.Umbella:
+                    DoSpellUmbella(OnComplete);
+                    break;
+            }
+        });
     } //Spell Event
+
+    private void DoSpellCornibus()
+    {
+        foreach (var CardCheck in m_player.CardQueue)
+        {
+            if (CardCheck.Equals(this) || (CardCheck.Origin != CardOriginType.Woodland && CardCheck.Class != CardClassType.Singer) || CardCheck.Type != CardType.Mons)
+                continue;
+            CardCheck.DoChoiceReady();
+        }
+        m_player.ProgessCardChoice = this;
+        m_player.ProgessCard(this);
+        GameManager.instance.CardSpellReady(this);
+    }
+
+    private void DoSpellFlowOfTheEssential(Action OnComplete)
+    {
+        var CardCurrentIndex = m_player.CardQueue.ToList().IndexOf(this);
+        var CardL = CardCurrentIndex - 1 >= 0 ? m_player.CardQueue[CardCurrentIndex - 1] : null;
+        var CardR = CardCurrentIndex + 1 <= m_player.CardQueue.Length - 1 ? m_player.CardQueue[CardCurrentIndex + 1] : null;
+        var ManaFullCount = 0;
+        if (CardL != null ? CardL.ManaFull : false)
+            ManaFullCount++;
+        if (CardR != null ? CardR.ManaFull : false)
+            ManaFullCount++;
+        DoGrowthChange(ManaFullCount, OnComplete);
+    }
+
+    private void DoSpellForestwing(Action OnComplete)
+    {
+        var CardCurrentIndex = m_player.CardQueue.ToList().IndexOf(this);
+        var CardCheckIndex = CardCurrentIndex + this.ClassFlyingMoveDir;
+        if (CardCheckIndex >= 0 && CardCheckIndex <= m_player.CardQueue.Length - 1)
+        {
+            var Card = m_player.CardQueue[CardCheckIndex];
+            if (Card.ClassFlyingManaFull)
+                Card.DoAttackActive(() =>
+                {
+                    this.ClassFlyingMoveDir = 0;
+                    Card.ClassFlyingManaFull = false;
+                    OnComplete?.Invoke();
+                });
+            else
+            {
+                this.ClassFlyingMoveDir = 0;
+                Card.ClassFlyingManaFull = false;
+                OnComplete?.Invoke();
+            }
+        }
+        else
+        {
+            this.ClassFlyingMoveDir = 0;
+            OnComplete?.Invoke();
+        }
+    }
+
+    private void DoSpellPott()
+    {
+        foreach (var CardCheck in m_player.CardQueue)
+        {
+            if (CardCheck.Type != CardType.Mons)
+                continue;
+            CardCheck.DoChoiceReady();
+        }
+        m_player.ProgessCardChoice = this;
+        m_player.ProgessCard(this);
+        GameManager.instance.CardSpellReady(this);
+    }
+
+    private void DoSpellUmbella(Action OnComplete)
+    {
+        var CardCurrentIndex = m_player.CardQueue.ToList().IndexOf(this);
+        var CardL = CardCurrentIndex - 1 >= 0 ? m_player.CardQueue[CardCurrentIndex - 1] : null;
+        var CardR = CardCurrentIndex + 1 <= m_player.CardQueue.Length - 1 ? m_player.CardQueue[CardCurrentIndex + 1] : null;
+        var ManaFullCount = 0;
+        if (CardL != null ? CardL.ManaFull : false)
+            ManaFullCount++;
+        if (CardR != null ? CardR.ManaFull : false)
+            ManaFullCount++;
+        Player.HealthChange(2 * ManaFullCount, OnComplete);
+    }
+
+    public void DoSpellStart()
+    {
+        foreach (var Card in m_player.CardQueue)
+            Card.DoChoiceUnReady();
+
+        switch (m_player.ProgessCardChoice.Name)
+        {
+            case CardNameType.Cornibus:
+                DoManaChange(1, () =>
+                {
+                    m_player.ProgessCardChoice = null;
+                    m_player.ProgessCheck();
+                });
+                break;
+            case CardNameType.Pott:
+                DoManaChange(1, () =>
+                {
+                    m_player.ProgessCardChoice = null;
+                    m_player.ProgessCheck();
+                });
+                break;
+        }
+    }
 }

@@ -53,7 +53,7 @@ public class GameEvent
     public static Action onUiChoiceCardOriginGhost { get; set; }
     public static Action onUiChoiceCardClassMagicAddict { get; set; }
     public static Action onUiChoiceCardClassFlying { get; set; }
-    public static Action onUiChoiceCardManaFill { get; set; }
+    public static Action onUiChoiceCardSpell { get; set; }
 
     public static void UiChoiceHide()
     {
@@ -95,9 +95,9 @@ public class GameEvent
         onUiChoiceCardClassFlying?.Invoke();
     }
 
-    public static void UiChoiceCardManaFill()
+    public static void UiChoiceCardSpell()
     {
-        onUiChoiceCardManaFill?.Invoke();
+        onUiChoiceCardSpell?.Invoke();
     }
 
     //Ui-Info
@@ -110,7 +110,7 @@ public class GameEvent
     public static Action<ICard> onUiInfoOriginGhost { get; set; }
     public static Action<ICard> onUiInfoClassMagicAddict { get; set; }
     public static Action<ICard> onUiInfoClassFlying { get; set; }
-    public static Action<ICard> onUiInfoManaFill { get; set; }
+    public static Action<ICard> onUiInfoSpell { get; set; }
 
     public static void UiInfoHide(bool MaskTween, bool CardBack)
     {
@@ -152,9 +152,9 @@ public class GameEvent
         onUiInfoClassFlying?.Invoke(Card);
     }
 
-    public static void UiInfoManaFill(ICard Card)
+    public static void UiInfoSpell(ICard Card)
     {
-        onUiInfoManaFill?.Invoke(Card);
+        onUiInfoSpell?.Invoke(Card);
     }
 
     //Button

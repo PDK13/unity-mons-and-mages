@@ -4326,7 +4326,7 @@ GameObject:
   - component: {fileID: 710353059}
   - component: {fileID: 710353058}
   m_Layer: 5
-  m_Name: hint-mana-fill
+  m_Name: hint-spell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4352,7 +4352,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tap a card to give it 1 <sprite name="mana cube">
+  m_text: Tap a card to active spell on that target
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7604,7 +7604,7 @@ MonoBehaviour:
   m_hintOriginGhost: {fileID: 1203182127}
   m_hintClassMagicAddict: {fileID: 1636790455}
   m_hintClassFlying: {fileID: 958949303}
-  m_hintManaFill: {fileID: 710353057}
+  m_hintSpell: {fileID: 710353057}
   m_tmpExplainOrigin: {fileID: 602094264}
   m_tmpExplainClass: {fileID: 126714541}
   m_runeStoneBox: {fileID: 559339041}
