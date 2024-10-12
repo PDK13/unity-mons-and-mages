@@ -74,6 +74,7 @@ public enum ChoiceType
     CardClassMagicAddict,
     CardClassFlying,
     CardSpell,
+    CardEnter,
 }
 
 public enum ProgessCollectType
@@ -82,7 +83,6 @@ public enum ProgessCollectType
     Start,
     Origin,
     Enter,
-    Passive,
     End,
 }
 

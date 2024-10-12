@@ -226,6 +226,21 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void CardEnterReady(ICard Card)
+    {
+        m_playerChoice = ChoiceType.CardEnter;
+        GameEvent.UiChoiceCardEnter();
+    } //Do Choices
+
+    public void CardEnterStart(ICard Card)
+    {
+        m_playerChoice = ChoiceType.None;
+        GameEvent.UiChoiceHide();
+        GameEvent.UiInfoHide(true, false);
+        Card.DoMoveBack(() => Card.DoEnterStart());
+    }
+
+
     public void PlayerEnd(IPlayer Player)
     {
         m_playerIndex++;

@@ -79,6 +79,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardClassMagicAddict += OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying += OnUiChoiceCardClassFlying;
         GameEvent.onUiChoiceCardSpell += OnUiChoiceCardSpell;
+        GameEvent.onUiChoiceCardEnter += OnUiChoiceCardEnter;
         //Ui-Info
         GameEvent.onUiInfoHide += OnUiInfoHide;
         GameEvent.onUiInfoCollect += OnUiInfoCollect;
@@ -88,7 +89,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost += OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict += OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying += OnUiInfoClassFlying;
-        GameEvent.onUiInfoSpell += OnUiInfoSpell;
+        GameEvent.onUiInfoCardSpell += OnUiInfoCardSpell;
+        GameEvent.onUiInfoCardEnter += OnUiInfoCardEnter;
         //Player
         GameEvent.onPlayerStart += OnPlayerStart;
         GameEvent.onPlayerStunnedCheck += OnPlayerStunnedCheck;
@@ -123,6 +125,7 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiChoiceCardClassMagicAddict -= OnUiChoiceCardClassMagicAddict;
         GameEvent.onUiChoiceCardClassFlying -= OnUiChoiceCardClassFlying;
         GameEvent.onUiChoiceCardSpell -= OnUiChoiceCardSpell;
+        GameEvent.onUiChoiceCardEnter -= OnUiChoiceCardEnter;
         //Ui-Info
         GameEvent.onUiInfoHide -= OnUiInfoHide;
         GameEvent.onUiInfoCollect -= OnUiInfoCollect;
@@ -132,7 +135,8 @@ public class PlayerView : MonoBehaviour
         GameEvent.onUiInfoOriginGhost -= OnUiInfoOriginGhost;
         GameEvent.onUiInfoClassMagicAddict -= OnUiInfoClassMagicAddict;
         GameEvent.onUiInfoClassFlying -= OnUiInfoClassFlying;
-        GameEvent.onUiInfoSpell -= OnUiInfoSpell;
+        GameEvent.onUiInfoCardSpell -= OnUiInfoCardSpell;
+        GameEvent.onUiInfoCardEnter -= OnUiInfoCardEnter;
         //Player
         GameEvent.onPlayerStart -= OnPlayerStart;
         GameEvent.onPlayerStunnedCheck -= OnPlayerStunnedCheck;
@@ -240,6 +244,9 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardSpell:
                 GameManager.instance.CardSpellStart(m_cardView);
                 break;
+            case ChoiceType.CardEnter:
+                GameManager.instance.CardEnterStart(m_cardView);
+                break;
         }
     }
 
@@ -264,6 +271,7 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardClassMagicAddict:
             case ChoiceType.CardClassFlying:
             case ChoiceType.CardSpell:
+            case ChoiceType.CardEnter:
                 GameEvent.UiInfoHide(true, true);
                 break;
         }
@@ -393,6 +401,9 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.CardSpell:
                 OnUiChoiceCardSpell();
                 break;
+            case ChoiceType.CardEnter:
+                OnUiChoiceCardEnter();
+                break;
         }
     }
 
@@ -506,6 +517,23 @@ public class PlayerView : MonoBehaviour
     }
 
     private void OnUiChoiceCardSpell()
+    {
+        OnUiChoiceHide();
+
+        var Type = GameView.instance.ViewType;
+        switch (Type)
+        {
+            case ViewType.Field:
+                m_hintSpell.SetActive(true);
+                break;
+            case ViewType.Wild:
+                m_btnBack.SetActive(true);
+                m_runeStoneBox.gameObject.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnUiChoiceCardEnter()
     {
         OnUiChoiceHide();
 
@@ -664,7 +692,19 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(true);
     } //Info Class Magic Addict
 
-    private void OnUiInfoSpell(ICard Card)
+    private void OnUiInfoCardSpell(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.DoMoveTop(null);
+
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(true);
+        m_btnInfoCancel.SetActive(true);
+    } //Info Card Spell
+
+    private void OnUiInfoCardEnter(ICard Card)
     {
         OnUiInfoHide(false, false);
         UiMaskInfo(true);

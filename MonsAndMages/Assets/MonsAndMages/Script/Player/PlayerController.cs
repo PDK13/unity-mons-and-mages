@@ -408,7 +408,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public void DoStaffActive(Action OnComplete)
     {
-        CardStaffCurrent.DostaffActive(OnComplete);
+        CardStaffCurrent.DoStaffActive(OnComplete);
     }
 
     public void DoStaffRumble(Action OnComplete)
@@ -501,8 +501,9 @@ public class PlayerController : MonoBehaviour, IPlayer
         {
             var Progess = m_progessCard[m_progessCard.Count - 1];
             m_progessCard.RemoveAt(m_progessCard.Count - 1);
-            Progess.DoCollectProgess();
-            Progess.DoManaProgess();
+            if (!Progess.DoCollectProgess())
+                if (!Progess.DoManaProgess())
+                    ProgessCheck();
         }
         else
         if (!m_progessStaff)
