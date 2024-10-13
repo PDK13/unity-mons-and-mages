@@ -55,10 +55,25 @@ public class GameManager : MonoBehaviour
         GameManager.instance = this;
     }
 
-    private IEnumerator Start()
+    private void Start()
     {
-        m_playerIndex = m_startIndex;
+        GameStart();
+    }
 
+    //
+
+    public void GameStart()
+    {
+        m_battle = false;
+        m_playerQueue = new List<IPlayer>();
+        m_playerIndex = m_startIndex;
+        m_playerChoice = ChoiceType.None;
+
+        StartCoroutine(IGameStart());
+    }
+
+    private IEnumerator IGameStart()
+    {
         GameEvent.Init();
 
         PlayerData[] PlayerJoin = new PlayerData[2]
@@ -79,6 +94,8 @@ public class GameManager : MonoBehaviour
             });
         });
     }
+
+    public void GameEnd() { }
 
     //
 
