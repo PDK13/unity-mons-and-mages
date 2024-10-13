@@ -32,7 +32,7 @@ public class CardMediate : MonoBehaviour
     public void Start()
     {
         m_mask.SetActive(true);
-        m_renderer.SetActive(false);
+        m_renderer.SetActive(true);
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
 
         m_button.onClick.AddListener(BtnTap);
