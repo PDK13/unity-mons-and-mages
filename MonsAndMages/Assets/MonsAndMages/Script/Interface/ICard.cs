@@ -53,19 +53,19 @@ public interface ICard
     void DoFixed();
 
 
-    void DoChoiceReady();
+    void DoChoiceReady(); //Lựa chọn sẵn sàng
 
     void DoChoiceUnReady();
 
     void DoChoiceOnce(bool Stage);
 
 
-    void DoFlipOpen(Action OnComplete);
+    void DoFlipOpen(Action OnComplete); //Lật thẻ bài
 
     void DoFlipClose(Action OnComplete);
 
 
-    void DoMoveTop(Action OnComplete);
+    void DoMoveTop(Action OnComplete); //Di chuyển thẻ bài
 
     void DoMoveBack(Action OnComplete);
 
@@ -74,10 +74,10 @@ public interface ICard
     void DoMoveCentreJump(RectTransform Centre, Action OnComplete);
 
 
-    void DoRumble(Action OnComplete);
+    void DoRumble(Action OnComplete); //Giậm đất
 
 
-    void DoEffectAlpha(Action OnComplete);
+    void DoEffectAlpha(Action OnComplete); //Hiệu ứng
 
     void DoEffectOutlineNormal(Action OnComplete);
 
@@ -93,7 +93,7 @@ public interface ICard
     void DoEffectClass(Action OnComplete);
 
 
-    void InfoShow(bool Show);
+    void InfoShow(bool Show); //Thông tin hiển thị
 
 
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
@@ -105,11 +105,11 @@ public interface ICard
 
     void DoOriginDragon(Action OnComplete); //Origin Dragon Event
 
-    void DoOriginWoodlandReady(); //Origin Woodland Event
+    void DoOriginWoodlandReady(Action OnComplete); //Origin Woodland Event
 
     void DoOriginWoodlandStart();
 
-    void DoOriginGhostReady(); //Origin Ghost Event
+    void DoOriginGhostReady(Action OnComplete); //Origin Ghost Event
 
     void DoOriginGhostStart();
 
@@ -153,7 +153,7 @@ public interface ICard
 
     void DoClassDiffuser(Action OnComplete); //Class Diffuser Event
 
-    void DoClassFlyingReady(); //Class Flying Event
+    void DoClassFlyingReady(Action OnComplete); //Class Flying Event
 
     void DoClassFlyingStart();
 
