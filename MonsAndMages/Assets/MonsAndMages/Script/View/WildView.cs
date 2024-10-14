@@ -17,14 +17,14 @@ public class WildView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInit += OnInit;
-
+        GameEvent.onEnd += OnEnd;
         GameEvent.onWildFill += OnWildFill;
     }
 
     private void OnDisable()
     {
         GameEvent.onInit -= OnInit;
-
+        GameEvent.onEnd -= OnEnd;
         GameEvent.onWildFill -= OnWildFill;
     }
 
@@ -44,28 +44,7 @@ public class WildView : MonoBehaviour
             CardClone.SetActive(true);
             CardClone.name = "card-" + CardCheck.Name.ToString();
             CardClone.transform.localPosition = Vector3.zero;
-
             CardClone.AddComponent<CardController>(); //Card controller required for every event!
-
-            switch (CardCheck.Name)
-            {
-                case CardNameType.Cornibus:
-                case CardNameType.Duchess:
-                case CardNameType.DragonEgg:
-                case CardNameType.Eversor:
-                case CardNameType.FlowOfTheEssential:
-                case CardNameType.Forestwing:
-                case CardNameType.PixieSGrove:
-                case CardNameType.OneTail:
-                case CardNameType.Pott:
-                case CardNameType.Umbella:
-                    break;
-                default:
-                    Destroy(CardClone);
-                    Debug.LogError("Not found card to init in wild");
-                    continue;
-            }
-
             CardClone.GetComponent<ICard>().Init(CardCheck);
         }
         //Suffle
@@ -78,6 +57,19 @@ public class WildView : MonoBehaviour
         for (int i = 0; i < m_cardDeck.childCount; i++)
             m_cardDeck.GetChild(i).localPosition = Vector3.up * i * 2f;
     }
+
+    //
+
+    private void OnEnd()
+    {
+        for (int i = 0; i < m_cardDeck.childCount; i++)
+            Destroy(m_cardDeck.GetChild(i).gameObject);
+        for (int i = 0; i < m_cardContent.childCount; i++)
+            for (int j = 0; j < m_cardContent.GetChild(i).childCount; j++)
+                Destroy(m_cardContent.GetChild(i).GetChild(j).gameObject);
+    }
+
+    //
 
     private void OnWildFill(Action OnComplete)
     {

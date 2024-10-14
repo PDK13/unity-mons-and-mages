@@ -70,7 +70,7 @@ public class CardController : MonoBehaviour, ICard
         m_classIcon = transform.Find("class-icon").gameObject;
     }
 
-    public void Start()
+    private void Start()
     {
         m_button.onClick.AddListener(BtnTap);
     }

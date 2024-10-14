@@ -12,17 +12,21 @@ public class FieldView : MonoBehaviour
     private void OnEnable()
     {
         GameEvent.onInitPlayer += OnInitPlayer;
+        GameEvent.onEnd += OnEnd;
     }
 
     private void OnDisable()
     {
         GameEvent.onInitPlayer -= OnInitPlayer;
+        GameEvent.onEnd -= OnEnd;
     }
 
     private void Start()
     {
         m_playerSample.SetActive(false);
     }
+
+    //
 
     private void OnInitPlayer(PlayerData[] Player)
     {
@@ -33,5 +37,11 @@ public class FieldView : MonoBehaviour
             PlayerClone.transform.localPosition = Vector3.right * m_playerContent.sizeDelta.x * i;
             PlayerClone.GetComponent<PlayerController>().Init(Player[i]);
         }
+    }
+
+    private void OnEnd()
+    {
+        for (int i = 0; i < m_playerContent.childCount; i++)
+            Destroy(m_playerContent.GetChild(i).gameObject);
     }
 }

@@ -67,6 +67,8 @@ public class PlayerView : MonoBehaviour
         //Init
         GameEvent.onInit += OnInit;
         GameEvent.onInitPlayer += OnInitPlayer;
+        //End
+        GameEvent.onEnd += OnEnd;
         //View
         GameEvent.onViewPlayer += OnViewPlayer;
         //Ui-Choice
@@ -113,6 +115,8 @@ public class PlayerView : MonoBehaviour
         //Init
         GameEvent.onInit -= OnInit;
         GameEvent.onInitPlayer -= OnInitPlayer;
+        //End
+        GameEvent.onEnd -= OnEnd;
         //View
         GameEvent.onViewPlayer -= OnViewPlayer;
         //Ui-Choice
@@ -322,6 +326,37 @@ public class PlayerView : MonoBehaviour
             ViewButton.Health = Player[i].HealthCurrent;
             ViewButton.Stun = Player[i].StunCurrent;
         }
+    }
+
+    //GameEvent - End
+
+    private void OnEnd()
+    {
+        //Choice - Hide
+        m_btnMediate.SetActive(false);
+        m_btnCollect.SetActive(false);
+        m_btnBack.SetActive(false);
+        m_playerContent.gameObject.SetActive(false);
+        m_hintMediateAction.SetActive(false);
+        m_hintMediateUnEmty.SetActive(false);
+        m_hintCollectAction.SetActive(false);
+        m_hintPlayerContent.SetActive(false);
+        m_hintManaActive.SetActive(false);
+        m_hintOriginWoodland.SetActive(false);
+        m_hintOriginGhost.SetActive(false);
+        m_hintClassMagicAddict.SetActive(false);
+        m_hintClassFlying.SetActive(false);
+        m_hintSpell.SetActive(false);
+        m_runeStoneBox.gameObject.SetActive(false);
+        //Info - Hide
+        m_infoMask.DOKill();
+        m_infoMask.gameObject.SetActive(false);
+        m_btnInfoAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(false);
+        m_mediateOptionContent.gameObject.SetActive(false);
+        m_hintCollectAccept.SetActive(false);
+        m_tmpExplainOrigin.gameObject.SetActive(false);
+        m_tmpExplainClass.gameObject.SetActive(false);
     }
 
     //GameEvent - View

@@ -19,6 +19,15 @@ public class GameEvent
         onInitPlayer?.Invoke(Player);
     }
 
+    //End
+
+    public static Action onEnd { get; set; }
+
+    public static void End()
+    {
+        onEnd?.Invoke();
+    }
+
     //Wild
 
     public static Action<Action> onWildFill { get; set; }

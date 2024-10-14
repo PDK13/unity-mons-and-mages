@@ -60,6 +60,16 @@ public class GameManager : MonoBehaviour
         GameStart();
     }
 
+#if UNITY_EDITOR
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Backspace))
+            GameEvent.End();
+    }
+
+#endif
+
     //
 
     public void GameStart()
@@ -95,7 +105,17 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    public void GameEnd() { }
+    //
+
+    public void GameEnd()
+    {
+        m_battle = false;
+        m_playerQueue = new List<IPlayer>();
+        m_playerIndex = m_startIndex;
+        m_playerChoice = ChoiceType.None;
+
+        GameEvent.End();
+    }
 
     //
 
