@@ -55,17 +55,14 @@ public class GameManager : MonoBehaviour
         GameManager.instance = this;
     }
 
-    private void Start()
-    {
-        GameStart();
-    }
-
 #if UNITY_EDITOR
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Return))
+            GameStart();
         if (Input.GetKeyDown(KeyCode.Backspace))
-            GameEvent.End();
+            GameEnd();
     }
 
 #endif

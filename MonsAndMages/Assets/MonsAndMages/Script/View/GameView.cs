@@ -25,6 +25,8 @@ public class GameView : MonoBehaviour
     {
         GameEvent.onInitPlayer += OnInitPlayer;
 
+        GameEvent.onEnd += OnEnd;
+
         GameEvent.onViewArea += OnView;
         GameEvent.onViewPlayer += OnViewPlayer;
 
@@ -34,6 +36,8 @@ public class GameView : MonoBehaviour
     private void OnDisable()
     {
         GameEvent.onInitPlayer -= OnInitPlayer;
+
+        GameEvent.onEnd -= OnEnd;
 
         GameEvent.onViewArea += OnView;
         GameEvent.onViewPlayer -= OnViewPlayer;
@@ -51,6 +55,17 @@ public class GameView : MonoBehaviour
                 continue;
             m_playerContent.localPosition = Vector3.right * (Player[i].Index * -m_playerContent.sizeDelta.x);
         }
+    }
+
+
+    private void OnEnd()
+    {
+        m_viewType = ViewType.None;
+        m_viewChange = false;
+        this.transform.DOKill();
+        m_playerContent.DOKill();
+        m_gameContent.DOKill();
+        m_gameContent.localPosition = Vector3.zero;
     }
 
 
