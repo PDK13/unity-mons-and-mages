@@ -9,22 +9,24 @@ public class GameManager : MonoBehaviour
 
     //
 
-    private bool m_battle;
-
     [SerializeField] private CardConfig m_cardConfig;
     [SerializeField] private TweenConfig m_tweenConfig;
     [SerializeField] private ExplainConfig m_explainConfig;
     [SerializeField] private DiceConfig m_diceConfig;
-
-    [Space]
-    [SerializeField] private Transform m_playerContent;
+    [SerializeField] private TutorialConfig m_tutorialConfig;
 
     private List<IPlayer> m_playerQueue = new List<IPlayer>(); //Max 4 player, min 2 player in game
-
     private int m_playerIndex = 0;
     private ChoiceType m_playerChoice = ChoiceType.None;
 
-    public bool Battle => m_battle;
+    [Space]
+    [SerializeField][Min(0)] private int m_startIndex = 0;
+    [SerializeField][Min(0)] private int m_baseIndex = 0;
+
+    private TutorialConfig m_tutorialCurrent = null;
+    private int m_tutorialIndex = 0;
+
+    //
 
     public CardConfig CardConfig => m_cardConfig;
 
@@ -42,11 +44,9 @@ public class GameManager : MonoBehaviour
 
     public ChoiceType PlayerChoice => m_playerChoice;
 
-    //
+    public bool TutorialActive => m_tutorialCurrent != null;
 
-    [Space]
-    [SerializeField][Min(0)] private int m_startIndex = 0;
-    [SerializeField][Min(0)] private int m_baseIndex = 0;
+    public TutorialConfigData TutorialInfo => m_tutorialConfig.Data[m_tutorialIndex];
 
     //
 
@@ -71,7 +71,6 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
-        m_battle = false;
         m_playerQueue = new List<IPlayer>();
         m_playerIndex = m_startIndex;
         m_playerChoice = ChoiceType.None;
@@ -96,7 +95,6 @@ public class GameManager : MonoBehaviour
         {
             GameEvent.WildCardFill(() =>
             {
-                m_battle = true;
                 PlayerCurrentStart();
             });
         });
@@ -106,7 +104,6 @@ public class GameManager : MonoBehaviour
 
     public void GameEnd()
     {
-        m_battle = false;
         m_playerQueue = new List<IPlayer>();
         m_playerIndex = m_startIndex;
         m_playerChoice = ChoiceType.None;
@@ -281,5 +278,38 @@ public class GameManager : MonoBehaviour
         if (m_playerIndex > m_playerQueue.Count - 1)
             m_playerIndex = 0;
         PlayerCurrentStart();
+    }
+
+
+    public void TutorialStart()
+    {
+        if (m_tutorialCurrent != null)
+            return;
+        m_tutorialCurrent = m_tutorialConfig;
+        m_tutorialIndex = 0;
+    }
+
+    public void TutorialContinue()
+    {
+        if (m_tutorialCurrent == null)
+            return;
+        m_tutorialIndex++;
+        if (m_tutorialIndex > m_tutorialCurrent.Data.Count - 1)
+            m_tutorialCurrent = null;
+        else
+        {
+            switch (m_tutorialCurrent.Data[m_tutorialIndex].Step)
+            {
+                case TutorialStepType.Box:
+                    GameEvent.TutorialBox();
+                    break;
+                case TutorialStepType.Button:
+                    GameEvent.TutorialButton();
+                    break;
+                case TutorialStepType.Card:
+                    GameEvent.TutorialCard();
+                    break;
+            }
+        }
     }
 }

@@ -307,4 +307,25 @@ public class GameEvent
     {
         onClassFighter?.Invoke(OnComplete);
     }
+
+    //Tutorial
+
+    public static Action onTutorialBox { get; set; }
+    public static Action onTutorialButton { get; set; }
+    public static Action onTutorialCard { get; set; }
+
+    public static void TutorialBox()
+    {
+        onTutorialBox?.Invoke();
+    }
+
+    public static void TutorialButton()
+    {
+        onTutorialButton?.Invoke();
+    }
+
+    public static void TutorialCard()
+    {
+        onTutorialCard?.Invoke();
+    }
 }

@@ -94,3 +94,34 @@ public enum ProgessManaType
     Spell,
     End,
 }
+
+public enum TutorialStepType
+{
+    None,
+    Box,
+    Button,
+    Card,
+}
+
+public enum TutorialBoxType
+{
+    None,
+    CardImformation,
+    CardResolve,
+}
+
+public enum TutorialButtonType
+{
+    None,
+    Mediate,
+    Collect,
+    Accept,
+    Cancel,
+    Back,
+    Player,
+}
+
+public enum TutorialHintType
+{
+    None,
+}
