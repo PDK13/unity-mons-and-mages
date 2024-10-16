@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
 
     public bool TutorialActive => m_tutorialCurrent != null;
 
-    public TutorialConfigData TutorialInfo => m_tutorialConfig.Data[m_tutorialIndex];
+    public TutorialConfigData TutorialInfo => m_tutorialConfig.Step[m_tutorialIndex];
 
     //
 
@@ -294,22 +294,7 @@ public class GameManager : MonoBehaviour
         if (m_tutorialCurrent == null)
             return;
         m_tutorialIndex++;
-        if (m_tutorialIndex > m_tutorialCurrent.Data.Count - 1)
+        if (m_tutorialIndex > m_tutorialCurrent.Step.Count - 1)
             m_tutorialCurrent = null;
-        else
-        {
-            switch (m_tutorialCurrent.Data[m_tutorialIndex].Step)
-            {
-                case TutorialStepType.Box:
-                    GameEvent.TutorialBox();
-                    break;
-                case TutorialStepType.Button:
-                    GameEvent.TutorialButton();
-                    break;
-                case TutorialStepType.Card:
-                    GameEvent.TutorialCard();
-                    break;
-            }
-        }
     }
 }

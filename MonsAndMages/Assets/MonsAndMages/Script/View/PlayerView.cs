@@ -46,6 +46,13 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
+    [SerializeField] private GameObject m_tutorialMediate;
+    [SerializeField] private GameObject m_tutorialCollect;
+    [SerializeField] private GameObject m_tutorialBack;
+    [SerializeField] private GameObject m_tutorialAccept;
+    [SerializeField] private GameObject m_tutorialCancel;
+
+    [Space]
     [SerializeField] private RectTransform m_diceSample;
 
     private ICard m_cardView;
@@ -108,6 +115,10 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginDragon += OnOriginDragon;
         //Class
         GameEvent.onClassFighter += OnClassFighter;
+        //Tutorial
+        GameEvent.onTutorialBox += OnTutorialBox;
+        GameEvent.onTutorialButton += OnTutorialButton;
+        GameEvent.onTutorialCard += OnTutorialCard;
     }
 
     private void OnDisable()
@@ -156,6 +167,10 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginDragon -= OnOriginDragon;
         //Class
         GameEvent.onClassFighter -= OnClassFighter;
+        //Tutorial
+        GameEvent.onTutorialBox -= OnTutorialBox;
+        GameEvent.onTutorialButton -= OnTutorialButton;
+        GameEvent.onTutorialCard -= OnTutorialCard;
     }
 
     private void Start()
@@ -190,6 +205,14 @@ public class PlayerView : MonoBehaviour
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
 
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonMeidate)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         for (int i = 0; i < m_mediateOptionContent.childCount; i++)
         {
             var Outline = m_mediateOptionContent.GetChild(i).GetComponent<Outline>();
@@ -205,6 +228,15 @@ public class PlayerView : MonoBehaviour
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonCollect)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         GameEvent.ViewArea(ViewType.Wild, null);
     }
 
@@ -212,11 +244,31 @@ public class PlayerView : MonoBehaviour
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonBack)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         GameEvent.ViewArea(ViewType.Field, null);
     }
 
     public void BtnCollectAccept()
     {
+        if (GameManager.instance.PlayerChoice == ChoiceType.None)
+            return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonAccept)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         switch (GameManager.instance.PlayerChoice)
         {
             case ChoiceType.MediateOrCollect:
@@ -256,6 +308,17 @@ public class PlayerView : MonoBehaviour
 
     public void BtnCollectCancel()
     {
+        if (GameManager.instance.PlayerChoice == ChoiceType.None)
+            return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonCancel)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         switch (GameManager.instance.PlayerChoice)
         {
             case ChoiceType.MediateOrCollect:
@@ -283,6 +346,17 @@ public class PlayerView : MonoBehaviour
 
     public void BtnMediateOption(int OptionIndex)
     {
+        if (GameManager.instance.PlayerChoice == ChoiceType.MediateOrCollect)
+            return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonMeidateOption)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
+
         m_mediateOptionIndex = OptionIndex;
         for (int i = 0; i < m_mediateOptionContent.childCount; i++)
         {
@@ -296,6 +370,14 @@ public class PlayerView : MonoBehaviour
     {
         if (GameManager.instance.PlayerChoice == ChoiceType.None)
             return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialInfo.ButtonPlayer)
+                GameManager.instance.TutorialContinue();
+            else
+                return;
+        }
 
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
     }
@@ -446,6 +528,7 @@ public class PlayerView : MonoBehaviour
     {
         OnUiChoiceHide();
 
+        var Tutorial = GameManager.instance.TutorialActive;
         var Type = GameView.instance.ViewType;
         switch (Type)
         {
@@ -458,10 +541,22 @@ public class PlayerView : MonoBehaviour
                 m_hintMediateUnEmty.SetActive(!MediateAvaible);
                 m_hintCollectAction.SetActive(true);
                 m_hintPlayerContent.SetActive(true);
+                if (Tutorial)
+                {
+                    var TutorialMeidate = GameManager.instance.TutorialInfo.ButtonMeidate;
+                    m_tutorialMediate.SetActive(TutorialMeidate);
+                    var TutorialCollect = GameManager.instance.TutorialInfo.ButtonCollect;
+                    m_tutorialCollect.SetActive(TutorialCollect);
+                }
                 break;
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
+                if (Tutorial)
+                {
+                    var TutorialBack = GameManager.instance.TutorialInfo.ButtonBack;
+                    m_tutorialBack.SetActive(TutorialBack);
+                }
                 break;
         }
     }
@@ -643,7 +738,6 @@ public class PlayerView : MonoBehaviour
         m_cardView.DoMoveTop(null);
 
         var CollectAvaible = m_cardView.RuneStoneCost <= PlayerCurrent.RuneStone;
-
         m_btnInfoAccept.GetComponent<Button>().interactable = CollectAvaible;
         m_btnInfoAccept.SetActive(true);
         m_hintCollectAccept.SetActive(!CollectAvaible);
@@ -652,6 +746,15 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
         m_tmpExplainClass.gameObject.SetActive(true);
+
+        var Tutorial = GameManager.instance.TutorialActive;
+        if (Tutorial)
+        {
+            var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
+            m_tutorialAccept.SetActive(TutorialAccept);
+            var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
+            m_tutorialCancel.SetActive(TutorialCancel);
+        }
     } //Info Collect
 
     private void OnUiInfoMediate()
@@ -661,6 +764,15 @@ public class PlayerView : MonoBehaviour
 
         m_btnInfoCancel.SetActive(true);
         m_mediateOptionContent.gameObject.SetActive(true);
+
+        var Tutorial = GameManager.instance.TutorialActive;
+        if (Tutorial)
+        {
+            var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
+            m_tutorialAccept.SetActive(TutorialAccept);
+            var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
+            m_tutorialCancel.SetActive(TutorialCancel);
+        }
     } //Info Meidate
 
     private void OnUiInfoFullMana(ICard Card)
@@ -844,4 +956,19 @@ public class PlayerView : MonoBehaviour
     {
         OnComplete?.Invoke();
     } //Roll a Dice for Fighter
+
+
+    // GameEvent - Tutorial
+
+    private void OnTutorialBox() { }
+
+    private void OnTutorialButton()
+    {
+
+    }
+
+    private void OnTutorialCard()
+    {
+
+    }
 }

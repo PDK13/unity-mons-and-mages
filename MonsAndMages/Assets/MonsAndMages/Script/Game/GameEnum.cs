@@ -114,6 +114,7 @@ public enum TutorialButtonType
 {
     None,
     Mediate,
+    MediateOption,
     Collect,
     Accept,
     Cancel,
