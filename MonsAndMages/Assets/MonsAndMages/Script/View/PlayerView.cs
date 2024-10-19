@@ -361,7 +361,7 @@ public class PlayerView : MonoBehaviour
         for (int i = 0; i < m_mediateOptionContent.childCount; i++)
         {
             var Outline = m_mediateOptionContent.GetChild(i).GetComponent<Outline>();
-            Outline.effectColor = OptionIndex == i ? Color.red : Color.black;
+            Outline.effectColor = OptionIndex == i ? Color.white : Color.black;
         }
         m_btnInfoAccept.SetActive(true);
     }
