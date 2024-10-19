@@ -63,11 +63,14 @@ public class WildView : MonoBehaviour
     private void OnEnd()
     {
         StopAllCoroutines();
+
         for (int i = 0; i < m_cardDeck.childCount; i++)
             Destroy(m_cardDeck.GetChild(i).gameObject);
+
         for (int i = 0; i < m_cardContent.childCount; i++)
             for (int j = 0; j < m_cardContent.GetChild(i).childCount; j++)
                 Destroy(m_cardContent.GetChild(i).GetChild(j).gameObject);
+
         m_wildFillFirstTime = true;
     }
 

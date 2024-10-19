@@ -72,6 +72,8 @@ public class PlayerView : MonoBehaviour
 
     private void OnEnable()
     {
+        //Start
+        GameEvent.onStart += OnStart;
         //Init
         GameEvent.onInit += OnInit;
         GameEvent.onInitPlayer += OnInitPlayer;
@@ -124,6 +126,8 @@ public class PlayerView : MonoBehaviour
 
     private void OnDisable()
     {
+        //Start
+        GameEvent.onStart -= OnStart;
         //Init
         GameEvent.onInit -= OnInit;
         GameEvent.onInitPlayer -= OnInitPlayer;
@@ -179,6 +183,8 @@ public class PlayerView : MonoBehaviour
         m_btnBack.SetActive(false);
         m_btnMediate.SetActive(false);
         m_btnCollect.SetActive(false);
+        m_btnEnd.SetActive(false);
+
         m_hintMediateAction.SetActive(false);
         m_hintMediateUnEmty.SetActive(false);
         m_hintCollectAction.SetActive(false);
@@ -388,6 +394,13 @@ public class PlayerView : MonoBehaviour
         GameManager.instance.GameEnd();
     }
 
+    //GameEvent - Start
+
+    private void OnStart()
+    {
+        m_btnEnd.SetActive(true);
+    }
+
     //GameEvent - Init
 
     private void OnInit()
@@ -424,6 +437,8 @@ public class PlayerView : MonoBehaviour
         m_btnMediate.SetActive(false);
         m_btnCollect.SetActive(false);
         m_btnBack.SetActive(false);
+        m_btnEnd.SetActive(false);
+        //
         m_playerContent.gameObject.SetActive(false);
         m_hintMediateAction.SetActive(false);
         m_hintMediateUnEmty.SetActive(false);

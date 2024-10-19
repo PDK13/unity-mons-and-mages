@@ -104,6 +104,8 @@ public class GameManager : MonoBehaviour
 
     public void GameEnd()
     {
+        StopAllCoroutines();
+
         m_tutorialCurrent = null;
         m_tutorialIndex = 0;
 

@@ -3436,7 +3436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &554866621
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9051,7 +9051,7 @@ MonoBehaviour:
   m_btnMediate: {fileID: 1522470580}
   m_btnCollect: {fileID: 985802691}
   m_btnBack: {fileID: 1901593816}
-  m_btnEnd: {fileID: 0}
+  m_btnEnd: {fileID: 554866620}
   m_playerContent: {fileID: 484968639}
   m_mediateOptionContent: {fileID: 1477496624}
   m_infoView: {fileID: 1144427967}

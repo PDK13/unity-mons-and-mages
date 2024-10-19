@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         m_stunBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_tmpStun.text = StunCurrent.ToString();
+            m_tmpStun.text = StunCurrent.ToString() + GameConstant.TMP_ICON_STUN;
             m_stunBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
         GameEvent.PlayerStunnedUpdate(this, null);
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     {
         m_healthBox.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
         {
-            m_tmpHealth.text = HealthCurrent.ToString();
+            m_tmpHealth.text = HealthCurrent.ToString() + GameConstant.TMP_ICON_HEALTH;
             m_healthBox.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
         });
         GameEvent.PlayerHealthUpdate(this, null);
