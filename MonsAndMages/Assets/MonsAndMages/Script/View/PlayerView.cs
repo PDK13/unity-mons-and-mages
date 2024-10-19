@@ -11,6 +11,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_btnMediate;
     [SerializeField] private GameObject m_btnCollect;
     [SerializeField] private GameObject m_btnBack;
+    [SerializeField] private GameObject m_btnEnd;
 
     [Space]
     [SerializeField] private Transform m_playerContent;
@@ -380,6 +381,11 @@ public class PlayerView : MonoBehaviour
         }
 
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
+    }
+
+    public void BtnEndGame()
+    {
+        GameManager.instance.GameEnd();
     }
 
     //GameEvent - Init
