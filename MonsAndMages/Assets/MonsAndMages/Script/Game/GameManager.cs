@@ -55,31 +55,31 @@ public class GameManager : MonoBehaviour
         GameManager.instance = this;
     }
 
-#if UNITY_EDITOR
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-            GameStart();
-        if (Input.GetKeyDown(KeyCode.Backspace))
-            GameEnd();
-    }
-
-#endif
-
     //
 
     public void GameStart()
     {
-        m_playerQueue = new List<IPlayer>();
-        m_playerIndex = m_startIndex;
-        m_playerChoice = ChoiceType.None;
+        GameEvent.Start();
+
+        StartCoroutine(IGameStart());
+    }
+
+    public void GameTutorial()
+    {
+        GameEvent.Start();
+
+        m_tutorialCurrent = m_tutorialConfig;
+        m_tutorialIndex = 0;
 
         StartCoroutine(IGameStart());
     }
 
     private IEnumerator IGameStart()
     {
+        m_playerQueue = new List<IPlayer>();
+        m_playerIndex = m_startIndex;
+        m_playerChoice = ChoiceType.None;
+
         GameEvent.Init();
 
         PlayerData[] PlayerJoin = new PlayerData[2]
@@ -104,6 +104,9 @@ public class GameManager : MonoBehaviour
 
     public void GameEnd()
     {
+        m_tutorialCurrent = null;
+        m_tutorialIndex = 0;
+
         m_playerQueue = new List<IPlayer>();
         m_playerIndex = m_startIndex;
         m_playerChoice = ChoiceType.None;

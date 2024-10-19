@@ -346,7 +346,7 @@ public class PlayerView : MonoBehaviour
 
     public void BtnMediateOption(int OptionIndex)
     {
-        if (GameManager.instance.PlayerChoice == ChoiceType.MediateOrCollect)
+        if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
 
         if (GameManager.instance.TutorialActive)

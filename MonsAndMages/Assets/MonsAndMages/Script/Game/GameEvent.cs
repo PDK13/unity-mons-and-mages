@@ -4,6 +4,15 @@ using UnityEngine.UI;
 
 public class GameEvent
 {
+    //Start
+
+    public static Action onStart { get; set; }
+
+    public static void Start()
+    {
+        onStart?.Invoke();
+    }
+
     //Init
 
     public static Action onInit { get; set; }
