@@ -20,6 +20,7 @@ public class CardController : MonoBehaviour, ICard
     private Outline m_outline;
     private GameObject m_originIcon;
     private GameObject m_classIcon;
+    private GameObject m_runeStoneIcon;
 
     private bool m_open = false;
     private bool m_top = false; //Đang được hiển thị trên cùng của màn hình
@@ -69,6 +70,7 @@ public class CardController : MonoBehaviour, ICard
         m_outline = m_renderer.GetComponent<Outline>();
         m_originIcon = transform.Find("origin-icon").gameObject;
         m_classIcon = transform.Find("class-icon").gameObject;
+        m_runeStoneIcon = transform.Find("rune-stone").gameObject;
     }
 
     private void OnEnable()
@@ -108,9 +110,8 @@ public class CardController : MonoBehaviour, ICard
         {
             case ChoiceType.MediateOrCollect:
                 if (m_player != null)
-                    DoRumble(null);
-                else
-                    GameEvent.UiInfoCollect(this);
+                    return;
+                GameEvent.UiInfoCollect(this);
                 break;
             case ChoiceType.CardFullMana:
                 if (m_player != GameManager.instance.PlayerCurrent || !ManaFull)
@@ -244,6 +245,7 @@ public class CardController : MonoBehaviour, ICard
             m_originIcon.GetComponent<CanvasGroup>().alpha = 0;
             m_classIcon.GetComponent<Image>().sprite = GameManager.instance.CardConfig.GetIconClass(Class);
             m_classIcon.GetComponent<CanvasGroup>().alpha = 0;
+            m_runeStoneIcon.SetActive(false);
         }
         else
         {
@@ -653,6 +655,12 @@ public class CardController : MonoBehaviour, ICard
     public void DoCollectActive(IPlayer Player, Action OnComplete)
     {
         m_player = Player;
+        //
+        m_runeStoneIcon.SetActive(m_runeStoneTake > 0);
+        var RuneStoneIconScale = m_runeStoneIcon.transform.localScale;
+        m_runeStoneIcon.transform.DOScale(RuneStoneIconScale * 1.01f, 0.1f).OnComplete(() =>
+            m_runeStoneIcon.transform.DOScale(RuneStoneIconScale, 0.1f));
+        //
         DoEffectAlpha(() =>
         {
             m_progessCollectCurrent = ProgessCollectType.Start;
@@ -1018,6 +1026,9 @@ public class CardController : MonoBehaviour, ICard
             OnComplete?.Invoke();
             return;
         }
+
+        DoStaffTakeRuneStone();
+
         DoEffectAlpha(() =>
         {
             switch (Type)
@@ -1031,6 +1042,13 @@ public class CardController : MonoBehaviour, ICard
             }
         });
     } //Staff Event
+
+    public void DoStaffTakeRuneStone()
+    {
+        m_player.DoStaffTakeRuneStone(m_runeStoneTake, null);
+        m_runeStoneTake = 0;
+        m_runeStoneIcon.SetActive(false);
+    }
 
     public void DoStaffActiveSerenity(Action OnComplete)
     {

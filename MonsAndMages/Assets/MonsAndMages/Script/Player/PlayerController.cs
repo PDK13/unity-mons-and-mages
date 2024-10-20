@@ -413,6 +413,43 @@ public class PlayerController : MonoBehaviour, IPlayer
         CardStaffCurrent.DoStaffActive(OnComplete);
     }
 
+    public void DoStaffTakeRuneStone(int Value, Action OnComplete)
+    {
+        if (Value == 0)
+        {
+            OnComplete?.Invoke();
+            return;
+        }
+
+        m_runeStone += Value;
+
+        var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
+        var RuneStoneFx = RuneStone.Find("fx-glow");
+        var RuneStoneIcon = RuneStone.Find("icon");
+        var RuneStoneIconScale = RuneStoneIcon.localScale;
+
+        RuneStone.gameObject.SetActive(true);
+
+        RuneStoneFx
+            .DORotate(Vector3.forward * 359f, 1.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1, LoopType.Restart);
+
+        Sequence RuneStoneIconTween = DOTween.Sequence();
+        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale + Vector3.one * 0.1f, 0.05f));
+        RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
+        RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            RuneStone.DOScale(Vector3.zero, 0.15f);
+            InfoRuneStoneUpdate(() =>
+            {
+                Destroy(RuneStone.gameObject, 0.2f);
+                OnComplete?.Invoke();
+            });
+        }).SetDelay(0.25f));
+        RuneStoneIconTween.Play();
+    }
+
     public void DoStaffRumble(Action OnComplete)
     {
         m_staff.DoRumble(OnComplete);

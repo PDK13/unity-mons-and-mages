@@ -58,6 +58,8 @@ public interface IPlayer
 
     void DoStaffActive(Action OnComplete); //Active Card at staff after moved if not stunned
 
+    void DoStaffTakeRuneStone(int Value, Action OnComplete);
+
     void DoStaffRumble(Action OnComplete);
 
 
