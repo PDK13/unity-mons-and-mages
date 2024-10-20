@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
 
     public bool TutorialActive => m_tutorialCurrent != null;
 
-    public TutorialConfigData TutorialInfo => m_tutorialConfig.Step[m_tutorialIndex];
+    public TutorialConfigData TutorialInfo => m_tutorialCurrent.Step[m_tutorialIndex];
 
     //
 

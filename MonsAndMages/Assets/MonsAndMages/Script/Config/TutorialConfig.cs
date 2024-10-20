@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,11 +14,21 @@ public class TutorialConfig : ScriptableObject
 [Serializable]
 public class TutorialConfigData
 {
+    public bool Auto = false;
+
+    [BoxGroup("Step")]
     public TutorialStepType Step = TutorialStepType.None;
+
+    [ShowIfGroup("Step/Box", Value = TutorialStepType.Box)]
     public TutorialBoxType StepBox = TutorialBoxType.None;
+
+    [ShowIfGroup("Step/Button", Value = TutorialStepType.Button)]
     public TutorialButtonType StepButton = TutorialButtonType.None;
+
+    [ShowIfGroup("Step/Card", Value = TutorialStepType.Card)]
     public CardNameType StepCard = CardNameType.None;
-    public TutorialHintType Hint = TutorialHintType.None;
+
+    //public TutorialHintType Hint = TutorialHintType.None;
 
     public bool Box => Step == TutorialStepType.Box;
 

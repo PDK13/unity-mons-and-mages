@@ -13,4 +13,14 @@ MonoBehaviour:
   m_Name: tutorial-config
   m_EditorClassIdentifier: 
   Wild: 
-  Step: []
+  Step:
+  - Auto: 0
+    Step: 2
+    StepBox: 0
+    StepButton: 1
+    StepCard: 0
+  - Auto: 0
+    Step: 2
+    StepBox: 0
+    StepButton: 5
+    StepCard: 0

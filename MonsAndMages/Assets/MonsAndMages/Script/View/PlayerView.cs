@@ -47,13 +47,6 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
-    [SerializeField] private GameObject m_tutorialMediate;
-    [SerializeField] private GameObject m_tutorialCollect;
-    [SerializeField] private GameObject m_tutorialBack;
-    [SerializeField] private GameObject m_tutorialAccept;
-    [SerializeField] private GameObject m_tutorialCancel;
-
-    [Space]
     [SerializeField] private RectTransform m_diceSample;
 
     private ICard m_cardView;
@@ -203,11 +196,18 @@ public class PlayerView : MonoBehaviour
 
         m_playerContent.gameObject.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(false);
+
+        m_btnMediate.GetComponent<Button>().onClick.AddListener(BtnMediate);
+        m_btnCollect.GetComponent<Button>().onClick.AddListener(BtnCollect);
+        m_btnBack.GetComponent<Button>().onClick.AddListener(BtnBack);
+        m_btnInfoAccept.GetComponent<Button>().onClick.AddListener(BtnInfoAccept);
+        m_btnInfoCancel.GetComponent<Button>().onClick.AddListener(BtnInfoCancel);
+        m_btnEnd.GetComponent<Button>().onClick.AddListener(BtnEndGame);
     }
 
     //Button
 
-    public void BtnViewMediate()
+    public void BtnMediate()
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
@@ -229,9 +229,12 @@ public class PlayerView : MonoBehaviour
         }
 
         GameEvent.UiInfoMediate();
+
+        m_btnMediate.transform.DOKill();
+        m_btnMediate.transform.localScale = Vector3.one;
     }
 
-    public void BtnViewCollect()
+    public void BtnCollect()
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
@@ -245,9 +248,12 @@ public class PlayerView : MonoBehaviour
         }
 
         GameEvent.ViewArea(ViewType.Wild, null);
+
+        m_btnCollect.transform.DOKill();
+        m_btnCollect.transform.localScale = Vector3.one;
     }
 
-    public void BtnViewBack()
+    public void BtnBack()
     {
         if (GameManager.instance.PlayerChoice != ChoiceType.MediateOrCollect)
             return;
@@ -261,9 +267,12 @@ public class PlayerView : MonoBehaviour
         }
 
         GameEvent.ViewArea(ViewType.Field, null);
+
+        m_btnBack.transform.DOKill();
+        m_btnBack.transform.localScale = Vector3.one;
     }
 
-    public void BtnCollectAccept()
+    public void BtnInfoAccept()
     {
         if (GameManager.instance.PlayerChoice == ChoiceType.None)
             return;
@@ -311,9 +320,12 @@ public class PlayerView : MonoBehaviour
                 GameManager.instance.CardEnterStart(m_cardView);
                 break;
         }
+
+        m_btnInfoAccept.transform.DOKill();
+        m_btnInfoAccept.transform.localScale = Vector3.one;
     }
 
-    public void BtnCollectCancel()
+    public void BtnInfoCancel()
     {
         if (GameManager.instance.PlayerChoice == ChoiceType.None)
             return;
@@ -349,6 +361,9 @@ public class PlayerView : MonoBehaviour
                 GameEvent.UiInfoHide(true, true);
                 break;
         }
+
+        m_btnInfoCancel.transform.DOKill();
+        m_btnInfoCancel.transform.localScale = Vector3.one;
     }
 
     public void BtnMediateOption(int OptionIndex)
@@ -565,9 +580,28 @@ public class PlayerView : MonoBehaviour
                 if (Tutorial)
                 {
                     var TutorialMeidate = GameManager.instance.TutorialInfo.ButtonMeidate;
-                    m_tutorialMediate.SetActive(TutorialMeidate);
+                    if (TutorialMeidate)
+                        m_btnMediate.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+                    else
+                    {
+                        m_btnMediate.transform.DOKill();
+                        m_btnMediate.transform.localScale = Vector3.one;
+                    }
                     var TutorialCollect = GameManager.instance.TutorialInfo.ButtonCollect;
-                    m_tutorialCollect.SetActive(TutorialCollect);
+                    if (TutorialCollect)
+                        m_btnCollect.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+                    else
+                    {
+                        m_btnCollect.transform.DOKill();
+                        m_btnCollect.transform.localScale = Vector3.one;
+                    }
+                }
+                else
+                {
+                    m_btnMediate.transform.DOKill();
+                    m_btnMediate.transform.localScale = Vector3.one;
+                    m_btnCollect.transform.DOKill();
+                    m_btnCollect.transform.localScale = Vector3.one;
                 }
                 break;
             case ViewType.Wild:
@@ -576,7 +610,18 @@ public class PlayerView : MonoBehaviour
                 if (Tutorial)
                 {
                     var TutorialBack = GameManager.instance.TutorialInfo.ButtonBack;
-                    m_tutorialBack.SetActive(TutorialBack);
+                    if (TutorialBack)
+                        m_btnBack.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+                    else
+                    {
+                        m_btnBack.transform.DOKill();
+                        m_btnBack.transform.localScale = Vector3.one;
+                    }
+                }
+                else
+                {
+                    m_btnBack.transform.DOKill();
+                    m_btnBack.transform.localScale = Vector3.one;
                 }
                 break;
         }
@@ -772,9 +817,15 @@ public class PlayerView : MonoBehaviour
         if (Tutorial)
         {
             var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
-            m_tutorialAccept.SetActive(TutorialAccept);
+            if (TutorialAccept)
+                m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+                m_btnInfoAccept.transform.localScale = Vector3.one;
             var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
-            m_tutorialCancel.SetActive(TutorialCancel);
+            if (TutorialCancel)
+                m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+                m_btnInfoCancel.transform.localScale = Vector3.one;
         }
     } //Info Collect
 
@@ -790,9 +841,28 @@ public class PlayerView : MonoBehaviour
         if (Tutorial)
         {
             var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
-            m_tutorialAccept.SetActive(TutorialAccept);
+            if (TutorialAccept)
+                m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+            {
+                m_btnInfoAccept.transform.DOKill();
+                m_btnInfoAccept.transform.localScale = Vector3.one;
+            }
             var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
-            m_tutorialCancel.SetActive(TutorialCancel);
+            if (TutorialCancel)
+                m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+            {
+                m_btnInfoCancel.transform.DOKill();
+                m_btnInfoCancel.transform.localScale = Vector3.one;
+            }
+        }
+        else
+        {
+            m_btnInfoAccept.transform.DOKill();
+            m_btnInfoAccept.transform.localScale = Vector3.one;
+            m_btnInfoCancel.transform.DOKill();
+            m_btnInfoCancel.transform.localScale = Vector3.one;
         }
     } //Info Meidate
 

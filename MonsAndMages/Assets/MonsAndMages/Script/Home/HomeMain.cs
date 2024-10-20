@@ -29,6 +29,9 @@ public class HomeMain : MonoBehaviour
     {
         m_btnTutorial.onClick.AddListener(BtnTutorial);
         m_btnFreePlay.onClick.AddListener(BtnFreePlay);
+
+        for (int i = 0; i < this.transform.childCount; i++)
+            this.transform.GetChild(i).gameObject.SetActive(true);
     }
 
     //
