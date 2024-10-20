@@ -218,6 +218,7 @@ public class PlayerController : MonoBehaviour, IPlayer
         RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
         RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
+            RuneStone.DOScale(Vector3.zero, 0.15f);
             InfoRuneStoneUpdate(() =>
             {
                 Destroy(RuneStone.gameObject, 0.2f);
@@ -258,6 +259,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                     RuneStoneIconTween.Append(RuneStoneIcon.DOScale(RuneStoneIconScale, 0.05f));
                     RuneStoneIconTween.Append(RuneStone.DOMove(m_runeStoneBox.position, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
                     {
+                        RuneStone.DOScale(Vector3.zero, 0.15f);
                         InfoRuneStoneUpdate(() =>
                         {
                             Destroy(RuneStone.gameObject, 0.2f);
