@@ -277,41 +277,44 @@ public class PlayerView : MonoBehaviour
                 return;
         }
 
-        switch (GameManager.instance.PlayerChoice)
+        GameEvent.ViewPlayer(PlayerCurrent, () =>
         {
-            case ChoiceType.MediateOrCollect:
-                switch (GameView.instance.ViewType)
-                {
-                    case ViewType.Field: //Mediate
-                        GameManager.instance.PlayerDoMediateStart(GameManager.instance.PlayerCurrent, m_mediateOptionIndex + 1);
-                        break;
-                    case ViewType.Wild: //Collect
-                        GameManager.instance.PlayerDoCollectStart(GameManager.instance.PlayerCurrent, m_cardView);
-                        break;
-                }
-                break;
-            case ChoiceType.CardFullMana:
-                GameManager.instance.CardManaActiveStart(m_cardView);
-                break;
-            case ChoiceType.CardOriginWoodland:
-                GameManager.instance.CardOriginWoodlandDoStart(m_cardView);
-                break;
-            case ChoiceType.CardOriginGhost:
-                GameManager.instance.CardOriginGhostDoStart(m_cardView);
-                break;
-            case ChoiceType.CardClassMagicAddict:
-                GameManager.instance.CardClassMagicAddictStart(m_cardView);
-                break;
-            case ChoiceType.CardClassFlying:
-                GameManager.instance.CardClassFlyingStart(m_cardView);
-                break;
-            case ChoiceType.CardSpell:
-                GameManager.instance.CardSpellStart(m_cardView);
-                break;
-            case ChoiceType.CardEnter:
-                GameManager.instance.CardEnterStart(m_cardView);
-                break;
-        }
+            switch (GameManager.instance.PlayerChoice)
+            {
+                case ChoiceType.MediateOrCollect:
+                    switch (GameView.instance.ViewType)
+                    {
+                        case ViewType.Field: //Mediate
+                            GameManager.instance.PlayerDoMediateStart(GameManager.instance.PlayerCurrent, m_mediateOptionIndex + 1);
+                            break;
+                        case ViewType.Wild: //Collect
+                            GameManager.instance.PlayerDoCollectStart(GameManager.instance.PlayerCurrent, m_cardView);
+                            break;
+                    }
+                    break;
+                case ChoiceType.CardFullMana:
+                    GameManager.instance.CardManaActiveStart(m_cardView);
+                    break;
+                case ChoiceType.CardOriginWoodland:
+                    GameManager.instance.CardOriginWoodlandDoStart(m_cardView);
+                    break;
+                case ChoiceType.CardOriginGhost:
+                    GameManager.instance.CardOriginGhostDoStart(m_cardView);
+                    break;
+                case ChoiceType.CardClassMagicAddict:
+                    GameManager.instance.CardClassMagicAddictStart(m_cardView);
+                    break;
+                case ChoiceType.CardClassFlying:
+                    GameManager.instance.CardClassFlyingStart(m_cardView);
+                    break;
+                case ChoiceType.CardSpell:
+                    GameManager.instance.CardSpellStart(m_cardView);
+                    break;
+                case ChoiceType.CardEnter:
+                    GameManager.instance.CardEnterStart(m_cardView);
+                    break;
+            }
+        });
 
         m_btnInfoAccept.transform.DOKill();
         m_btnInfoAccept.transform.localScale = Vector3.one;
@@ -786,6 +789,7 @@ public class PlayerView : MonoBehaviour
         m_hintCollectAccept.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
         m_tmpExplainClass.gameObject.SetActive(false);
+        m_runeStoneBox.gameObject.SetActive(GameView.instance.ViewType == ViewType.Wild);
     } //Info Hide
 
     private void OnUiInfoCollect(ICard Card)
@@ -804,6 +808,7 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
         m_tmpExplainClass.gameObject.SetActive(true);
+        m_runeStoneBox.gameObject.SetActive(true);
 
         UiInfoTutorial();
     } //Info Collect
@@ -815,6 +820,7 @@ public class PlayerView : MonoBehaviour
 
         m_btnInfoCancel.SetActive(true);
         m_mediateOptionContent.gameObject.SetActive(true);
+        m_runeStoneBox.gameObject.SetActive(true);
 
         UiInfoTutorial();
     } //Info Meidate
