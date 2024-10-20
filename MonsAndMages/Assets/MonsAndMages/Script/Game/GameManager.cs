@@ -47,7 +47,9 @@ public class GameManager : MonoBehaviour
 
     public bool TutorialActive => m_tutorialCurrent != null;
 
-    public TutorialConfigData TutorialCurrentData => m_tutorialCurrent.Step[m_tutorialIndex];
+    public List<CardNameType> TutorialWild => m_tutorialCurrent.Wild;
+
+    public TutorialConfigData TutorialStepCurrent => m_tutorialCurrent.Step[m_tutorialIndex];
 
     //
 
@@ -319,7 +321,7 @@ public class GameManager : MonoBehaviour
         if (!TutorialActive)
             return;
 
-        switch (TutorialCurrentData.Type)
+        switch (TutorialStepCurrent.Type)
         {
             case TutorialStepType.Box:
                 //...
@@ -328,7 +330,7 @@ public class GameManager : MonoBehaviour
                 //Progess in Player View script
                 break;
             case TutorialStepType.Card:
-                GameEvent.TutorialCard(TutorialCurrentData.CardValue);
+                GameEvent.TutorialCard(TutorialStepCurrent.CardValue);
                 break;
         }
     }

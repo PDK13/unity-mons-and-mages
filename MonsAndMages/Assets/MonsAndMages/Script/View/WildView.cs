@@ -37,9 +37,15 @@ public class WildView : MonoBehaviour
 
     private void OnInit()
     {
+        var Tutorial = GameManager.instance.TutorialActive;
+
         //Generate
         foreach (var CardCheck in GameManager.instance.CardConfig.Card)
         {
+            if (Tutorial)
+                if (!GameManager.instance.TutorialWild.Exists(t => t == CardCheck.Name))
+                    continue;
+            //
             var CardClone = Instantiate(m_cardSample, m_cardDeck);
             CardClone.SetActive(true);
             CardClone.name = "card-" + CardCheck.Name.ToString();
@@ -50,8 +56,16 @@ public class WildView : MonoBehaviour
         //Suffle
         for (int i = 0; i < m_cardDeck.childCount; i++)
         {
-            var IndexRandom = UnityEngine.Random.Range(0, (m_cardDeck.childCount - 1) * 10) / 10;
-            m_cardDeck.GetChild(i).SetSiblingIndex(m_cardDeck.GetChild(IndexRandom).GetSiblingIndex());
+            if (Tutorial)
+            {
+                var CardName = m_cardDeck.GetChild(i).GetComponent<ICard>().Name;
+                m_cardDeck.GetChild(i).SetSiblingIndex(GameManager.instance.TutorialWild.FindIndex(t => t == CardName));
+            }
+            else
+            {
+                var IndexRandom = UnityEngine.Random.Range(0, (m_cardDeck.childCount - 1) * 10) / 10;
+                m_cardDeck.GetChild(i).SetSiblingIndex(m_cardDeck.GetChild(IndexRandom).GetSiblingIndex());
+            }
         }
         //Pos
         for (int i = 0; i < m_cardDeck.childCount; i++)

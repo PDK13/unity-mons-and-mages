@@ -95,7 +95,7 @@ public class CardController : MonoBehaviour, ICard
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.Card)
+            if (GameManager.instance.TutorialStepCurrent.Card)
             {
                 if (!m_tutorial)
                     return;

@@ -206,7 +206,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonMeidate)
+            if (GameManager.instance.TutorialStepCurrent.ButtonMeidate)
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
@@ -233,7 +233,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonCollect)
+            if (GameManager.instance.TutorialStepCurrent.ButtonCollect)
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
@@ -252,7 +252,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonBack)
+            if (GameManager.instance.TutorialStepCurrent.ButtonBack)
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
@@ -271,7 +271,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonAccept)
+            if (GameManager.instance.TutorialStepCurrent.ButtonAccept)
                 GameManager.instance.TutorialContinue(false);
             else
                 return;
@@ -324,7 +324,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonCancel)
+            if (GameManager.instance.TutorialStepCurrent.ButtonCancel)
                 GameManager.instance.TutorialContinue(false);
             else
                 return;
@@ -365,7 +365,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonMeidateOption)
+            if (GameManager.instance.TutorialStepCurrent.ButtonMeidateOption)
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
@@ -387,7 +387,7 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialCurrentData.ButtonPlayer)
+            if (GameManager.instance.TutorialStepCurrent.ButtonPlayer)
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
@@ -571,7 +571,7 @@ public class PlayerView : MonoBehaviour
                 m_hintPlayerContent.SetActive(true);
                 if (Tutorial)
                 {
-                    var TutorialMeidate = GameManager.instance.TutorialCurrentData.ButtonMeidate;
+                    var TutorialMeidate = GameManager.instance.TutorialStepCurrent.ButtonMeidate;
                     if (TutorialMeidate)
                         m_btnMediate.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -579,7 +579,7 @@ public class PlayerView : MonoBehaviour
                         m_btnMediate.transform.DOKill();
                         m_btnMediate.transform.localScale = Vector3.one;
                     }
-                    var TutorialCollect = GameManager.instance.TutorialCurrentData.ButtonCollect;
+                    var TutorialCollect = GameManager.instance.TutorialStepCurrent.ButtonCollect;
                     if (TutorialCollect)
                         m_btnCollect.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -601,7 +601,7 @@ public class PlayerView : MonoBehaviour
                 m_runeStoneBox.gameObject.SetActive(true);
                 if (Tutorial)
                 {
-                    var TutorialBack = GameManager.instance.TutorialCurrentData.ButtonBack;
+                    var TutorialBack = GameManager.instance.TutorialStepCurrent.ButtonBack;
                     if (TutorialBack)
                         m_btnBack.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -926,12 +926,12 @@ public class PlayerView : MonoBehaviour
         var Tutorial = GameManager.instance.TutorialActive;
         if (Tutorial)
         {
-            var TutorialAccept = GameManager.instance.TutorialCurrentData.ButtonAccept;
+            var TutorialAccept = GameManager.instance.TutorialStepCurrent.ButtonAccept;
             if (TutorialAccept)
                 m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
             else
                 m_btnInfoAccept.transform.localScale = Vector3.one;
-            var TutorialCancel = GameManager.instance.TutorialCurrentData.ButtonCancel;
+            var TutorialCancel = GameManager.instance.TutorialStepCurrent.ButtonCancel;
             if (TutorialCancel)
                 m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
             else
