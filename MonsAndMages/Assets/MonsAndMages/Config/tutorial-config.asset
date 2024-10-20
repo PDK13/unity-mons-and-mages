@@ -15,12 +15,27 @@ MonoBehaviour:
   Wild: 
   Step:
   - Auto: 0
-    Step: 2
-    StepBox: 0
-    StepButton: 1
-    StepCard: 0
+    Type: 2
+    BoxValue: 0
+    ButtonValue: 3
+    CardValue: 0
   - Auto: 0
-    Step: 2
-    StepBox: 0
-    StepButton: 5
-    StepCard: 0
+    Type: 3
+    BoxValue: 0
+    ButtonValue: 0
+    CardValue: 9
+  - Auto: 0
+    Type: 2
+    BoxValue: 0
+    ButtonValue: 4
+    CardValue: 0
+  - Auto: 0
+    Type: 3
+    BoxValue: 0
+    ButtonValue: 0
+    CardValue: 9
+  - Auto: 0
+    Type: 2
+    BoxValue: 0
+    ButtonValue: 4
+    CardValue: 0

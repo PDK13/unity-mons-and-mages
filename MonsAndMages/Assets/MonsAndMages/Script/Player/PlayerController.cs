@@ -279,7 +279,7 @@ public class PlayerController : MonoBehaviour, IPlayer
             if (Stuned)
                 StunChange(m_stunCurrent, () => DoStaffNext(false));
             else
-                GameManager.instance.PlayerDoChoiceMediateOrCollect(this);
+                GameManager.instance.PlayerDoMediateOrCollectChoice(this);
         });
     }
 
@@ -495,7 +495,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     public void ProgessCheck()
     {
         if (m_cardQueue.Exists(t => t.ManaFull))
-            GameManager.instance.PlayerDoCardManaActiveReady(this);
+            GameManager.instance.PlayerDoCardManaActiveChoice(this);
         else
         if (m_progessCard.Count > 0)
         {

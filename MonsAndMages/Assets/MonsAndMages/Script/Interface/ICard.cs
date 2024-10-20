@@ -60,6 +60,11 @@ public interface ICard
     void DoChoiceOnce(bool Stage);
 
 
+    void DoTutorialReady();
+
+    void DoTutorialUnReady();
+
+
     void DoFlipOpen(Action OnComplete); //Lật thẻ bài
 
     void DoFlipClose(Action OnComplete);

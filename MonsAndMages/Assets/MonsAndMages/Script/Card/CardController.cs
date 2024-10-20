@@ -25,6 +25,7 @@ public class CardController : MonoBehaviour, ICard
     private bool m_top = false; //Đang được hiển thị trên cùng của màn hình
     private bool m_choice = false; //Có thể được lựa chọn trong trường hợp đặc biệt
     private bool m_choiceOnce = false; //Chỉ có thể được lựa chọn một lần duy nhật trong trường hợp đặc biệt
+    private bool m_tutorial = false;
     private bool m_flip = false;
     private bool m_move = false;
     private bool m_effect = false;
@@ -70,6 +71,16 @@ public class CardController : MonoBehaviour, ICard
         m_classIcon = transform.Find("class-icon").gameObject;
     }
 
+    private void OnEnable()
+    {
+        GameEvent.onTutorialCard += OnTutorialCard;
+    }
+
+    private void OnDisable()
+    {
+        GameEvent.onTutorialCard -= OnTutorialCard;
+    }
+
     private void Start()
     {
         m_button.onClick.AddListener(BtnTap);
@@ -81,6 +92,17 @@ public class CardController : MonoBehaviour, ICard
     {
         if (!Avaible)
             return;
+
+        if (GameManager.instance.TutorialActive)
+        {
+            if (GameManager.instance.TutorialCurrentData.Card)
+            {
+                if (!m_tutorial)
+                    return;
+                DoTutorialUnReady();
+                GameManager.instance.TutorialContinue(true);
+            }
+        }
 
         switch (GameManager.instance.PlayerChoice)
         {
@@ -126,6 +148,16 @@ public class CardController : MonoBehaviour, ICard
                 GameEvent.UiInfoCardEnter(this);
                 break;
         }
+    }
+
+    //
+
+    private void OnTutorialCard(CardNameType CardName)
+    {
+        if (this.Name == CardName)
+            DoTutorialReady();
+        else
+            DoTutorialUnReady();
     }
 
     //ICard
@@ -265,6 +297,20 @@ public class CardController : MonoBehaviour, ICard
     public void DoChoiceOnce(bool Stage)
     {
         m_choiceOnce = Stage;
+    }
+
+
+    public void DoTutorialReady()
+    {
+        m_tutorial = true;
+        m_renderer.transform.DOScale(Vector2.one * 1.02f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+    }
+
+    public void DoTutorialUnReady()
+    {
+        m_tutorial = false;
+        m_renderer.transform.DOKill();
+        m_renderer.transform.localScale = Vector3.one;
     }
 
 
@@ -728,7 +774,7 @@ public class CardController : MonoBehaviour, ICard
             m_player.ProgessMana = Mathf.Max(1, (int)ManaGainValue);
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardOriginWoodlandReady(this);
+            GameManager.instance.CardOriginWoodlandChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -764,7 +810,7 @@ public class CardController : MonoBehaviour, ICard
                         continue;
                     CardCheck.DoChoiceReady();
                 }
-                GameManager.instance.CardOriginWoodlandReady(m_player.ProgessCardChoice);
+                GameManager.instance.CardOriginWoodlandChoice(m_player.ProgessCardChoice);
             }
             else
             {
@@ -793,7 +839,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardOriginGhostReady(this);
+            GameManager.instance.CardOriginGhostChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -864,7 +910,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardEnterReady(this);
+            GameManager.instance.CardEnterChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -885,7 +931,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardEnterReady(this);
+            GameManager.instance.CardEnterChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -1187,7 +1233,7 @@ public class CardController : MonoBehaviour, ICard
             //Found monster(s) got mana for this monster cast spell once more time
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardClassMagicAddictReady(this);
+            GameManager.instance.CardClassMagicAddictChoice(this);
         }
         else
             //If no monster got mana for this monster cast spell once more time, skip this
@@ -1265,7 +1311,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardClassFlyingReady(this);
+            GameManager.instance.CardClassFlyingChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -1352,7 +1398,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardSpellReady(this);
+            GameManager.instance.CardSpellChoice(this);
         }
         else
             OnComplete?.Invoke();
@@ -1414,7 +1460,7 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice = this;
             m_player.ProgessCard(this);
-            GameManager.instance.CardSpellReady(this);
+            GameManager.instance.CardSpellChoice(this);
         }
         else
             OnComplete?.Invoke();

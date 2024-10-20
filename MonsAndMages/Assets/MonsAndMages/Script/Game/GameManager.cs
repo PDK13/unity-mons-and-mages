@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -46,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public bool TutorialActive => m_tutorialCurrent != null;
 
-    public TutorialConfigData TutorialInfo => m_tutorialCurrent.Step[m_tutorialIndex];
+    public TutorialConfigData TutorialCurrentData => m_tutorialCurrent.Step[m_tutorialIndex];
 
     //
 
@@ -68,8 +69,7 @@ public class GameManager : MonoBehaviour
     {
         GameEvent.Start();
 
-        m_tutorialCurrent = m_tutorialConfig;
-        m_tutorialIndex = 0;
+        TutorialStart();
 
         StartCoroutine(IGameStart());
     }
@@ -149,9 +149,10 @@ public class GameManager : MonoBehaviour
     } //Camera move to Field and PlayerQueue before start PlayerQueue's turn
 
 
-    public void PlayerDoChoiceMediateOrCollect(IPlayer Player)
+    public void PlayerDoMediateOrCollectChoice(IPlayer Player)
     {
         m_playerChoice = ChoiceType.MediateOrCollect;
+        TutorialCheck();
         GameEvent.UiChoiceMediateOrCollect();
     } //Do Choice
 
@@ -172,9 +173,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardOriginWoodlandReady(ICard Card)
+    public void CardOriginWoodlandChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginWoodland;
+        TutorialCheck();
         GameEvent.UiChoiceCardOriginWoodland();
     } //Do Choice
 
@@ -187,9 +189,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardOriginGhostReady(ICard Card)
+    public void CardOriginGhostChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginGhost;
+        TutorialCheck();
         GameEvent.UiChoiceCardOriginGhost();
     } //Do Choice
 
@@ -202,9 +205,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void PlayerDoCardManaActiveReady(IPlayer Player)
+    public void PlayerDoCardManaActiveChoice(IPlayer Player)
     {
         m_playerChoice = ChoiceType.CardFullMana;
+        TutorialCheck();
         GameEvent.UiChoiceCardFullMana();
     } //Do Choice
 
@@ -217,9 +221,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardClassMagicAddictReady(ICard Card)
+    public void CardClassMagicAddictChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardClassMagicAddict;
+        TutorialCheck();
         GameEvent.UiChoiceCardClassMagicAddict();
     } //Do Choice
 
@@ -232,9 +237,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardClassFlyingReady(ICard Card)
+    public void CardClassFlyingChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardClassFlying;
+        TutorialCheck();
         GameEvent.UiChoiceCardClassFlying();
     } //Do Choices
 
@@ -247,9 +253,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardSpellReady(ICard Card)
+    public void CardSpellChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardSpell;
+        TutorialCheck();
         GameEvent.UiChoiceCardSpell();
     } //Do Choices
 
@@ -262,9 +269,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void CardEnterReady(ICard Card)
+    public void CardEnterChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardEnter;
+        TutorialCheck();
         GameEvent.UiChoiceCardEnter();
     } //Do Choices
 
@@ -294,12 +302,40 @@ public class GameManager : MonoBehaviour
         m_tutorialIndex = 0;
     }
 
-    public void TutorialContinue()
+    public void TutorialContinue(bool CheckNext)
     {
         if (m_tutorialCurrent == null)
             return;
         m_tutorialIndex++;
         if (m_tutorialIndex > m_tutorialCurrent.Step.Count - 1)
-            m_tutorialCurrent = null;
+            TutorialEnd();
+        else
+        if (CheckNext)
+            TutorialCheck();
+    }
+
+    public void TutorialCheck()
+    {
+        if (!TutorialActive)
+            return;
+
+        switch (TutorialCurrentData.Type)
+        {
+            case TutorialStepType.Box:
+                //...
+                break;
+            case TutorialStepType.Button:
+                //Progess in Player View script
+                break;
+            case TutorialStepType.Card:
+                GameEvent.TutorialCard(TutorialCurrentData.CardValue);
+                break;
+        }
+    }
+
+    public void TutorialEnd()
+    {
+        m_tutorialCurrent = null;
+        m_tutorialIndex = 0;
     }
 }

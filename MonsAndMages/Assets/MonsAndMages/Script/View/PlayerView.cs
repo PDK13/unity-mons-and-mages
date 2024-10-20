@@ -111,10 +111,6 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginDragon += OnOriginDragon;
         //Class
         GameEvent.onClassFighter += OnClassFighter;
-        //Tutorial
-        GameEvent.onTutorialBox += OnTutorialBox;
-        GameEvent.onTutorialButton += OnTutorialButton;
-        GameEvent.onTutorialCard += OnTutorialCard;
     }
 
     private void OnDisable()
@@ -165,10 +161,6 @@ public class PlayerView : MonoBehaviour
         GameEvent.onOriginDragon -= OnOriginDragon;
         //Class
         GameEvent.onClassFighter -= OnClassFighter;
-        //Tutorial
-        GameEvent.onTutorialBox -= OnTutorialBox;
-        GameEvent.onTutorialButton -= OnTutorialButton;
-        GameEvent.onTutorialCard -= OnTutorialCard;
     }
 
     private void Start()
@@ -214,8 +206,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonMeidate)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonMeidate)
+                GameManager.instance.TutorialContinue(true);
             else
                 return;
         }
@@ -241,8 +233,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonCollect)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonCollect)
+                GameManager.instance.TutorialContinue(true);
             else
                 return;
         }
@@ -260,8 +252,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonBack)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonBack)
+                GameManager.instance.TutorialContinue(true);
             else
                 return;
         }
@@ -279,8 +271,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonAccept)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonAccept)
+                GameManager.instance.TutorialContinue(false);
             else
                 return;
         }
@@ -332,8 +324,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonCancel)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonCancel)
+                GameManager.instance.TutorialContinue(false);
             else
                 return;
         }
@@ -373,8 +365,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonMeidateOption)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonMeidateOption)
+                GameManager.instance.TutorialContinue(true);
             else
                 return;
         }
@@ -395,8 +387,8 @@ public class PlayerView : MonoBehaviour
 
         if (GameManager.instance.TutorialActive)
         {
-            if (GameManager.instance.TutorialInfo.ButtonPlayer)
-                GameManager.instance.TutorialContinue();
+            if (GameManager.instance.TutorialCurrentData.ButtonPlayer)
+                GameManager.instance.TutorialContinue(true);
             else
                 return;
         }
@@ -579,7 +571,7 @@ public class PlayerView : MonoBehaviour
                 m_hintPlayerContent.SetActive(true);
                 if (Tutorial)
                 {
-                    var TutorialMeidate = GameManager.instance.TutorialInfo.ButtonMeidate;
+                    var TutorialMeidate = GameManager.instance.TutorialCurrentData.ButtonMeidate;
                     if (TutorialMeidate)
                         m_btnMediate.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -587,7 +579,7 @@ public class PlayerView : MonoBehaviour
                         m_btnMediate.transform.DOKill();
                         m_btnMediate.transform.localScale = Vector3.one;
                     }
-                    var TutorialCollect = GameManager.instance.TutorialInfo.ButtonCollect;
+                    var TutorialCollect = GameManager.instance.TutorialCurrentData.ButtonCollect;
                     if (TutorialCollect)
                         m_btnCollect.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -609,7 +601,7 @@ public class PlayerView : MonoBehaviour
                 m_runeStoneBox.gameObject.SetActive(true);
                 if (Tutorial)
                 {
-                    var TutorialBack = GameManager.instance.TutorialInfo.ButtonBack;
+                    var TutorialBack = GameManager.instance.TutorialCurrentData.ButtonBack;
                     if (TutorialBack)
                         m_btnBack.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
                     else
@@ -813,20 +805,7 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainOrigin.gameObject.SetActive(true);
         m_tmpExplainClass.gameObject.SetActive(true);
 
-        var Tutorial = GameManager.instance.TutorialActive;
-        if (Tutorial)
-        {
-            var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
-            if (TutorialAccept)
-                m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
-            else
-                m_btnInfoAccept.transform.localScale = Vector3.one;
-            var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
-            if (TutorialCancel)
-                m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
-            else
-                m_btnInfoCancel.transform.localScale = Vector3.one;
-        }
+        UiInfoTutorial();
     } //Info Collect
 
     private void OnUiInfoMediate()
@@ -837,33 +816,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(true);
         m_mediateOptionContent.gameObject.SetActive(true);
 
-        var Tutorial = GameManager.instance.TutorialActive;
-        if (Tutorial)
-        {
-            var TutorialAccept = GameManager.instance.TutorialInfo.ButtonAccept;
-            if (TutorialAccept)
-                m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
-            else
-            {
-                m_btnInfoAccept.transform.DOKill();
-                m_btnInfoAccept.transform.localScale = Vector3.one;
-            }
-            var TutorialCancel = GameManager.instance.TutorialInfo.ButtonCancel;
-            if (TutorialCancel)
-                m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
-            else
-            {
-                m_btnInfoCancel.transform.DOKill();
-                m_btnInfoCancel.transform.localScale = Vector3.one;
-            }
-        }
-        else
-        {
-            m_btnInfoAccept.transform.DOKill();
-            m_btnInfoAccept.transform.localScale = Vector3.one;
-            m_btnInfoCancel.transform.DOKill();
-            m_btnInfoCancel.transform.localScale = Vector3.one;
-        }
+        UiInfoTutorial();
     } //Info Meidate
 
     private void OnUiInfoFullMana(ICard Card)
@@ -880,6 +833,8 @@ public class PlayerView : MonoBehaviour
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
         m_tmpExplainClass.gameObject.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Full ManaCurrent
 
     private void OnUiInfoOriginWoodland(ICard Card)
@@ -892,6 +847,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Origin Woodland
 
     private void OnUiInfoOriginGhost(ICard Card)
@@ -904,6 +861,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Origin Ghost
 
     private void OnUiInfoClassMagicAddict(ICard Card)
@@ -916,6 +875,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Class Magic Addict
 
     private void OnUiInfoClassFlying(ICard Card)
@@ -928,6 +889,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Class Magic Addict
 
     private void OnUiInfoCardSpell(ICard Card)
@@ -940,6 +903,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Card Spell
 
     private void OnUiInfoCardEnter(ICard Card)
@@ -952,7 +917,34 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+
+        UiInfoTutorial();
     } //Info Class Magic Addict
+
+    private void UiInfoTutorial()
+    {
+        var Tutorial = GameManager.instance.TutorialActive;
+        if (Tutorial)
+        {
+            var TutorialAccept = GameManager.instance.TutorialCurrentData.ButtonAccept;
+            if (TutorialAccept)
+                m_btnInfoAccept.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+                m_btnInfoAccept.transform.localScale = Vector3.one;
+            var TutorialCancel = GameManager.instance.TutorialCurrentData.ButtonCancel;
+            if (TutorialCancel)
+                m_btnInfoCancel.transform.DOScale(Vector2.one * 1.05f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            else
+                m_btnInfoCancel.transform.localScale = Vector3.one;
+        }
+        else
+        {
+            m_btnInfoAccept.transform.DOKill();
+            m_btnInfoAccept.transform.localScale = Vector3.one;
+            m_btnInfoCancel.transform.DOKill();
+            m_btnInfoCancel.transform.localScale = Vector3.one;
+        }
+    }
 
     //GameEvent - Player
 
@@ -1047,19 +1039,4 @@ public class PlayerView : MonoBehaviour
     {
         OnComplete?.Invoke();
     } //Roll a Dice for Fighter
-
-
-    // GameEvent - Tutorial
-
-    private void OnTutorialBox() { }
-
-    private void OnTutorialButton()
-    {
-
-    }
-
-    private void OnTutorialCard()
-    {
-
-    }
 }

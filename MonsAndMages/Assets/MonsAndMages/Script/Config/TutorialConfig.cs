@@ -16,30 +16,30 @@ public class TutorialConfigData
 {
     public bool Auto = false;
 
-    [BoxGroup("Step")]
-    public TutorialStepType Step = TutorialStepType.None;
+    [BoxGroup("Data")]
+    public TutorialStepType Type = TutorialStepType.None;
 
-    [ShowIfGroup("Step/Box", Value = TutorialStepType.Box)]
-    public TutorialBoxType StepBox = TutorialBoxType.None;
+    [ShowIfGroup("Data/Box", Value = TutorialStepType.Box)]
+    public TutorialBoxType BoxValue = TutorialBoxType.None;
 
-    [ShowIfGroup("Step/Button", Value = TutorialStepType.Button)]
-    public TutorialButtonType StepButton = TutorialButtonType.None;
+    [ShowIfGroup("Data/Button", Value = TutorialStepType.Button)]
+    public TutorialButtonType ButtonValue = TutorialButtonType.None;
 
-    [ShowIfGroup("Step/Card", Value = TutorialStepType.Card)]
-    public CardNameType StepCard = CardNameType.None;
+    [ShowIfGroup("Data/Card", Value = TutorialStepType.Card)]
+    public CardNameType CardValue = CardNameType.None;
 
     //public TutorialHintType Hint = TutorialHintType.None;
 
-    public bool Box => Step == TutorialStepType.Box;
+    public bool Box => Type == TutorialStepType.Box;
 
-    public bool Button => Step == TutorialStepType.Button;
-    public bool ButtonMeidate => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Mediate;
-    public bool ButtonMeidateOption => Step == TutorialStepType.Button && StepButton == TutorialButtonType.MediateOption;
-    public bool ButtonCollect => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Collect;
-    public bool ButtonAccept => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Accept;
-    public bool ButtonCancel => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Cancel;
-    public bool ButtonBack => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Back;
-    public bool ButtonPlayer => Step == TutorialStepType.Button && StepButton == TutorialButtonType.Player;
+    public bool Button => Type == TutorialStepType.Button;
+    public bool ButtonMeidate => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Mediate;
+    public bool ButtonMeidateOption => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.MediateOption;
+    public bool ButtonCollect => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Collect;
+    public bool ButtonAccept => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Accept;
+    public bool ButtonCancel => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Cancel;
+    public bool ButtonBack => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Back;
+    public bool ButtonPlayer => Type == TutorialStepType.Button && ButtonValue == TutorialButtonType.Player;
 
-    public bool Card => Step == TutorialStepType.Card;
+    public bool Card => Type == TutorialStepType.Card;
 }
