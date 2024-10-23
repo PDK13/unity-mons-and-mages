@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     private int m_stunCurrent = 0;
     private int[] m_mediation = new int[2] { 0, 0 };
     private List<ICard> m_cardQueue = new List<ICard>();
-    private int m_staffStep = 0;
+    private int m_staffStep = -1;
 
     private List<ICard> m_progessCard = new List<ICard>();
     private bool m_progessStaff = false;
@@ -365,7 +365,10 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         //Staff
         m_staff.Pointer = PointerLast;
-        m_staff.Centre = m_cardContent.GetChild(Mathf.Max(0, m_staffStep)).GetComponent<RectTransform>();
+        if (m_staffStep >= 0)
+            m_staff.Centre = m_cardContent.GetChild(Mathf.Max(0, m_staffStep)).GetComponent<RectTransform>();
+        else
+            m_staff.Centre = null;
         m_staff.DoFixed();
     }
 

@@ -772,7 +772,7 @@ public class CardController : MonoBehaviour, ICard
         for (int i = 0; i < m_player.CardQueue.Length; i++)
         {
             var CardCheck = m_player.CardQueue[i];
-            if (CardCheck.Origin != CardOriginType.Woodland || CardCheck.Type != CardType.Mons)
+            if (CardCheck.Type != CardType.Mons)
                 continue;
             CardCheck.DoChoiceReady();
             ProgessReady = true;

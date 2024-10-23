@@ -22,6 +22,7 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private CanvasGroup m_infoMask;
     [SerializeField] private GameObject m_btnInfoAccept;
     [SerializeField] private GameObject m_btnInfoCancel;
+    [SerializeField] private GameObject m_btnInfoCancelFull;
 
     [Space]
     //Field
@@ -182,6 +183,7 @@ public class PlayerView : MonoBehaviour
         m_infoMask.gameObject.SetActive(false);
         m_btnInfoAccept.SetActive(false);
         m_btnInfoCancel.SetActive(false);
+        m_btnInfoCancelFull.SetActive(false);
         m_hintCollectAccept.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
         m_tmpExplainClass.gameObject.SetActive(false);
@@ -194,6 +196,7 @@ public class PlayerView : MonoBehaviour
         m_btnBack.GetComponent<Button>().onClick.AddListener(BtnBack);
         m_btnInfoAccept.GetComponent<Button>().onClick.AddListener(BtnInfoAccept);
         m_btnInfoCancel.GetComponent<Button>().onClick.AddListener(BtnInfoCancel);
+        m_btnInfoCancelFull.GetComponent<Button>().onClick.AddListener(BtnInfoCancel);
         m_btnEnd.GetComponent<Button>().onClick.AddListener(BtnEndGame);
     }
 
@@ -785,6 +788,7 @@ public class PlayerView : MonoBehaviour
 
         m_btnInfoAccept.SetActive(false);
         m_btnInfoCancel.SetActive(false);
+        m_btnInfoCancelFull.SetActive(false);
         m_mediateOptionContent.gameObject.SetActive(false);
         m_hintCollectAccept.SetActive(false);
         m_tmpExplainOrigin.gameObject.SetActive(false);
@@ -804,6 +808,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.SetActive(true);
         m_hintCollectAccept.SetActive(!CollectAvaible);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
         m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
@@ -819,6 +824,7 @@ public class PlayerView : MonoBehaviour
         UiMaskInfo(true);
 
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
         m_mediateOptionContent.gameObject.SetActive(true);
         m_runeStoneBox.gameObject.SetActive(true);
 
@@ -835,6 +841,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
         m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
         m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
         m_tmpExplainOrigin.gameObject.SetActive(true);
@@ -853,6 +860,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Origin Woodland
@@ -867,6 +875,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Origin Ghost
@@ -881,6 +890,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Class Magic Addict
@@ -895,6 +905,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Class Magic Addict
@@ -909,6 +920,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Card Spell
@@ -923,6 +935,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
 
         UiInfoTutorial();
     } //Info Class Magic Addict

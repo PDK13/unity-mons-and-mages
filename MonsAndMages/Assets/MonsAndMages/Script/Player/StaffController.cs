@@ -16,7 +16,15 @@ public class StaffController : MonoBehaviour
 
     public RectTransform Centre { get; set; }
 
-    public Vector2 CentreInPointer => Pointer.InverseTransformPoint(Centre.position);
+    public Vector2 CentreInPointer
+    {
+        get
+        {
+            if (Centre == null)
+                return new Vector2(-(Pointer.localPosition.x + 226 * 0.5f), 0);
+            return Pointer.InverseTransformPoint(Centre.position);
+        }
+    }
 
     public Image Renderer => this.GetComponent<Image>();
 
