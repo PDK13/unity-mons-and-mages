@@ -89,6 +89,7 @@ public class PlayerView : MonoBehaviour
         //Ui-Info
         GameEvent.onUiInfoHide += OnUiInfoHide;
         GameEvent.onUiInfoCollect += OnUiInfoCollect;
+        GameEvent.onUiInfoZoom += OnUiInfoZoom;
         GameEvent.onUiInfoMediate += OnUiInfoMediate;
         GameEvent.onUiInfoFullMana += OnUiInfoFullMana;
         GameEvent.onUiInfoOriginWoodland += OnUiInfoOriginWoodland;
@@ -139,6 +140,7 @@ public class PlayerView : MonoBehaviour
         //Ui-Info
         GameEvent.onUiInfoHide -= OnUiInfoHide;
         GameEvent.onUiInfoCollect -= OnUiInfoCollect;
+        GameEvent.onUiInfoZoom -= OnUiInfoZoom;
         GameEvent.onUiInfoMediate -= OnUiInfoMediate;
         GameEvent.onUiInfoFullMana -= OnUiInfoFullMana;
         GameEvent.onUiInfoOriginWoodland -= OnUiInfoOriginWoodland;
@@ -817,6 +819,26 @@ public class PlayerView : MonoBehaviour
 
         UiInfoTutorial();
     } //Info Collect
+
+    private void OnUiInfoZoom(ICard Card)
+    {
+        OnUiInfoHide(false, false);
+        UiMaskInfo(true);
+        m_cardView = Card;
+        m_cardView.DoMoveTop(null);
+
+        m_btnInfoAccept.SetActive(false);
+        m_hintCollectAccept.SetActive(false);
+        m_btnInfoCancel.SetActive(true);
+        m_btnInfoCancelFull.SetActive(true);
+        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_tmpExplainOrigin.gameObject.SetActive(true);
+        m_tmpExplainClass.gameObject.SetActive(true);
+        m_runeStoneBox.gameObject.SetActive(true);
+
+        UiInfoTutorial();
+    } //Info Zoom
 
     private void OnUiInfoMediate()
     {

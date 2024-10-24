@@ -128,6 +128,7 @@ public class GameEvent
 
     public static Action<bool, bool> onUiInfoHide { get; set; }
     public static Action<ICard> onUiInfoCollect { get; set; }
+    public static Action<ICard> onUiInfoZoom { get; set; }
     public static Action onUiInfoMediate { get; set; }
     public static Action<ICard> onUiInfoFullMana { get; set; }
     public static Action<ICard> onUiInfoOriginWoodland { get; set; }
@@ -145,6 +146,11 @@ public class GameEvent
     public static void UiInfoCollect(ICard Card)
     {
         onUiInfoCollect?.Invoke(Card);
+    }
+
+    public static void UiInfoZoom(ICard Card)
+    {
+        onUiInfoZoom?.Invoke(Card);
     }
 
     public static void UiInfoMediate()

@@ -110,7 +110,10 @@ public class CardController : MonoBehaviour, ICard
         {
             case ChoiceType.MediateOrCollect:
                 if (m_player != null)
+                {
+                    GameEvent.UiInfoZoom(this);
                     return;
+                }
                 GameEvent.UiInfoCollect(this);
                 break;
             case ChoiceType.CardFullMana:
