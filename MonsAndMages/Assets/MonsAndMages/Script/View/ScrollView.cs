@@ -38,13 +38,13 @@ public class ScrollView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     {
         m_scrollValue += new Vector2(delta.x, delta.y) * Time.fixedDeltaTime;
 
-        if (m_scrollValue.y > 1)
+        if (m_scrollValue.y < -1)
         {
             m_scrollValue = new Vector2();
             GameEvent.onViewArea(ViewType.Wild, null);
         }
         else
-        if (m_scrollValue.y < -1)
+        if (m_scrollValue.y > 1)
         {
             m_scrollValue = new Vector2();
             GameEvent.ViewArea(ViewType.Field, null);
