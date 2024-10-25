@@ -64,6 +64,19 @@ public class GameManager : MonoBehaviour
     {
         GameEvent.Start();
 
+        m_playerQueue = new List<IPlayer>();
+        m_playerIndex = m_startIndex;
+        m_playerChoice = ChoiceType.None;
+
+        GameEvent.Init();
+
+        PlayerData[] PlayerJoin = new PlayerData[2]
+        {
+            new PlayerData(0, m_baseIndex == 0, 40, 5),
+            new PlayerData(1, m_baseIndex == 1, 40, 5),
+        };
+        GameEvent.InitPlayer(PlayerJoin);
+
         StartCoroutine(IGameStart());
     }
 
@@ -73,11 +86,6 @@ public class GameManager : MonoBehaviour
 
         TutorialStart();
 
-        StartCoroutine(IGameStart());
-    }
-
-    private IEnumerator IGameStart()
-    {
         m_playerQueue = new List<IPlayer>();
         m_playerIndex = m_startIndex;
         m_playerChoice = ChoiceType.None;
@@ -86,11 +94,16 @@ public class GameManager : MonoBehaviour
 
         PlayerData[] PlayerJoin = new PlayerData[2]
         {
-            new PlayerData(0, m_baseIndex == 0, 10, 100),
-            new PlayerData(1, m_baseIndex == 1, 10, 100),
+            new PlayerData(0, m_baseIndex == 0, 100, 100),
+            new PlayerData(1, m_baseIndex == 1, 100, 100),
         };
         GameEvent.InitPlayer(PlayerJoin);
 
+        StartCoroutine(IGameStart());
+    }
+
+    private IEnumerator IGameStart()
+    {
         yield return new WaitForSeconds(2f);
 
         GameEvent.ViewArea(ViewType.Wild, () =>

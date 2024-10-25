@@ -845,6 +845,8 @@ public class PlayerView : MonoBehaviour
         OnUiInfoHide(false, false);
         UiMaskInfo(true);
 
+        m_btnInfoAccept.GetComponent<Button>().interactable = true;
+        m_btnInfoAccept.SetActive(false);
         m_btnInfoCancel.SetActive(true);
         m_btnInfoCancelFull.SetActive(true);
         m_mediateOptionContent.gameObject.SetActive(true);

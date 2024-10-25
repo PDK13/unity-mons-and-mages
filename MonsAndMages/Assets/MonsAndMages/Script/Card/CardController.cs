@@ -13,6 +13,7 @@ public class CardController : MonoBehaviour, ICard
     private Button m_button;
     private GameObject m_mask;
     private GameObject m_renderer;
+    private ManaController m_manaGroup;
     private GameObject m_rendererAlpha;
     private TextMeshProUGUI m_tmpGrowth;
     private TextMeshProUGUI m_tmpMana;
@@ -63,6 +64,8 @@ public class CardController : MonoBehaviour, ICard
         m_button = GetComponent<Button>();
         m_mask = transform.Find("mask").gameObject;
         m_renderer = transform.Find("renderer").gameObject;
+        for (int i = 0; i < m_renderer.transform.childCount; i++)
+            m_renderer.transform.GetChild(i).gameObject.SetActive(false);
         m_rendererAlpha = transform.Find("alpha-mask").gameObject;
         m_tmpGrowth = transform.Find("tmp-growth").GetComponent<TextMeshProUGUI>();
         m_tmpMana = transform.Find("tmp-mana").GetComponent<TextMeshProUGUI>();
@@ -238,6 +241,19 @@ public class CardController : MonoBehaviour, ICard
             m_mask.SetActive(true);
             m_renderer.SetActive(false);
             m_renderer.GetComponent<Image>().sprite = m_image;
+            //
+            switch (m_manaPoint)
+            {
+                case 3:
+                    m_manaGroup = m_renderer.transform.Find("mana-group-3").GetComponent<ManaController>();
+                    break;
+                case 2:
+                    m_manaGroup = m_renderer.transform.Find("mana-group-2").GetComponent<ManaController>();
+                    break;
+            }
+            if (m_manaGroup != null)
+                m_manaGroup.gameObject.SetActive(true);
+            //
             m_rendererAlpha.GetComponent<Image>().sprite = m_image;
             m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
             InfoShow(false);
@@ -630,15 +646,19 @@ public class CardController : MonoBehaviour, ICard
 
     private void InfoManaUpdate(int Value, int Max, Action OnComplete)
     {
-        DoEffectOutlineMana(() => DoEffectOutlineNormal(() =>
+        DoEffectOutlineMana(() =>
         {
-            m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+            DoEffectOutlineNormal(() =>
             {
-                var ValueText = string.Format("{0}/{1} {2}", m_manaCurrent, m_manaPoint, GameConstant.TMP_ICON_Mana);
-                m_tmpMana.text = ValueText;
-                m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
+                m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
+                {
+                    var ValueText = string.Format("{0}/{1} {2}", m_manaCurrent, m_manaPoint, GameConstant.TMP_ICON_Mana);
+                    m_tmpMana.text = ValueText;
+                    m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
+                });
             });
-        }));
+            m_manaGroup.InfoManaUpdate(m_manaCurrent);
+        });
     }
 
     private void InfoDamageUpdate(int Value, Action OnComplete)

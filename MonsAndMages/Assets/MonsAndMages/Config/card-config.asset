@@ -118,7 +118,7 @@ MonoBehaviour:
     Class: 5
     Image: {fileID: 21300000, guid: 76c7e069457b1e54d81396d3698c5a03, type: 3}
     RuneStoneCost: 3
-    RuneStoneTake: 1
+    RuneStoneTake: 0
     ManaPoint: 2
     ManaStart: 0
     AttackPoint: 0
