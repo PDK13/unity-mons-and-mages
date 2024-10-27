@@ -165,6 +165,10 @@ public class PlayerController : MonoBehaviour, IPlayer
 
         m_playerName.text = "P" + (Index + 1).ToString();
 
+        m_tmpHealth.text = "";
+        m_tmpRuneStone.text = "";
+        m_tmpStun.text = "";
+
         InfoRuneStoneUpdate(null);
         InfoStunUpdate(null);
         InfoHealthUpdate(null);

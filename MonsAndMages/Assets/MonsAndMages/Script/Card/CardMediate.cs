@@ -34,6 +34,7 @@ public class CardMediate : MonoBehaviour
         m_mask.SetActive(true);
         m_renderer.SetActive(true);
         m_rendererAlpha.GetComponent<CanvasGroup>().alpha = 0;
+        m_tmpRuneStone.text = "";
 
         m_button.onClick.AddListener(BtnTap);
     }
