@@ -100,9 +100,9 @@ public class PlayerController : MonoBehaviour, IPlayer
         GameEvent.PlayerHealthUpdate(this, null);
     }
 
-    private void InfoMediationUpdate(int Index, Action OnComplete)
+    private void InfoMediationUpdate(int Index, Action<int> OnComplete)
     {
-        m_cardMediation[Index].InfoRuneStoneUpdate(m_mediation[Index], OnComplete);
+        m_cardMediation[Index].InfoRuneStoneUpdate(m_mediation[Index], () => OnComplete?.Invoke(Index));
     }
 
     //IPlayer
@@ -231,6 +231,7 @@ public class PlayerController : MonoBehaviour, IPlayer
     private void DoTakeRuneStoneFromMediation(Action OnComplete)
     {
         var RuneStoneTake = false;
+        var EventOnComplete = false;
         for (int i = 0; i < m_mediation.Length; i++)
         {
             if (m_mediation[i] > 0)
@@ -240,13 +241,13 @@ public class PlayerController : MonoBehaviour, IPlayer
                 m_mediation[i] -= 2;
                 m_runeStone += 2;
 
-                InfoMediationUpdate(i, () =>
+                InfoMediationUpdate(i, (index) =>
                 {
                     var RuneStone = Instantiate(m_runeStoneIcon, this.transform).GetComponent<RectTransform>();
                     var RuneStoneFx = RuneStone.Find("fx-glow");
                     var RuneStoneIcon = RuneStone.Find("icon");
                     var RuneStoneIconScale = RuneStoneIcon.localScale;
-
+                    RuneStone.transform.position = m_cardMediation[index].transform.position;
                     RuneStone.gameObject.SetActive(true);
 
                     RuneStoneFx
@@ -263,7 +264,11 @@ public class PlayerController : MonoBehaviour, IPlayer
                         InfoRuneStoneUpdate(() =>
                         {
                             Destroy(RuneStone.gameObject, 0.2f);
-                            OnComplete?.Invoke();
+                            if (!EventOnComplete)
+                            {
+                                EventOnComplete = true;
+                                OnComplete?.Invoke();
+                            }
                         });
                     }).SetDelay(0.25f));
                     RuneStoneIconTween.Play();
@@ -294,13 +299,13 @@ public class PlayerController : MonoBehaviour, IPlayer
             if (m_mediation[0] == 0)
             {
                 m_mediation[0] = RuneStoneAdd * 2;
-                InfoMediationUpdate(0, OnComplete);
+                InfoMediationUpdate(0, (index) => OnComplete?.Invoke());
             }
             else
             if (m_mediation[1] == 0)
             {
                 m_mediation[1] = RuneStoneAdd * 2;
-                InfoMediationUpdate(1, OnComplete);
+                InfoMediationUpdate(1, (index) => OnComplete?.Invoke());
             }
             else
                 OnComplete?.Invoke();
