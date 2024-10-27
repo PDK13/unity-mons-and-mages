@@ -32,6 +32,8 @@ public class QuitView : MonoBehaviour
     public void BtnYes()
     {
         GameManager.instance.GameEnd();
+        for (int i = 0; i < this.transform.childCount; i++)
+            this.transform.GetChild(i).gameObject.SetActive(false);
     }
 
     public void BtnNo()
