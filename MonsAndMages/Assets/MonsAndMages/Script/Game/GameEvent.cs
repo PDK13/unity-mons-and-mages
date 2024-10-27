@@ -30,7 +30,13 @@ public class GameEvent
 
     //End
 
+    public static Action onEndView { get; set; }
     public static Action onEnd { get; set; }
+
+    public static void EndView()
+    {
+        onEndView?.Invoke();
+    }
 
     public static void End()
     {

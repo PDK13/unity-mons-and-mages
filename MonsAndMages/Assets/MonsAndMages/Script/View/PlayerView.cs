@@ -199,7 +199,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.GetComponent<Button>().onClick.AddListener(BtnInfoAccept);
         m_btnInfoCancel.GetComponent<Button>().onClick.AddListener(BtnInfoCancel);
         m_btnInfoCancelFull.GetComponent<Button>().onClick.AddListener(BtnInfoCancel);
-        m_btnEnd.GetComponent<Button>().onClick.AddListener(BtnEndGame);
+        m_btnEnd.GetComponent<Button>().onClick.AddListener(BtnEnd);
     }
 
     //Button
@@ -404,9 +404,9 @@ public class PlayerView : MonoBehaviour
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
     }
 
-    public void BtnEndGame()
+    public void BtnEnd()
     {
-        GameManager.instance.GameEnd();
+        GameEvent.EndView();
     }
 
     //GameEvent - Start
