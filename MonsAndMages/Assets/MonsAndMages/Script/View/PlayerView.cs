@@ -217,6 +217,8 @@ public class PlayerView : MonoBehaviour
                 return;
         }
 
+        m_mediateOptionIndex = -1;
+
         for (int i = 0; i < m_mediateOptionContent.childCount; i++)
         {
             var Outline = m_mediateOptionContent.GetChild(i).GetComponent<Outline>();
@@ -377,6 +379,12 @@ public class PlayerView : MonoBehaviour
                 GameManager.instance.TutorialContinue(true);
             else
                 return;
+        }
+
+        if (m_mediateOptionIndex == OptionIndex)
+        {
+            BtnInfoAccept();
+            return;
         }
 
         m_mediateOptionIndex = OptionIndex;
