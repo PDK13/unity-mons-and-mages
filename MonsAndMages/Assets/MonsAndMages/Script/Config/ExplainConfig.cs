@@ -11,18 +11,18 @@ public class ExplainConfig : ScriptableObject
     [Space]
     public List<ExplainConfigClassData> CardClass = new List<ExplainConfigClassData>();
 
-    public string GetExplainOrigin(CardOriginType Type)
+    public Sprite GetExplainOrigin(CardOriginType Type)
     {
         if (Type == CardOriginType.None)
-            return "";
-        return "Origin: " + Type.ToString() + "\n" + CardOrigin.Find(t => t.Type == Type).Text;
+            return null;
+        return CardOrigin.Find(t => t.Type == Type).Text;
     }
 
-    public string GetExplainClass(CardClassType Type)
+    public Sprite GetExplainClass(CardClassType Type)
     {
         if (Type == CardClassType.None)
-            return "";
-        return "Class: " + Type.ToString() + "\n" + CardClass.Find(t => t.Type == Type).Text;
+            return null;
+        return CardClass.Find(t => t.Type == Type).Text;
     }
 }
 
@@ -30,12 +30,12 @@ public class ExplainConfig : ScriptableObject
 public class ExplainConfigOriginData
 {
     public CardOriginType Type;
-    [Multiline(4)] public string Text;
+    public Sprite Text;
 }
 
 [Serializable]
 public class ExplainConfigClassData
 {
     public CardClassType Type;
-    [Multiline(4)] public string Text;
+    public Sprite Text;
 }

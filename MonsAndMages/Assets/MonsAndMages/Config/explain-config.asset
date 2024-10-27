@@ -14,35 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardOrigin:
   - Type: 1
-    Text: Roll a dice equal to the number of Dragon on your board, deal damage to
-      opponents or yourself if unlucky.
+    Text: {fileID: 21300000, guid: 7ee041a9350b22142a74188135f81a64, type: 3}
   - Type: 2
-    Text: Gain mana equal to half the number of Woodland on your board, rounded up.
-      Each monster can only gain 1 mana this way.
+    Text: {fileID: 21300000, guid: eaf198e2c5a930e41b758db24f7f9b89, type: 3}
   - Type: 3
-    Text: Move the staff forward spaces up to number of Ghost on your board and activate
-      the card it lands on. You must move the staff at least 1 space.
+    Text: {fileID: 21300000, guid: b38233ed0b4dbca418497f3a9c1c84c7, type: 3}
   - Type: 4
-    Text: Resolve the leaf effects on each Insect on your board from left to right,
-      include the newly added Insect card.
+    Text: {fileID: 21300000, guid: 27de64a7205211b418cca460f2f2dcef, type: 3}
   - Type: 5
-    Text: Inflict 1 stun to opponents.
+    Text: {fileID: 21300000, guid: 6c70c450e6e8de447867c9aa1b1cd959, type: 3}
   - Type: 6
-    Text: No special effect.
+    Text: {fileID: 21300000, guid: 052e53665be66574191e5d3fb96620dc, type: 3}
   CardClass:
   - Type: 1
-    Text: Roll a number of dice equa to this monster strength, deal 1 damage for
-      each dot rolled.
+    Text: {fileID: 21300000, guid: 09c06e17d8983f7438a3d316cca06622, type: 3}
   - Type: 2
-    Text: You may remove 1 mana from another monster on your board to have this monster
-      cast its spell once more time.
+    Text: {fileID: 21300000, guid: ed9440ea89af81e4783818c449a6d1f6, type: 3}
   - Type: 3
-    Text: Deal 1 damage for each Singer on your board.
+    Text: {fileID: 21300000, guid: f36a9eedb83a7ed40a190437290db6f4, type: 3}
   - Type: 4
-    Text: Place 1 growth on an adjacent monster. If this is the first growth on that
-      monster, also place 1 rune stone on it.
+    Text: {fileID: 21300000, guid: cc61c6ff4841432479c57276727cfe4e, type: 3}
   - Type: 5
-    Text: Two monster next to it gain 1 mana.
+    Text: {fileID: 21300000, guid: 82dbdf6662850a64bb40d595abd8bafc, type: 3}
   - Type: 6
-    Text: This monster moves forward or backward any number of spaces, then place
-      1 mana on an adjacent monster that it doesn't move past during this movement.
+    Text: {fileID: 21300000, guid: 126b8474743434548a6e6e9c5465fb02, type: 3}

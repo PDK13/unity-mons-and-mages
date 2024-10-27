@@ -40,8 +40,10 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_hintSpell;
 
     [Space]
-    [SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
-    [SerializeField] private TextMeshProUGUI m_tmpExplainClass;
+    [SerializeField] private Image m_imgExplainOrigin;
+    [SerializeField] private Image m_imgExplainClass;
+    //[SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
+    //[SerializeField] private TextMeshProUGUI m_tmpExplainClass;
 
     [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
@@ -187,8 +189,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(false);
         m_btnInfoCancelFull.SetActive(false);
         m_hintCollectAccept.SetActive(false);
-        m_tmpExplainOrigin.gameObject.SetActive(false);
-        m_tmpExplainClass.gameObject.SetActive(false);
+        m_imgExplainOrigin.gameObject.SetActive(false);
+        m_imgExplainClass.gameObject.SetActive(false);
 
         m_playerContent.gameObject.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(false);
@@ -481,8 +483,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.SetActive(false);
         m_mediateOptionContent.gameObject.SetActive(false);
         m_hintCollectAccept.SetActive(false);
-        m_tmpExplainOrigin.gameObject.SetActive(false);
-        m_tmpExplainClass.gameObject.SetActive(false);
+        m_imgExplainOrigin.gameObject.SetActive(false);
+        m_imgExplainClass.gameObject.SetActive(false);
     }
 
     //GameEvent - View
@@ -801,8 +803,8 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancelFull.SetActive(false);
         m_mediateOptionContent.gameObject.SetActive(false);
         m_hintCollectAccept.SetActive(false);
-        m_tmpExplainOrigin.gameObject.SetActive(false);
-        m_tmpExplainClass.gameObject.SetActive(false);
+        m_imgExplainOrigin.gameObject.SetActive(false);
+        m_imgExplainClass.gameObject.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(GameView.instance.ViewType == ViewType.Wild);
     } //Info Hide
 
@@ -819,10 +821,12 @@ public class PlayerView : MonoBehaviour
         m_hintCollectAccept.SetActive(!CollectAvaible);
         m_btnInfoCancel.SetActive(true);
         m_btnInfoCancelFull.SetActive(true);
-        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
-        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
-        m_tmpExplainOrigin.gameObject.SetActive(true);
-        m_tmpExplainClass.gameObject.SetActive(true);
+        m_imgExplainOrigin.sprite = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_imgExplainClass.sprite = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_imgExplainOrigin.SetNativeSize();
+        m_imgExplainClass.SetNativeSize();
+        m_imgExplainOrigin.gameObject.SetActive(m_imgExplainOrigin.sprite != null);
+        m_imgExplainClass.gameObject.SetActive(m_imgExplainClass.sprite != null);
         m_runeStoneBox.gameObject.SetActive(true);
 
         UiInfoTutorial();
@@ -839,10 +843,12 @@ public class PlayerView : MonoBehaviour
         m_hintCollectAccept.SetActive(false);
         m_btnInfoCancel.SetActive(true);
         m_btnInfoCancelFull.SetActive(true);
-        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
-        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
-        m_tmpExplainOrigin.gameObject.SetActive(true);
-        m_tmpExplainClass.gameObject.SetActive(true);
+        m_imgExplainOrigin.sprite = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_imgExplainClass.sprite = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_imgExplainOrigin.SetNativeSize();
+        m_imgExplainClass.SetNativeSize();
+        m_imgExplainOrigin.gameObject.SetActive(m_imgExplainOrigin.sprite != null);
+        m_imgExplainClass.gameObject.SetActive(m_imgExplainClass.sprite != null);
         m_runeStoneBox.gameObject.SetActive(true);
 
         UiInfoTutorial();
@@ -874,10 +880,12 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.SetActive(true);
         m_btnInfoCancel.SetActive(true);
         m_btnInfoCancelFull.SetActive(true);
-        m_tmpExplainOrigin.text = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
-        m_tmpExplainClass.text = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
-        m_tmpExplainOrigin.gameObject.SetActive(true);
-        m_tmpExplainClass.gameObject.SetActive(true);
+        m_imgExplainOrigin.sprite = GameManager.instance.ExplainConfig.GetExplainOrigin(m_cardView.Origin);
+        m_imgExplainClass.sprite = GameManager.instance.ExplainConfig.GetExplainClass(m_cardView.Class);
+        m_imgExplainOrigin.SetNativeSize();
+        m_imgExplainClass.SetNativeSize();
+        m_imgExplainOrigin.gameObject.SetActive(m_imgExplainOrigin.sprite != null);
+        m_imgExplainClass.gameObject.SetActive(m_imgExplainClass.sprite != null);
 
         UiInfoTutorial();
     } //Info Full ManaCurrent
