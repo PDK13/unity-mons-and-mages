@@ -79,11 +79,13 @@ public class CardController : MonoBehaviour, ICard
     private void OnEnable()
     {
         GameEvent.onTutorialCard += OnTutorialCard;
+        GameEvent.onEnd += OnEnd;
     }
 
     private void OnDisable()
     {
         GameEvent.onTutorialCard -= OnTutorialCard;
+        GameEvent.onEnd -= OnEnd;
     }
 
     private void Start()
@@ -165,6 +167,13 @@ public class CardController : MonoBehaviour, ICard
             DoTutorialReady();
         else
             DoTutorialUnReady();
+    }
+
+    private void OnEnd()
+    {
+        this.transform.DOKill();
+        this.m_renderer.transform.DOKill();
+        Destroy(this.gameObject);
     }
 
     //ICard
