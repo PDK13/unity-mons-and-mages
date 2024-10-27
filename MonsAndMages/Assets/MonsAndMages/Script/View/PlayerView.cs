@@ -42,12 +42,14 @@ public class PlayerView : MonoBehaviour
     [Space]
     [SerializeField] private Image m_imgExplainOrigin;
     [SerializeField] private Image m_imgExplainClass;
-    //[SerializeField] private TextMeshProUGUI m_tmpExplainOrigin;
-    //[SerializeField] private TextMeshProUGUI m_tmpExplainClass;
 
     [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
+
+    [Space]
+    [SerializeField] private GameObject m_notiPhaseStart;
+    [SerializeField] private GameObject m_notiPhaseEnd;
 
     [Space]
     [SerializeField] private RectTransform m_diceSample;
@@ -194,6 +196,9 @@ public class PlayerView : MonoBehaviour
 
         m_playerContent.gameObject.SetActive(false);
         m_runeStoneBox.gameObject.SetActive(false);
+
+        m_notiPhaseStart.gameObject.SetActive(false);
+        m_notiPhaseEnd.gameObject.SetActive(false);
 
         m_btnMediate.GetComponent<Button>().onClick.AddListener(BtnMediate);
         m_btnCollect.GetComponent<Button>().onClick.AddListener(BtnCollect);
@@ -1028,10 +1033,7 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerDoChoice(IPlayer Player, Action OnComplete)
     {
-        m_btnMediate.GetComponent<Button>().interactable = PlayerCurrent.MediationEmty;
-        m_btnMediate.SetActive(true);
-        m_btnCollect.SetActive(true);
-        OnComplete?.Invoke();
+        NotiPhase(m_notiPhaseStart, OnComplete);
     }
 
     private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete) { OnComplete?.Invoke(); }
@@ -1042,12 +1044,15 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
-        var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
-        PlayerView.DOScale(Vector2.one * 0.8f, 0.2f).OnComplete(() =>
+        NotiPhase(m_notiPhaseEnd, () =>
         {
-            PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
+            var PlayerView = m_playerContent.transform.GetChild(GameManager.instance.PlayerIndex);
+            PlayerView.DOScale(Vector2.one * 0.8f, 0.2f).OnComplete(() =>
             {
-                OnComplete?.Invoke();
+                PlayerView.DOScale(Vector2.one, 0.2f).OnComplete(() =>
+                {
+                    OnComplete?.Invoke();
+                });
             });
         });
     }
@@ -1098,4 +1103,23 @@ public class PlayerView : MonoBehaviour
     {
         OnComplete?.Invoke();
     } //Roll a Dice for Fighter
+
+    //Noti
+
+    private void NotiPhase(GameObject Noti, Action OnComplete)
+    {
+        var NotiAlpha = Noti.GetComponent<CanvasGroup>();
+        Noti.transform.localScale = Vector3.one * 2f;
+        NotiAlpha.alpha = 1;
+        Noti.SetActive(true);
+        Noti.transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
+        {
+            NotiAlpha.DOFade(0f, 0.2f).SetDelay(1f);
+            Noti.transform.DOScale(Vector3.one * 2f, 0.2f).SetDelay(1f).OnComplete(() =>
+            {
+                OnComplete?.Invoke();
+                Noti.SetActive(false);
+            });
+        });
+    }
 }

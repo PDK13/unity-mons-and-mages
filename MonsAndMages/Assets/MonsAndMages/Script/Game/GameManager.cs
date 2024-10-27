@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
     {
         m_playerChoice = ChoiceType.MediateOrCollect;
         TutorialCheck();
-        GameEvent.UiChoiceMediateOrCollect();
+        GameEvent.PlayerDoChoice(PlayerCurrent, () => GameEvent.UiChoiceMediateOrCollect());
     } //Do Choice
 
     public void PlayerDoMediateStart(IPlayer Player, int RuneStoneAdd)
