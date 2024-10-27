@@ -1223,10 +1223,10 @@ public class CardController : MonoBehaviour, ICard
 
     public void DoClassFighter(Action OnComplete)
     {
-        DoClassFighterProgess(AttackCombine + this.GetPassiveEversor(), 0, OnComplete);
+        DoClassFighterProgess(AttackCombine + this.GetPassiveEversor(), OnComplete);
     } //Class Fighter Event
 
-    private void DoClassFighterProgess(int AttackCombineLeft, int DiceDotSumRolled, Action OnComplete)
+    private void DoClassFighterProgess(int AttackCombineLeft, Action OnComplete)
     {
         var DiceQueue = GameManager.instance.DiceConfig.Data;
         var DiceCount = DiceQueue.Count;
@@ -1234,17 +1234,15 @@ public class CardController : MonoBehaviour, ICard
         var DiceFace = DiceQueue[DiceIndex];
 
         AttackCombineLeft--;
-        DiceDotSumRolled += DiceFace.Dot;
-
-        ClassFighterDiceDot = DiceFace.Dot;
+        ClassFighterDiceDot += DiceFace.Dot;
 
         GameEvent.ClassFighter(() =>
         {
             if (AttackCombineLeft > 0)
-                DoClassFighterProgess(AttackCombineLeft, DiceDotSumRolled, OnComplete);
+                DoClassFighterProgess(AttackCombineLeft, OnComplete);
             else
             {
-                var DiceDotSumAttack = (int)(DiceDotSumRolled / 2);
+                var DiceDotSumAttack = (int)(ClassFighterDiceDot / 2);
                 DoRumble(() =>
                 {
                     var OnCompleteEvent = false;
