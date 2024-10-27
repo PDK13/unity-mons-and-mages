@@ -11,7 +11,7 @@ public class ScrollView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (GameManager.instance.PlayerChoice == ChoiceType.None)
+        if (GameManager.instance.PlayerChoice == ChoiceType.None || GameManager.instance.TutorialActive)
         {
             m_scrollAvaible = false;
             return;
