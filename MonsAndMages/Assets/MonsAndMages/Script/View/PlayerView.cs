@@ -1,5 +1,7 @@
 using DG.Tweening;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -52,7 +54,8 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private GameObject m_notiPhaseEnd;
 
     [Space]
-    [SerializeField] private RectTransform m_diceSample;
+    [SerializeField] private RectTransform m_diceContent;
+    [SerializeField] private GameObject m_dicePointer;
 
     private ICard m_cardView;
     private int m_mediateOptionIndex = -1;
@@ -199,6 +202,8 @@ public class PlayerView : MonoBehaviour
 
         m_notiPhaseStart.gameObject.SetActive(false);
         m_notiPhaseEnd.gameObject.SetActive(false);
+
+        m_dicePointer.SetActive(false);
 
         m_btnMediate.GetComponent<Button>().onClick.AddListener(BtnMediate);
         m_btnCollect.GetComponent<Button>().onClick.AddListener(BtnCollect);
@@ -763,7 +768,7 @@ public class PlayerView : MonoBehaviour
 
     //GameEvent - Ui Info
 
-    private void UiMaskInfo(bool Show)
+    private void UiMaskInfo(bool Show, Action OnComplete)
     {
         var MoveDuration = GameManager.instance.TweenConfig.CardAction.MoveDuration + 0.02f;
 
@@ -774,7 +779,8 @@ public class PlayerView : MonoBehaviour
             m_infoMask.alpha = 0;
             m_infoMask
                 .DOFade(1f, MoveDuration)
-                .SetEase(Ease.Linear);
+                .SetEase(Ease.Linear)
+                .OnComplete(() => OnComplete?.Invoke());
         }
         else
         {
@@ -782,14 +788,18 @@ public class PlayerView : MonoBehaviour
             m_infoMask
                 .DOFade(0f, MoveDuration)
                 .SetEase(Ease.Linear)
-                .OnComplete(() => m_infoMask.gameObject.SetActive(false));
+                .OnComplete(() =>
+                {
+                    m_infoMask.gameObject.SetActive(false);
+                    OnComplete?.Invoke();
+                });
         }
     } //Info MaskTween
 
     private void OnUiInfoHide(bool MaskTween, bool CardBack)
     {
         if (MaskTween)
-            UiMaskInfo(false);
+            UiMaskInfo(false, null);
         else
         {
             m_infoMask.DOKill();
@@ -816,7 +826,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoCollect(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -840,7 +850,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoZoom(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -862,7 +872,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoMediate()
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
 
         m_btnInfoAccept.GetComponent<Button>().interactable = true;
         m_btnInfoAccept.SetActive(false);
@@ -877,7 +887,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoFullMana(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -898,7 +908,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoOriginWoodland(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -913,7 +923,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoOriginGhost(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -928,7 +938,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoClassMagicAddict(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -943,7 +953,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoClassFlying(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -958,7 +968,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoCardSpell(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -973,7 +983,7 @@ public class PlayerView : MonoBehaviour
     private void OnUiInfoCardEnter(ICard Card)
     {
         OnUiInfoHide(false, false);
-        UiMaskInfo(true);
+        UiMaskInfo(true, null);
         m_cardView = Card;
         m_cardView.DoMoveTop(null);
 
@@ -1007,6 +1017,44 @@ public class PlayerView : MonoBehaviour
             m_btnInfoAccept.transform.localScale = Vector3.one;
             m_btnInfoCancel.transform.DOKill();
             m_btnInfoCancel.transform.localScale = Vector3.one;
+        }
+    }
+
+    private void UiInfoDice(DiceConfigData[] DiceResult, Action OnComplete)
+    {
+        UiMaskInfo(true, null);
+        var DiceScale = m_dicePointer.transform.GetChild(0).localScale;
+        var DiceDuration = 1f;
+        var DicePoint = new List<GameObject>();
+        for (int i = 0; i < DiceResult.Length; i++)
+        {
+            var DiceClone = Instantiate(m_dicePointer, m_diceContent);
+            DiceClone.SetActive(true);
+            DicePoint.Add(DiceClone);
+            var DiceIcon = DiceClone.transform.GetChild(0);
+            DiceIcon.GetComponent<Image>().sprite = DiceResult[i].Face;
+            DiceIcon.localScale = Vector3.zero;
+            DiceIcon.DOScale(DiceScale, DiceDuration);
+
+            if (i != 0)
+            {
+                DiceIcon.DOLocalJump(Vector3.zero, 150f, 1, DiceDuration).OnComplete(() =>
+                DiceIcon.DOScale(DiceScale + Vector3.one * 0.25f, 0.1f).SetDelay(1.5f).OnComplete(() =>
+                    DiceIcon.DOScale(DiceScale, 0.1f).OnComplete(() =>
+                        DiceIcon.DOScale(DiceScale, 0.5f))));
+                continue;
+            }
+
+            DiceIcon.DOLocalJump(Vector3.zero, 150f, 1, DiceDuration).OnComplete(() =>
+                DiceIcon.DOScale(DiceScale + Vector3.one * 0.25f, 0.1f).SetDelay(1.5f).OnComplete(() =>
+                    DiceIcon.DOScale(DiceScale, 0.1f).OnComplete(() =>
+                        DiceIcon.DOScale(DiceScale, 0.5f).OnComplete(() =>
+                        {
+                            UiMaskInfo(false, null);
+                            foreach (var DicePointCheck in DicePoint)
+                                Destroy(DicePointCheck);
+                            OnComplete?.Invoke();
+                        }))));
         }
     }
 
@@ -1078,16 +1126,16 @@ public class PlayerView : MonoBehaviour
 
     //GameEvent - Origin
 
-    private void OnOriginDragon(Action OnComplete)
+    private void OnOriginDragon(DiceConfigData[] DiceResult, Action OnComplete)
     {
-        OnComplete?.Invoke();
+        UiInfoDice(DiceResult, OnComplete);
     } //Roll a Dice for Dragon
 
     //GameEvent - Class
 
-    private void OnClassFighter(Action OnComplete)
+    private void OnClassFighter(DiceConfigData[] DiceResult, Action OnComplete)
     {
-        OnComplete?.Invoke();
+        UiInfoDice(DiceResult, OnComplete);
     } //Roll a Dice for Fighter
 
     //Noti

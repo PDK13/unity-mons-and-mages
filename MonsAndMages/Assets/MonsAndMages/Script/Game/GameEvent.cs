@@ -313,20 +313,20 @@ public class GameEvent
 
     //Origin
 
-    public static Action<Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
+    public static Action<DiceConfigData[], Action> onOriginDragon { get; set; } //Roll a Dice for Dragon
 
-    public static void OriginDragon(Action OnComplete)
+    public static void OriginDragon(DiceConfigData[] DiceResult, Action OnComplete)
     {
-        onOriginDragon?.Invoke(OnComplete);
+        onOriginDragon?.Invoke(DiceResult, OnComplete);
     }
 
     //Class
 
-    public static Action<Action> onClassFighter { get; set; } //Roll a Dice for Fighter
+    public static Action<DiceConfigData[], Action> onClassFighter { get; set; } //Roll a Dice for Fighter
 
-    public static void ClassFighter(Action OnComplete)
+    public static void ClassFighter(DiceConfigData[] DiceResult, Action OnComplete)
     {
-        onClassFighter?.Invoke(OnComplete);
+        onClassFighter?.Invoke(DiceResult, OnComplete);
     }
 
 

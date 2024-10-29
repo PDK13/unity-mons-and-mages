@@ -222,9 +222,13 @@ public class CardController : MonoBehaviour, ICard
 
     public int Index => Centre.GetSiblingIndex();
 
+    public List<DiceConfigData> OriginDragonDice { get; set; } = new List<DiceConfigData>();
+
     public int OriginDragonDiceBite { get; set; }
 
     public int OriginDragonDiceDragon { get; set; }
+
+    public List<DiceConfigData> ClassFighterDice { get; set; } = new List<DiceConfigData>();
 
     public int ClassFighterDiceDot { get; set; }
 
@@ -754,8 +758,10 @@ public class CardController : MonoBehaviour, ICard
                 m_progessCollectCurrent = ProgessCollectType.None;
                 m_progessEvent?.Invoke();
                 m_progessEvent = null;
+                OriginDragonDice.Clear();
                 OriginDragonDiceBite = 0;
                 OriginDragonDiceDragon = 0;
+                ClassFighterDice.Clear();
                 ClassFighterDiceDot = 0;
                 m_choice = false;
                 m_choiceOnce = false;
@@ -810,6 +816,7 @@ public class CardController : MonoBehaviour, ICard
         var DiceFace = DiceQueue[DiceIndex];
 
         DragonLeft--;
+        OriginDragonDice.Add(DiceFace);
         OriginDragonDiceBite += DiceFace.Bite;
         OriginDragonDiceDragon += DiceFace.Dragon;
 
@@ -819,7 +826,7 @@ public class CardController : MonoBehaviour, ICard
             return;
         }
 
-        GameEvent.OriginDragon(() => DoRumble(() =>
+        GameEvent.OriginDragon(OriginDragonDice.ToArray(), () => DoRumble(() =>
         {
             var DiceBite = OriginDragonDiceBite;
             var DiceDragon = OriginDragonDiceDragon;
@@ -1224,8 +1231,10 @@ public class CardController : MonoBehaviour, ICard
                 m_progessManaCurrent = ProgessManaType.None;
                 m_progessEvent?.Invoke();
                 m_progessEvent = null;
+                OriginDragonDice.Clear();
                 OriginDragonDiceBite = 0;
                 OriginDragonDiceDragon = 0;
+                ClassFighterDice.Clear();
                 ClassFighterDiceDot = 0;
                 m_choice = false;
                 m_choiceOnce = false;
@@ -1279,6 +1288,7 @@ public class CardController : MonoBehaviour, ICard
         var DiceFace = DiceQueue[DiceIndex];
 
         AttackCombineLeft--;
+        ClassFighterDice.Add(DiceFace);
         ClassFighterDiceDot += DiceFace.Dot;
 
         if (AttackCombineLeft > 0)
@@ -1287,7 +1297,7 @@ public class CardController : MonoBehaviour, ICard
             return;
         }
 
-        GameEvent.ClassFighter(() => DoRumble(() =>
+        GameEvent.ClassFighter(ClassFighterDice.ToArray(), () => DoRumble(() =>
         {
             var DiceDotSumAttack = (int)(ClassFighterDiceDot / 2);
             var OnCompleteEvent = false;
