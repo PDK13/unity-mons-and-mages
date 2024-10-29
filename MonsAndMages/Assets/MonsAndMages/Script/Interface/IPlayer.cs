@@ -70,7 +70,7 @@ public interface IPlayer
 
     void ProgessCardDone(ICard Card);
 
-    void ProgessCheck();
+    void ProgessCheck(ICard Card = null);
 
 
     void DoEnd(Action OnComplete);

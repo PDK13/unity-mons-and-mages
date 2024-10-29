@@ -543,8 +543,16 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_progessCard.Remove(Card);
     }
 
-    public void ProgessCheck()
+    public void ProgessCheck(ICard Card = null)
     {
+        if (Card != null)
+        {
+            m_progessCard.Remove(Card);
+            if (!Card.DoCollectProgess())
+                if (!Card.DoManaProgess())
+                    ProgessCheck();
+        }
+        else
         if (m_cardQueue.Exists(t => t.ManaFull))
             GameManager.instance.PlayerDoCardManaActiveChoice(this);
         else

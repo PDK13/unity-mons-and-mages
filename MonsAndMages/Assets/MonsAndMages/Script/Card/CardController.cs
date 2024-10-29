@@ -1350,8 +1350,9 @@ public class CardController : MonoBehaviour, ICard
         {
             m_player.ProgessCardChoice.DoSpellActive(() =>
             {
+                var CardChoice = m_player.ProgessCardChoice;
                 m_player.ProgessCardChoice = null;
-                m_player.ProgessCheck();
+                m_player.ProgessCheck(CardChoice);
             });
         }));
     }
