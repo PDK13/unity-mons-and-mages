@@ -16,6 +16,7 @@ public class PlayerViewButton : MonoBehaviour
 
     private int m_healthLast = 0;
     private int m_stunLast = 0;
+    private bool m_effect = false;
 
     //
 
@@ -24,6 +25,25 @@ public class PlayerViewButton : MonoBehaviour
     public int Health { set => m_tmpHealth.text = value.ToString(); }
 
     public int Stun { set => m_tmpStun.text = value.ToString(); }
+
+    //
+
+    public void OnEnable()
+    {
+        GameEvent.onPlayerStart += OnPlayerStart;
+    }
+
+    public void OnDisable()
+    {
+        GameEvent.onPlayerStart -= OnPlayerStart;
+    }
+
+    //
+
+    private void OnPlayerStart(IPlayer Player, Action OnComplete)
+    {
+        m_effect = true;
+    }
 
     //
 
@@ -55,6 +75,8 @@ public class PlayerViewButton : MonoBehaviour
 
     public void HealthEffect(int ValueCurrent, int ValueLast)
     {
+        if (!m_effect)
+            return;
         var ValueOffset = ValueCurrent - ValueLast;
         if (ValueOffset == 0)
             return;
@@ -71,6 +93,8 @@ public class PlayerViewButton : MonoBehaviour
 
     public void StunEffect(int ValueCurrent, int ValueLast)
     {
+        if (!m_effect)
+            return;
         var ValueOffset = ValueCurrent - ValueLast;
         if (ValueOffset == 0)
             return;
