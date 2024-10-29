@@ -1367,6 +1367,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 184115344}
+  m_boxHealth: {fileID: 455999620}
+  m_boxStun: {fileID: 1126554765}
   m_tmpIndex: {fileID: 1197589332}
   m_tmpHealth: {fileID: 382949982}
   m_tmpStun: {fileID: 2015216305}
@@ -2308,6 +2311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 363679166}
+  m_boxHealth: {fileID: 1560672071}
+  m_boxStun: {fileID: 2045724354}
   m_tmpIndex: {fileID: 1450783032}
   m_tmpHealth: {fileID: 1323054053}
   m_tmpStun: {fileID: 1992295852}
@@ -3517,6 +3523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 458693641}
+  m_boxHealth: {fileID: 1035329514}
+  m_boxStun: {fileID: 1598692703}
   m_tmpIndex: {fileID: 1509650704}
   m_tmpHealth: {fileID: 152803204}
   m_tmpStun: {fileID: 1159596501}
@@ -4713,6 +4722,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 0}
+  m_boxHealth: {fileID: 0}
+  m_boxStun: {fileID: 0}
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
@@ -5329,6 +5341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 0}
+  m_boxHealth: {fileID: 0}
+  m_boxStun: {fileID: 0}
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
@@ -7649,6 +7664,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 0}
+  m_boxHealth: {fileID: 0}
+  m_boxStun: {fileID: 0}
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
@@ -7970,6 +7988,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e28143af95ca0344c87e9059f6733395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_boxIndex: {fileID: 1277927481}
+  m_boxHealth: {fileID: 661999806}
+  m_boxStun: {fileID: 194380467}
   m_tmpIndex: {fileID: 518710048}
   m_tmpHealth: {fileID: 313995086}
   m_tmpStun: {fileID: 760304686}

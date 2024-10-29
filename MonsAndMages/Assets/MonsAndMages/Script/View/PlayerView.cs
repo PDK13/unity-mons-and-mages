@@ -453,7 +453,7 @@ public class PlayerView : MonoBehaviour
             m_playerContent.transform.GetChild(i).gameObject.SetActive(true);
 
             var ViewButton = m_playerContent.transform.GetChild(i).GetComponent<PlayerViewButton>();
-            ViewButton.Base = Player[i].Base;
+            ViewButton.View = this;
             ViewButton.Health = Player[i].HealthCurrent;
             ViewButton.Stun = Player[i].StunCurrent;
         }
@@ -1068,26 +1068,12 @@ public class PlayerView : MonoBehaviour
 
     private void OnPlayerHealthUpdate(IPlayer Player, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
-        var PlayerHealth = PlayerCurrent.Find("health");
-        var PlayerHealthTmp = PlayerHealth.Find("tmp-health").GetComponent<TextMeshProUGUI>();
-        PlayerHealth.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
-        {
-            PlayerHealthTmp.text = Player.HealthCurrent.ToString();
-            PlayerHealth.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() => OnComplete?.Invoke());
-        });
+        m_playerContent.transform.GetChild(Player.Index).GetComponent<PlayerViewButton>().HealthUpdate(Player.HealthCurrent, OnComplete);
     }
 
     private void OnPlayerStunnedUpdate(IPlayer Player, Action OnComplete)
     {
-        var PlayerCurrent = m_playerContent.transform.GetChild(Player.Index);
-        var PlayerStun = PlayerCurrent.Find("stun");
-        var PlayerStunTmp = PlayerStun.Find("tmp-stun").GetComponent<TextMeshProUGUI>();
-        PlayerStun.DOScale(Vector2.one * 1.2f, 0.1f).SetEase(Ease.OutQuint).OnComplete(() =>
-        {
-            PlayerStunTmp.text = Player.StunCurrent.ToString();
-            PlayerStun.DOScale(Vector2.one, 0.3f).SetEase(Ease.Linear).OnComplete(() => OnComplete?.Invoke());
-        });
+        m_playerContent.transform.GetChild(Player.Index).GetComponent<PlayerViewButton>().StunUpdate(Player.StunCurrent, OnComplete);
     }
 
     //GameEvent - Origin
