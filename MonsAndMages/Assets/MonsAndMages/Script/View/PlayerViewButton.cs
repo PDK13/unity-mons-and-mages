@@ -56,6 +56,8 @@ public class PlayerViewButton : MonoBehaviour
     public void HealthEffect(int ValueCurrent, int ValueLast)
     {
         var ValueOffset = ValueCurrent - ValueLast;
+        if (ValueOffset == 0)
+            return;
         var TmpClone = Instantiate(m_tmpHealth, m_tmpHealth.transform.parent);
         TmpClone.GetComponent<TextMeshProUGUI>().text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
         TmpClone.GetComponent<TextMeshProUGUI>().DOFade(0f, 1f).SetDelay(0.5f);
@@ -69,6 +71,8 @@ public class PlayerViewButton : MonoBehaviour
     public void StunEffect(int ValueCurrent, int ValueLast)
     {
         var ValueOffset = ValueCurrent - ValueLast;
+        if (ValueOffset == 0)
+            return;
         var TmpClone = Instantiate(m_tmpStun, m_tmpStun.transform.parent);
         TmpClone.GetComponent<TextMeshProUGUI>().text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
         TmpClone.GetComponent<TextMeshProUGUI>().DOFade(0f, 1f).SetDelay(0.5f);

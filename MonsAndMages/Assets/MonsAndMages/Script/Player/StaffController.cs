@@ -87,13 +87,14 @@ public class StaffController : MonoBehaviour
     {
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
-        transform.SetSiblingIndex(Pointer.childCount - 1);
+        transform.SetAsLastSibling();
         Renderer.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete((TweenCallback)(() =>
         {
             Renderer.transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete((TweenCallback)(() =>
             {
-                transform.SetSiblingIndex(Pointer.GetSiblingIndex() - 1);
+                transform.SetAsLastSibling();
+                Renderer.maskable = true;
                 OnComplete?.Invoke();
             }));
         }));
