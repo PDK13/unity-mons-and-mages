@@ -644,6 +644,22 @@ public class CardController : MonoBehaviour, ICard
     }  //Effect Class Event
 
 
+    public void DoTextAttack()
+    {
+        if (AttackCombine == 0)
+            return;
+        var TmpClone = Instantiate(m_tmpDamage, m_tmpDamage.transform.parent);
+        TmpClone.GetComponent<TextMeshProUGUI>().DOFade(0f, 1f).SetDelay(0.5f);
+        TmpClone.transform.position = m_tmpDamage.transform.position;
+        TmpClone.transform.localScale = Vector3.one;
+        TmpClone.gameObject.SetActive(true);
+        var TmpRecTransform = TmpClone.GetComponent<RectTransform>();
+        TmpRecTransform.anchoredPosition += Vector2.up * 25;
+        TmpRecTransform.DOScale(Vector2.one * 3f, 0.1f).OnComplete(() => TmpRecTransform.DOScale(Vector2.one, 0.1f));
+        TmpRecTransform.DOAnchorPosY(TmpRecTransform.anchoredPosition.y + 50f, 1.5f).OnComplete(() => Destroy(TmpClone));
+    }
+
+
     public void InfoShow(bool Show)
     {
         m_tmpGrowth.gameObject.SetActive(Type == CardType.Mons && Show);
@@ -1119,6 +1135,8 @@ public class CardController : MonoBehaviour, ICard
         }
         DoRumble(() =>
         {
+            DoTextAttack();
+            //
             var PlayerQueue = GameManager.instance.PlayerQueue;
             for (int i = 0; i < PlayerQueue.Length; i++)
             {

@@ -98,6 +98,9 @@ public interface ICard
     void DoEffectClass(Action OnComplete);
 
 
+    void DoTextAttack();
+
+
     void InfoShow(bool Show); //Thông tin hiển thị
 
 

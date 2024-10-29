@@ -58,11 +58,12 @@ public class PlayerViewButton : MonoBehaviour
         var ValueOffset = ValueCurrent - ValueLast;
         if (ValueOffset == 0)
             return;
-        var TmpClone = Instantiate(m_tmpHealth, m_tmpHealth.transform.parent);
-        TmpClone.GetComponent<TextMeshProUGUI>().text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
-        TmpClone.GetComponent<TextMeshProUGUI>().DOFade(0f, 1f).SetDelay(0.5f);
+        var TmpClone = Instantiate(m_tmpHealth, View.transform);
+        TmpClone.text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
+        TmpClone.DOFade(0f, 1f).SetDelay(0.5f);
         TmpClone.transform.position = m_tmpHealth.transform.position;
         TmpClone.transform.localScale = Vector3.one;
+        TmpClone.gameObject.SetActive(true);
         var TmpRecTransform = TmpClone.GetComponent<RectTransform>();
         TmpRecTransform.anchoredPosition += Vector2.up * 25;
         TmpRecTransform.DOAnchorPosY(TmpRecTransform.anchoredPosition.y + 50f, 1.5f).OnComplete(() => Destroy(TmpClone));
@@ -73,11 +74,12 @@ public class PlayerViewButton : MonoBehaviour
         var ValueOffset = ValueCurrent - ValueLast;
         if (ValueOffset == 0)
             return;
-        var TmpClone = Instantiate(m_tmpStun, m_tmpStun.transform.parent);
-        TmpClone.GetComponent<TextMeshProUGUI>().text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
-        TmpClone.GetComponent<TextMeshProUGUI>().DOFade(0f, 1f).SetDelay(0.5f);
+        var TmpClone = Instantiate(m_tmpStun, View.transform);
+        TmpClone.text = (ValueOffset > 0 ? "+" : "") + ValueOffset.ToString();
+        TmpClone.DOFade(0f, 1f).SetDelay(0.5f);
         TmpClone.transform.position = m_tmpStun.transform.position;
         TmpClone.transform.localScale = Vector3.one;
+        TmpClone.gameObject.SetActive(true);
         var TmpRecTransform = TmpClone.GetComponent<RectTransform>();
         TmpRecTransform.anchoredPosition += Vector2.up * 25;
         TmpRecTransform.DOAnchorPosY(TmpRecTransform.anchoredPosition.y + 50f, 1.5f).OnComplete(() => Destroy(TmpClone));
