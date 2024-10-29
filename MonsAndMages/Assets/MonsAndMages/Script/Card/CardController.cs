@@ -416,6 +416,9 @@ public class CardController : MonoBehaviour, ICard
 
         transform.SetParent(PlayerView.instance.InfoView, true);
         Renderer.maskable = false;
+        m_tmpDamage.maskable = false;
+        m_tmpGrowth.maskable = false;
+        m_tmpMana.maskable = false;
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one * 2.35f, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
@@ -423,7 +426,6 @@ public class CardController : MonoBehaviour, ICard
         CardTween.OnComplete(() =>
         {
             m_move = false;
-            Renderer.maskable = true;
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -440,7 +442,6 @@ public class CardController : MonoBehaviour, ICard
 
         transform.SetParent(Pointer, true);
         transform.SetSiblingIndex(Pointer.childCount - 1);
-        Renderer.maskable = false;
 
         Sequence CardTween = DOTween.Sequence();
         CardTween.Insert(0f, transform.DOScale(Vector3.one, MoveDuration * 0.7f).SetEase(Ease.OutQuad));
@@ -450,6 +451,9 @@ public class CardController : MonoBehaviour, ICard
             m_move = false;
             transform.SetSiblingIndex(0);
             Renderer.maskable = true;
+            m_tmpDamage.maskable = true;
+            m_tmpGrowth.maskable = true;
+            m_tmpMana.maskable = true;
             OnComplete?.Invoke();
         });
         CardTween.Play();
@@ -513,16 +517,24 @@ public class CardController : MonoBehaviour, ICard
 
         var RumbleDuration = GameManager.instance.TweenConfig.CardAction.RumbleDuration;
 
-        transform.SetSiblingIndex(Pointer.childCount - 2);
+        transform.SetAsLastSibling();
         Renderer.maskable = false;
+        m_tmpDamage.maskable = false;
+        m_tmpGrowth.maskable = false;
+        m_tmpMana.maskable = false;
         Renderer.transform.DOScale(Vector3.one * 1.35f, RumbleDuration * 0.8f).SetEase(Ease.OutQuad).OnComplete((() =>
         {
             Renderer.transform.DOScale(Vector3.one, RumbleDuration * 0.2f).SetEase(Ease.Linear).OnComplete((() =>
             {
                 m_effect = false;
-                transform.SetSiblingIndex(0);
-                Renderer.maskable = true;
-                GameEvent.CardRumble(this, () => OnComplete?.Invoke());
+                GameEvent.CardRumble(this, () =>
+                {
+                    Renderer.maskable = true;
+                    m_tmpDamage.maskable = true;
+                    m_tmpGrowth.maskable = true;
+                    m_tmpMana.maskable = true;
+                    OnComplete?.Invoke();
+                });
             }));
         }));
 

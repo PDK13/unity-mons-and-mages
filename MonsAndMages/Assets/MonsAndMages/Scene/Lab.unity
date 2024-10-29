@@ -1373,7 +1373,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 1197589332}
   m_tmpHealth: {fileID: 382949982}
   m_tmpStun: {fileID: 2015216305}
-  Base: 0
 --- !u!1 &185197255
 GameObject:
   m_ObjectHideFlags: 0
@@ -2317,7 +2316,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 1450783032}
   m_tmpHealth: {fileID: 1323054053}
   m_tmpStun: {fileID: 1992295852}
-  Base: 0
 --- !u!1 &380968397
 GameObject:
   m_ObjectHideFlags: 0
@@ -3529,7 +3527,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 1509650704}
   m_tmpHealth: {fileID: 152803204}
   m_tmpStun: {fileID: 1159596501}
-  Base: 0
 --- !u!1 &460262387
 GameObject:
   m_ObjectHideFlags: 0
@@ -4728,7 +4725,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
-  Base: 0
 --- !u!114 &623916919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5347,7 +5343,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
-  Base: 0
 --- !u!114 &696487407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7670,7 +7665,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 0}
   m_tmpHealth: {fileID: 0}
   m_tmpStun: {fileID: 0}
-  Base: 0
 --- !u!114 &1262212010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7994,7 +7988,6 @@ MonoBehaviour:
   m_tmpIndex: {fileID: 518710048}
   m_tmpHealth: {fileID: 313995086}
   m_tmpStun: {fileID: 760304686}
-  Base: 0
 --- !u!1 &1323054051
 GameObject:
   m_ObjectHideFlags: 0
