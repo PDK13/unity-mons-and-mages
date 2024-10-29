@@ -222,6 +222,10 @@ public class CardController : MonoBehaviour, ICard
 
     public int Index => Centre.GetSiblingIndex();
 
+    public int OriginDragonDiceBite { get; set; }
+
+    public int OriginDragonDiceDragon { get; set; }
+
     public int ClassFighterDiceDot { get; set; }
 
     public int ClassFlyingMoveDir { get; set; }
@@ -750,6 +754,11 @@ public class CardController : MonoBehaviour, ICard
                 m_progessCollectCurrent = ProgessCollectType.None;
                 m_progessEvent?.Invoke();
                 m_progessEvent = null;
+                OriginDragonDiceBite = 0;
+                OriginDragonDiceDragon = 0;
+                ClassFighterDiceDot = 0;
+                m_choice = false;
+                m_choiceOnce = false;
                 return true;
         }
         return false;
@@ -801,27 +810,28 @@ public class CardController : MonoBehaviour, ICard
         var DiceFace = DiceQueue[DiceIndex];
 
         DragonLeft--;
+        OriginDragonDiceBite += DiceFace.Bite;
+        OriginDragonDiceDragon += DiceFace.Dragon;
 
-        GameEvent.OriginDragon(() =>
+        if (DragonLeft > 0)
         {
-            DoRumble(() =>
+            DoOriginDragonProgess(DragonLeft, OnComplete);
+            return;
+        }
+
+        GameEvent.OriginDragon(() => DoRumble(() =>
+        {
+            var DiceBite = OriginDragonDiceBite;
+            var DiceDragon = OriginDragonDiceDragon;
+            var PlayerQueue = GameManager.instance.PlayerQueue;
+            for (int i = 0; i < PlayerQueue.Length; i++)
             {
-                var PlayerQueue = GameManager.instance.PlayerQueue;
-                for (int i = 0; i < PlayerQueue.Length; i++)
-                {
-                    if (PlayerQueue[i].Equals(m_player))
-                        PlayerQueue[i].HealthChange(-DiceFace.Bite, () =>
-                        {
-                            if (DragonLeft > 0)
-                                DoOriginDragonProgess(DragonLeft, OnComplete);
-                            else
-                                OnComplete?.Invoke();
-                        });
-                    else
-                        PlayerQueue[i].HealthChange(-DiceFace.Dragon, null);
-                }
-            });
-        });
+                if (PlayerQueue[i].Equals(m_player))
+                    PlayerQueue[i].HealthChange(-DiceBite, () => OnComplete?.Invoke());
+                else
+                    PlayerQueue[i].HealthChange(-DiceDragon, null);
+            }
+        }));
     }
 
     public void DoOriginWoodlandReady(Action OnComplete)
@@ -1214,6 +1224,11 @@ public class CardController : MonoBehaviour, ICard
                 m_progessManaCurrent = ProgessManaType.None;
                 m_progessEvent?.Invoke();
                 m_progessEvent = null;
+                OriginDragonDiceBite = 0;
+                OriginDragonDiceDragon = 0;
+                ClassFighterDiceDot = 0;
+                m_choice = false;
+                m_choiceOnce = false;
                 return true;
         }
         return false;
@@ -1266,33 +1281,31 @@ public class CardController : MonoBehaviour, ICard
         AttackCombineLeft--;
         ClassFighterDiceDot += DiceFace.Dot;
 
-        GameEvent.ClassFighter(() =>
+        if (AttackCombineLeft > 0)
         {
-            if (AttackCombineLeft > 0)
-                DoClassFighterProgess(AttackCombineLeft, OnComplete);
-            else
-            {
-                var DiceDotSumAttack = (int)(ClassFighterDiceDot / 2);
-                DoRumble(() =>
-                {
-                    var OnCompleteEvent = false;
-                    var PlayerQueue = GameManager.instance.PlayerQueue;
-                    for (int i = 0; i < PlayerQueue.Length; i++)
-                    {
-                        if (PlayerQueue[i].Equals(m_player))
-                            continue;
+            DoClassFighterProgess(AttackCombineLeft, OnComplete);
+            return;
+        }
 
-                        if (!OnCompleteEvent)
-                        {
-                            OnCompleteEvent = true;
-                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, OnComplete);
-                        }
-                        else
-                            PlayerQueue[i].HealthChange(-DiceDotSumAttack, null);
-                    }
-                });
+        GameEvent.ClassFighter(() => DoRumble(() =>
+        {
+            var DiceDotSumAttack = (int)(ClassFighterDiceDot / 2);
+            var OnCompleteEvent = false;
+            var PlayerQueue = GameManager.instance.PlayerQueue;
+            for (int i = 0; i < PlayerQueue.Length; i++)
+            {
+                if (PlayerQueue[i].Equals(m_player))
+                    continue;
+
+                if (!OnCompleteEvent)
+                {
+                    OnCompleteEvent = true;
+                    PlayerQueue[i].HealthChange(-DiceDotSumAttack, OnComplete);
+                }
+                else
+                    PlayerQueue[i].HealthChange(-DiceDotSumAttack, null);
             }
-        });
+        }));
     }
 
     public void DoClassMagicAddictReady(Action OnComplete)
@@ -1436,11 +1449,7 @@ public class CardController : MonoBehaviour, ICard
                     Player.HealthChange(3, OnComplete);
                     break;
                 case CardNameType.Eversor:
-                    Player.HealthChange(ClassFighterDiceDot / 4, () =>
-                    {
-                        ClassFighterDiceDot = 0;
-                        OnComplete?.Invoke();
-                    });
+                    Player.HealthChange(ClassFighterDiceDot / 4, () => OnComplete?.Invoke());
                     break;
                 case CardNameType.FlowOfTheEssential:
                     DoSpellFlowOfTheEssential(OnComplete);
