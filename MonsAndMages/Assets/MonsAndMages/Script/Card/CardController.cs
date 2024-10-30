@@ -697,12 +697,12 @@ public class CardController : MonoBehaviour, ICard
             {
                 m_tmpMana.transform.DOScale(Vector2.one * 1.2f, 0.1f).OnComplete(() =>
                 {
-                    var ValueText = string.Format("{0}/{1} {2}", m_manaCurrent, m_manaPoint, GameConstant.TMP_ICON_Mana);
+                    var ValueText = string.Format("{0}/{1} {2}", Value, Max, GameConstant.TMP_ICON_Mana);
                     m_tmpMana.text = ValueText;
                     m_tmpMana.transform.DOScale(Vector2.one, 0.1f).OnComplete(() => OnComplete?.Invoke());
                 });
             });
-            m_manaGroup.InfoManaUpdate(m_manaCurrent);
+            m_manaGroup.InfoManaUpdate(Value);
         });
     }
 
@@ -891,7 +891,7 @@ public class CardController : MonoBehaviour, ICard
                 for (int i = 0; i < m_player.CardQueue.Length; i++)
                 {
                     var CardCheck = m_player.CardQueue[i];
-                    if (CardCheck.Origin != CardOriginType.Woodland || CardCheck.Type != CardType.Mons)
+                    if (CardCheck.Type != CardType.Mons)
                         continue;
                     CardCheck.DoChoiceReady();
                 }
@@ -1401,10 +1401,13 @@ public class CardController : MonoBehaviour, ICard
     public void DoClassFlyingReady(Action OnComplete)
     {
         bool ProgessReady = false;
+        var CardStageIndexMin = -1;
+        while (m_player.CardQueue[CardStageIndexMin + 1].Name == CardNameType.Stage)
+            CardStageIndexMin++;
         var CardIndex = m_player.CardQueue.ToList().IndexOf(this);
         for (int i = 0; i < m_player.CardQueue.Length; i++)
         {
-            if (m_player.CardQueue[i].Equals(this) || Mathf.Abs(CardIndex - i) <= 1)
+            if (m_player.CardQueue[i].Equals(this) || Mathf.Abs(CardIndex - i) <= 1 || i <= CardStageIndexMin)
                 continue;
             m_player.CardQueue[i].DoChoiceReady();
             ProgessReady = true;
@@ -1436,8 +1439,9 @@ public class CardController : MonoBehaviour, ICard
                  {
                      if (this.ManaFull)
                          this.ClassFlyingManaFull = true;
+                     var CardChoice = m_player.ProgessCardChoice;
                      m_player.ProgessCardChoice = null;
-                     m_player.ProgessCheck();
+                     m_player.ProgessCheck(CardChoice);
                  }));
              });
         });
