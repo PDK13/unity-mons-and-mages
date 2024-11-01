@@ -252,7 +252,7 @@ public class PlayerView : MonoBehaviour
         m_btnMediate.transform.DOKill();
         m_btnMediate.transform.localScale = Vector3.one;
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnCollect()
@@ -273,7 +273,7 @@ public class PlayerView : MonoBehaviour
         m_btnCollect.transform.DOKill();
         m_btnCollect.transform.localScale = Vector3.one;
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnBack()
@@ -294,7 +294,7 @@ public class PlayerView : MonoBehaviour
         m_btnBack.transform.DOKill();
         m_btnBack.transform.localScale = Vector3.one;
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnInfoAccept()
@@ -360,7 +360,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoAccept.transform.DOKill();
         m_btnInfoAccept.transform.localScale = Vector3.one;
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnInfoCancel()
@@ -405,7 +405,7 @@ public class PlayerView : MonoBehaviour
         m_btnInfoCancel.transform.DOKill();
         m_btnInfoCancel.transform.localScale = Vector3.one;
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnMediateOption(int OptionIndex)
@@ -435,7 +435,7 @@ public class PlayerView : MonoBehaviour
         }
         m_btnInfoAccept.SetActive(true);
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnViewPlayer(int PlayerIndex)
@@ -453,14 +453,14 @@ public class PlayerView : MonoBehaviour
 
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     public void BtnEnd()
     {
         GameEvent.EndView();
 
-        SoundManager.instance.Play(SoundType.ButtonPress);
+        SoundManager.instance.Play(SoundType.CardLight);
     }
 
     //GameEvent - Start

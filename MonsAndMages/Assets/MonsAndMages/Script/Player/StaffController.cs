@@ -48,7 +48,11 @@ public class StaffController : MonoBehaviour
         m_recTransform
             .DOLocalJump(CentreInPointer, 45f, 1, 1f)
             .SetEase(Ease.InCubic)
-            .OnComplete(() => OnComplete?.Invoke());
+            .OnComplete(() =>
+            {
+                SoundManager.instance.Play(SoundType.CardLight);
+                OnComplete?.Invoke();
+            });
     }
 
     public void DoMoveCentreLinear(Action OnComplete)
