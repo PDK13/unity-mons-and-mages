@@ -41,7 +41,8 @@ public class CardMediate : MonoBehaviour
 
     //
 
-    public void BtnTap() { }
+    public void BtnTap()
+    { }
 
     //
 
@@ -63,7 +64,6 @@ public class CardMediate : MonoBehaviour
             });
         });
     }
-
 
     public void InfoRuneStoneUpdate(int Value, Action OnComplete)
     {

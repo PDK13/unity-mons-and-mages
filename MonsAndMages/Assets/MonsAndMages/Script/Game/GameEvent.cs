@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class GameEvent
@@ -297,7 +296,6 @@ public class GameEvent
 
     //Card
 
-
     public static Action<ICard, Action> onCardRumble { get; set; }
     public static Action<ICard, Action> onCardAttack { get; set; }
 
@@ -328,7 +326,6 @@ public class GameEvent
     {
         onClassFighter?.Invoke(DiceResult, OnComplete);
     }
-
 
     //Tutorial
 

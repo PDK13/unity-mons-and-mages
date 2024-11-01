@@ -16,7 +16,8 @@ public class PlayerData
     public List<ICard> CardQueue = new List<ICard>();
     [Min(0)] public int StaffStep;
 
-    public PlayerData() { }
+    public PlayerData()
+    { }
 
     public PlayerData(int Index, bool Base, int HealthPoint, int RuneStone)
     {
@@ -41,17 +42,21 @@ public class CardData
 
     [Space]
     [Min(0)] public int RuneStoneCost;
+
     [Min(0)] public int RuneStoneTake; //When staff move to card, get Rune Stone
 
     [Space]
     [Min(0)] public int ManaPoint;
+
     [Min(0)] public int ManaStart;
 
     [Space]
     [Min(0)] public int AttackPoint;
+
     [Min(0)] public int GrowthStart;
 
-    public CardData() { }
+    public CardData()
+    { }
 
     public CardData(CardData Data)
     {

@@ -30,8 +30,10 @@ public enum CardClassType
 public enum CardNameType
 {
     None = 0,
+
     //
     Cornibus = 2,
+
     Duchess = 3,
     DragonEgg = 4,
     Eversor = 5,
@@ -41,14 +43,15 @@ public enum CardNameType
     OneTail = 9,
     Pott = 10,
     Umbella = 11,
+
     //
     Mediate = int.MaxValue - 1,
+
     Stage = int.MaxValue,
 }
 
 public enum CardTrickType
 {
-
 }
 
 public enum CardEffectType
@@ -125,4 +128,17 @@ public enum TutorialButtonType
 public enum TutorialHintType
 {
     None,
+}
+
+public enum SoundType
+{
+    None,
+    TurnHint,
+    ButtonPress,
+    CardEffect,
+    CardOrigin,
+    CardClass,
+    CardHard,
+    CardLight,
+    CardChoice,
 }

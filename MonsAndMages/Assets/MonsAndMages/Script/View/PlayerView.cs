@@ -1,6 +1,5 @@
 using DG.Tweening;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,10 +16,12 @@ public class PlayerView : MonoBehaviour
 
     [Space]
     [SerializeField] private Transform m_playerContent;
+
     [SerializeField] private Transform m_mediateOptionContent;
 
     [Space]
     [SerializeField] private Transform m_infoView;
+
     [SerializeField] private CanvasGroup m_infoMask;
     [SerializeField] private GameObject m_btnInfoAccept;
     [SerializeField] private GameObject m_btnInfoCancel;
@@ -29,12 +30,15 @@ public class PlayerView : MonoBehaviour
     [Space]
     //Field
     [SerializeField] private GameObject m_hintMediateAction;
+
     [SerializeField] private GameObject m_hintMediateUnEmty;
     [SerializeField] private GameObject m_hintCollectAction;
     [SerializeField] private GameObject m_hintPlayerContent;
     [SerializeField] private GameObject m_hintManaActive;
+
     //Info
     [SerializeField] private GameObject m_hintCollectAccept;
+
     [SerializeField] private GameObject m_hintOriginWoodland;
     [SerializeField] private GameObject m_hintOriginGhost;
     [SerializeField] private GameObject m_hintClassMagicAddict;
@@ -43,18 +47,22 @@ public class PlayerView : MonoBehaviour
 
     [Space]
     [SerializeField] private Image m_imgExplainOrigin;
+
     [SerializeField] private Image m_imgExplainClass;
 
     [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
+
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
     [SerializeField] private GameObject m_notiPhaseStart;
+
     [SerializeField] private GameObject m_notiPhaseEnd;
 
     [Space]
     [SerializeField] private RectTransform m_diceContent;
+
     [SerializeField] private GameObject m_dicePointer;
 
     private ICard m_cardView;
@@ -243,6 +251,8 @@ public class PlayerView : MonoBehaviour
 
         m_btnMediate.transform.DOKill();
         m_btnMediate.transform.localScale = Vector3.one;
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnCollect()
@@ -262,6 +272,8 @@ public class PlayerView : MonoBehaviour
 
         m_btnCollect.transform.DOKill();
         m_btnCollect.transform.localScale = Vector3.one;
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnBack()
@@ -281,6 +293,8 @@ public class PlayerView : MonoBehaviour
 
         m_btnBack.transform.DOKill();
         m_btnBack.transform.localScale = Vector3.one;
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnInfoAccept()
@@ -306,29 +320,37 @@ public class PlayerView : MonoBehaviour
                         case ViewType.Field: //Mediate
                             GameManager.instance.PlayerDoMediateStart(GameManager.instance.PlayerCurrent, m_mediateOptionIndex + 1);
                             break;
+
                         case ViewType.Wild: //Collect
                             GameManager.instance.PlayerDoCollectStart(GameManager.instance.PlayerCurrent, m_cardView);
                             break;
                     }
                     break;
+
                 case ChoiceType.CardFullMana:
                     GameManager.instance.CardManaActiveStart(m_cardView);
                     break;
+
                 case ChoiceType.CardOriginWoodland:
                     GameManager.instance.CardOriginWoodlandDoStart(m_cardView);
                     break;
+
                 case ChoiceType.CardOriginGhost:
                     GameManager.instance.CardOriginGhostDoStart(m_cardView);
                     break;
+
                 case ChoiceType.CardClassMagicAddict:
                     GameManager.instance.CardClassMagicAddictStart(m_cardView);
                     break;
+
                 case ChoiceType.CardClassFlying:
                     GameManager.instance.CardClassFlyingStart(m_cardView);
                     break;
+
                 case ChoiceType.CardSpell:
                     GameManager.instance.CardSpellStart(m_cardView);
                     break;
+
                 case ChoiceType.CardEnter:
                     GameManager.instance.CardEnterStart(m_cardView);
                     break;
@@ -337,6 +359,8 @@ public class PlayerView : MonoBehaviour
 
         m_btnInfoAccept.transform.DOKill();
         m_btnInfoAccept.transform.localScale = Vector3.one;
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnInfoCancel()
@@ -360,11 +384,13 @@ public class PlayerView : MonoBehaviour
                     case ViewType.Field: //Mediate
                         GameEvent.UiInfoHide(true, true);
                         break;
+
                     case ViewType.Wild: //Collect
                         GameEvent.UiInfoHide(true, true);
                         break;
                 }
                 break;
+
             case ChoiceType.CardFullMana:
             case ChoiceType.CardOriginWoodland:
             case ChoiceType.CardOriginGhost:
@@ -378,6 +404,8 @@ public class PlayerView : MonoBehaviour
 
         m_btnInfoCancel.transform.DOKill();
         m_btnInfoCancel.transform.localScale = Vector3.one;
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnMediateOption(int OptionIndex)
@@ -406,6 +434,8 @@ public class PlayerView : MonoBehaviour
             Outline.effectColor = OptionIndex == i ? Color.white : Color.black;
         }
         m_btnInfoAccept.SetActive(true);
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnViewPlayer(int PlayerIndex)
@@ -422,11 +452,15 @@ public class PlayerView : MonoBehaviour
         }
 
         GameEvent.ViewPlayer(GameManager.instance.GetPlayer(PlayerIndex), null);
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     public void BtnEnd()
     {
         GameEvent.EndView();
+
+        SoundManager.instance.Play(SoundType.ButtonPress);
     }
 
     //GameEvent - Start
@@ -501,7 +535,6 @@ public class PlayerView : MonoBehaviour
 
     private void OnViewCard(ICard Card)
     {
-
     }
 
     private void OnViewPlayer(IPlayer Player, Action OnComplete)
@@ -553,27 +586,35 @@ public class PlayerView : MonoBehaviour
             case ChoiceType.None:
                 OnUiChoiceHide();
                 break;
+
             case ChoiceType.MediateOrCollect:
                 OnUiChoiceMediateOrCollect();
                 break;
+
             case ChoiceType.CardFullMana:
                 OnUiChoiceCardFullMana();
                 break;
+
             case ChoiceType.CardOriginWoodland:
                 OnUiChoiceCardOriginWoodland();
                 break;
+
             case ChoiceType.CardOriginGhost:
                 OnUiChoiceCardOriginGhost();
                 break;
+
             case ChoiceType.CardClassMagicAddict:
                 OnUiChoiceCardClassMagicAddict();
                 break;
+
             case ChoiceType.CardClassFlying:
                 OnUiChoiceCardClassFlying();
                 break;
+
             case ChoiceType.CardSpell:
                 OnUiChoiceCardSpell();
                 break;
+
             case ChoiceType.CardEnter:
                 OnUiChoiceCardEnter();
                 break;
@@ -624,6 +665,7 @@ public class PlayerView : MonoBehaviour
                     m_btnCollect.transform.localScale = Vector3.one;
                 }
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -657,6 +699,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintManaActive.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -674,6 +717,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintOriginWoodland.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -691,6 +735,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintOriginGhost.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -708,6 +753,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintClassMagicAddict.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -725,6 +771,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintClassFlying.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -742,6 +789,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintSpell.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -759,6 +807,7 @@ public class PlayerView : MonoBehaviour
             case ViewType.Field:
                 m_hintSpell.SetActive(true);
                 break;
+
             case ViewType.Wild:
                 m_btnBack.SetActive(true);
                 m_runeStoneBox.gameObject.SetActive(true);
@@ -1045,16 +1094,27 @@ public class PlayerView : MonoBehaviour
                 continue;
             }
 
+            SoundManager.instance.Play(SoundType.TurnHint);
             DiceIcon.DOLocalJump(Vector3.zero, 150f, 1, DiceDuration).OnComplete(() =>
-                DiceIcon.DOScale(DiceScale + Vector3.one * 0.25f, 0.1f).SetDelay(1.5f).OnComplete(() =>
-                    DiceIcon.DOScale(DiceScale, 0.1f).OnComplete(() =>
-                        DiceIcon.DOScale(DiceScale, 0.5f).OnComplete(() =>
+            {
+                DiceIcon
+                    .DOScale(DiceScale + Vector3.one * 0.25f, 0.1f)
+                    .SetDelay(1.5f)
+                    .OnStart(() => SoundManager.instance.Play(SoundType.CardChoice))
+                    .OnComplete(() =>
+                    {
+                        DiceIcon.DOScale(DiceScale, 0.1f).OnComplete(() =>
                         {
-                            UiMaskInfo(false, null);
-                            foreach (var DicePointCheck in DicePoint)
-                                Destroy(DicePointCheck);
-                            OnComplete?.Invoke();
-                        }))));
+                            DiceIcon.DOScale(DiceScale, 0.5f).OnComplete(() =>
+                            {
+                                UiMaskInfo(false, null);
+                                foreach (var DicePointCheck in DicePoint)
+                                    Destroy(DicePointCheck);
+                                OnComplete?.Invoke();
+                            });
+                        });
+                    });
+            });
         }
     }
 
@@ -1072,6 +1132,8 @@ public class PlayerView : MonoBehaviour
         });
 
         m_tmpRuneStone.text = GameManager.instance.PlayerCurrent.RuneStone.ToString() + GameConstant.TMP_ICON_RUNE_STONE;
+
+        SoundManager.instance.Play(SoundType.CardChoice);
     }
 
     private void OnPlayerStunnedCheck(IPlayer Player, Action OnComplete)
@@ -1084,11 +1146,14 @@ public class PlayerView : MonoBehaviour
         NotiPhase(m_notiPhaseStart, OnComplete);
     }
 
-    private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete) { OnComplete?.Invoke(); }
+    private void OnPlayerDoMediate(IPlayer Player, int Value, Action OnComplete)
+    { OnComplete?.Invoke(); }
 
-    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete) { OnComplete?.Invoke(); }
+    private void OnPlayerDoCollect(IPlayer Player, ICard Card, Action OnComplete)
+    { OnComplete?.Invoke(); }
 
-    private void OnCardManaActive(ICard Card, Action OnComplete) { OnComplete?.Invoke(); }
+    private void OnCardManaActive(ICard Card, Action OnComplete)
+    { OnComplete?.Invoke(); }
 
     private void OnPlayerEnd(IPlayer Player, Action OnComplete)
     {
@@ -1122,6 +1187,7 @@ public class PlayerView : MonoBehaviour
     private void OnPlayerStunnedUpdate(IPlayer Player, Action OnComplete)
     {
         m_playerContent.transform.GetChild(Player.Index).GetComponent<PlayerViewButton>().StunUpdate(Player.StunCurrent, OnComplete);
+        SoundManager.instance.Play(SoundType.CardChoice);
     }
 
     //GameEvent - Origin
@@ -1148,12 +1214,16 @@ public class PlayerView : MonoBehaviour
         Noti.SetActive(true);
         Noti.transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
         {
-            NotiAlpha.DOFade(0f, 0.2f).SetDelay(1f);
+            NotiAlpha.DOFade(0f, 0.2f).SetDelay(1f).OnStart(() =>
+            {
+                SoundManager.instance.Play(SoundType.TurnHint);
+            });
             Noti.transform.DOScale(Vector3.one * 2f, 0.2f).SetDelay(1f).OnComplete(() =>
             {
                 OnComplete?.Invoke();
                 Noti.SetActive(false);
             });
         });
+        SoundManager.instance.Play(SoundType.TurnHint);
     }
 }

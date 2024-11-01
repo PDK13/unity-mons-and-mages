@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IPlayer
@@ -30,27 +29,21 @@ public interface IPlayer
 
     ICard CardStaffCurrent { get; }
 
-
     RectTransform PointerLast { get; }
 
     int ProgessMana { get; set; }
 
     ICard ProgessCardChoice { get; set; }
 
-
     void Init(PlayerData Data);
-
 
     void DoStart(); //Start turn
 
-
     void DoMediate(int RuneStoneAdd, Action OnComplete);
-
 
     void DoCollect(ICard Card, Action OnComplete);
 
     void DoBoardReRange(params ICard[] CardIgnore);
-
 
     void DoStaffNext(bool Active); //Move staff Next
 
@@ -62,9 +55,7 @@ public interface IPlayer
 
     void DoStaffRumble(Action OnComplete);
 
-
     void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete);
-
 
     void ProgessCard(ICard Card);
 
@@ -72,9 +63,7 @@ public interface IPlayer
 
     void ProgessCheck(ICard Card = null);
 
-
     void DoEnd(Action OnComplete);
-
 
     void RuneStoneChange(int Value, Action OnComplete);
 

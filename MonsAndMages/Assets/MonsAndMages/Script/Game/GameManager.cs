@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -22,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     [Space]
     [SerializeField][Min(0)] private int m_startIndex = 0;
+
     [SerializeField][Min(0)] private int m_baseIndex = 0;
 
     private TutorialConfig m_tutorialCurrent = null;
@@ -66,6 +65,7 @@ public class GameManager : MonoBehaviour
 
         m_playerQueue = new List<IPlayer>();
         m_playerIndex = m_startIndex;
+
         m_playerChoice = ChoiceType.None;
 
         GameEvent.Init();
@@ -163,7 +163,6 @@ public class GameManager : MonoBehaviour
         });
     } //Camera move to Field and PlayerQueue before start PlayerQueue's turn
 
-
     public void PlayerDoMediateOrCollectChoice(IPlayer Player)
     {
         m_playerChoice = ChoiceType.MediateOrCollect;
@@ -187,7 +186,6 @@ public class GameManager : MonoBehaviour
         Player.DoCollect(Card, () => Player.DoStaffNext(true));
     }
 
-
     public void CardOriginWoodlandChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardOriginWoodland;
@@ -202,7 +200,6 @@ public class GameManager : MonoBehaviour
         GameEvent.UiInfoHide(true, false);
         Card.DoMoveBack(() => Card.DoOriginWoodlandStart());
     }
-
 
     public void CardOriginGhostChoice(ICard Card)
     {
@@ -219,7 +216,6 @@ public class GameManager : MonoBehaviour
         Card.DoMoveBack(() => Card.DoOriginGhostStart());
     }
 
-
     public void PlayerDoCardManaActiveChoice(IPlayer Player)
     {
         m_playerChoice = ChoiceType.CardFullMana;
@@ -234,7 +230,6 @@ public class GameManager : MonoBehaviour
         GameEvent.UiInfoHide(true, false);
         GameEvent.CardActiveMana(Card, () => Card.DoMoveBack(() => Card.DoManaActive(() => Card.Player.ProgessCheck())));
     }
-
 
     public void CardClassMagicAddictChoice(ICard Card)
     {
@@ -251,7 +246,6 @@ public class GameManager : MonoBehaviour
         Card.DoMoveBack(() => Card.DoClassMagicAddictStart());
     }
 
-
     public void CardClassFlyingChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardClassFlying;
@@ -266,7 +260,6 @@ public class GameManager : MonoBehaviour
         GameEvent.UiInfoHide(true, false);
         Card.DoMoveBack(() => Card.DoClassFlyingStart());
     }
-
 
     public void CardSpellChoice(ICard Card)
     {
@@ -283,7 +276,6 @@ public class GameManager : MonoBehaviour
         Card.DoMoveBack(() => Card.DoSpellStart());
     }
 
-
     public void CardEnterChoice(ICard Card)
     {
         m_playerChoice = ChoiceType.CardEnter;
@@ -299,7 +291,6 @@ public class GameManager : MonoBehaviour
         Card.DoMoveBack(() => Card.DoEnterStart());
     }
 
-
     public void PlayerEnd(IPlayer Player)
     {
         m_playerIndex++;
@@ -307,7 +298,6 @@ public class GameManager : MonoBehaviour
             m_playerIndex = 0;
         PlayerCurrentStart();
     }
-
 
     public void TutorialStart()
     {
@@ -339,9 +329,11 @@ public class GameManager : MonoBehaviour
             case TutorialStepType.Box:
                 //...
                 break;
+
             case TutorialStepType.Button:
                 //Progess in Player View script
                 break;
+
             case TutorialStepType.Card:
                 GameEvent.TutorialCard(TutorialStepCurrent.CardValue);
                 break;

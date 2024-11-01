@@ -57,7 +57,6 @@ public class GameView : MonoBehaviour
         }
     }
 
-
     private void OnEnd()
     {
         m_viewType = ViewType.None;
@@ -67,7 +66,6 @@ public class GameView : MonoBehaviour
         m_gameContent.DOKill();
         m_gameContent.localPosition = Vector3.zero;
     }
-
 
     private void OnView(ViewType Type, Action OnComplete)
     {
@@ -97,6 +95,7 @@ public class GameView : MonoBehaviour
                         OnComplete?.Invoke();
                     });
                 break;
+
             case ViewType.Wild:
                 GameEvent.UiChoiceHide();
                 m_gameContent
@@ -122,7 +121,6 @@ public class GameView : MonoBehaviour
             .SetEase(MoveXEase)
             .OnComplete(() => OnComplete?.Invoke());
     }
-
 
     private void OnCardRumble(ICard Card, Action OnComplete)
     {

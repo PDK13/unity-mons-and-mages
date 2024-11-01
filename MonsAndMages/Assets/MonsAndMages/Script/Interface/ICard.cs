@@ -28,7 +28,6 @@ public interface ICard
 
     int AttackCombine { get; } //Tổng sát thương khi tấn công thường
 
-
     RectTransform Pointer { get; set; }
 
     RectTransform Centre { get; set; }
@@ -45,13 +44,11 @@ public interface ICard
 
     bool ClassFlyingManaFull { get; set; }
 
-
     void Init(CardData Data); //Khởi tạo bài
 
     void DoFill(RectTransform Point, RectTransform Centre); //Thêm bài vào khu vực chung
 
     void DoFixed();
-
 
     void DoChoiceReady(); //Lựa chọn sẵn sàng
 
@@ -59,16 +56,13 @@ public interface ICard
 
     void DoChoiceOnce(bool Stage);
 
-
     void DoTutorialReady();
 
     void DoTutorialUnReady();
 
-
     void DoFlipOpen(Action OnComplete); //Lật thẻ bài
 
     void DoFlipClose(Action OnComplete);
-
 
     void DoMoveTop(Action OnComplete); //Di chuyển thẻ bài
 
@@ -78,9 +72,7 @@ public interface ICard
 
     void DoMoveCentreJump(RectTransform Centre, Action OnComplete);
 
-
     void DoRumble(Action OnComplete); //Giậm đất
-
 
     void DoEffectAlpha(Action OnComplete); //Hiệu ứng
 
@@ -92,22 +84,17 @@ public interface ICard
 
     void DoEffectOutlineProgess(Action OnComplete);
 
-
     void DoEffectOrigin(Action OnComplete);
 
     void DoEffectClass(Action OnComplete);
 
-
     void DoTextAttack();
 
-
     void InfoShow(bool Show); //Thông tin hiển thị
-
 
     void DoCollectActive(IPlayer Player, Action OnComplete); //Kích hoạt khi lên sân
 
     bool DoCollectProgess(); //Tiếp tục tiến trình khi lên sân
-
 
     void DoOriginActive(Action OnComplete); //Kích hoạt kĩ năng tộc khi lên sân
 
@@ -127,11 +114,9 @@ public interface ICard
 
     void DoOriginNeutral(Action OnComplete); //Origin Neutral Event
 
-
     void DoEnterActive(Action OnComplete); //Kích hoạt kĩ năng khi lên sân (Biểu tượng sấm sét)
 
     void DoEnterStart();
-
 
     void DoStaffActive(Action OnComplete); //Kích hoạt khi đặt trượng phép
 
@@ -141,11 +126,9 @@ public interface ICard
 
     void DoManaChange(int Value, Action OnComplete); //Nhận năng lượng khi đặt trượng phép
 
-
     void DoManaActive(Action OnComplete); //Kích hoạt kĩ năng khi đủ năng lượng
 
     bool DoManaProgess(); //Tiếp tục tiến trình khi đủ năng lượng
-
 
     void DoClassActive(Action OnComplete); //Kích hoạt kĩ năng hệ khi đủ năng lượng
 

@@ -1,8 +1,6 @@
-using DG.Tweening;
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WildView : MonoBehaviour
 {

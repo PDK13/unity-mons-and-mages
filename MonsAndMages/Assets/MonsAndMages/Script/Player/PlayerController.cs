@@ -3,10 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPlayer
 {
@@ -14,6 +12,7 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     [Space]
     [SerializeField] private GameObject m_cardPoint;
+
     [SerializeField] private RectTransform m_cardContent;
 
     [Space]
@@ -24,14 +23,17 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     [Space]
     [SerializeField] private RectTransform m_runeStoneBox;
+
     [SerializeField] private TextMeshProUGUI m_tmpRuneStone;
 
     [Space]
     [SerializeField] private RectTransform m_stunBox;
+
     [SerializeField] private TextMeshProUGUI m_tmpStun;
 
     [Space]
     [SerializeField] private RectTransform m_healthBox;
+
     [SerializeField] private TextMeshProUGUI m_tmpHealth;
 
     [Space]
@@ -133,13 +135,11 @@ public class PlayerController : MonoBehaviour, IPlayer
 
     public ICard CardStaffCurrent => m_cardQueue[StaffStep];
 
-
     public RectTransform PointerLast => m_cardContent.GetChild(m_cardContent.childCount - 1).GetComponent<RectTransform>();
 
     public ICard ProgessCardChoice { get; set; }
 
     public int ProgessMana { get; set; }
-
 
     public void Init(PlayerData Data)
     {
@@ -177,7 +177,6 @@ public class PlayerController : MonoBehaviour, IPlayer
 
         GameManager.instance.PlayerJoin(this);
     }
-
 
     public void DoStart()
     {
@@ -230,6 +229,8 @@ public class PlayerController : MonoBehaviour, IPlayer
             });
         }).SetDelay(0.25f));
         RuneStoneIconTween.Play();
+
+        SoundManager.instance.Play(SoundType.CardChoice);
     }
 
     private void DoTakeRuneStoneFromMediation(Action OnComplete)
@@ -276,6 +277,8 @@ public class PlayerController : MonoBehaviour, IPlayer
                         });
                     }).SetDelay(0.25f));
                     RuneStoneIconTween.Play();
+
+                    SoundManager.instance.Play(SoundType.CardChoice);
                 });
             }
         }
@@ -293,7 +296,6 @@ public class PlayerController : MonoBehaviour, IPlayer
                 GameManager.instance.PlayerDoMediateOrCollectChoice(this);
         });
     }
-
 
     public void DoMediate(int RuneStoneAdd, Action OnComplete)
     {
@@ -315,7 +317,6 @@ public class PlayerController : MonoBehaviour, IPlayer
                 OnComplete?.Invoke();
         });
     }
-
 
     public void DoCollect(ICard Card, Action OnComplete)
     {
@@ -380,7 +381,6 @@ public class PlayerController : MonoBehaviour, IPlayer
             m_staff.Centre = null;
         m_staff.DoFixed();
     }
-
 
     public void DoStaffNext(bool Active)
     {
@@ -467,7 +467,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         m_staff.DoRumble(OnComplete);
     }
 
-
     public void DoClassFlyingProgess(int IndexFrom, int IndexTo, Action OnComplete)
     {
         var CardFrom = m_cardQueue[IndexFrom];
@@ -493,6 +492,7 @@ public class PlayerController : MonoBehaviour, IPlayer
                     }
                 }
                 break;
+
             case 1:
                 for (int i = IndexFrom + 1; i <= IndexTo; i++)
                 {
@@ -526,7 +526,6 @@ public class PlayerController : MonoBehaviour, IPlayer
         }
         m_cardQueue[IndexTo] = CardFrom;
     }
-
 
     public void ProgessCard(ICard Card)
     {
@@ -571,13 +570,11 @@ public class PlayerController : MonoBehaviour, IPlayer
             DoEnd(() => GameManager.instance.PlayerEnd(this));
     }
 
-
     public void DoEnd(Action OnComplete)
     {
         m_stunCurrent = 0;
         GameEvent.PlayerEnd(this, OnComplete);
     }
-
 
     public void RuneStoneChange(int Value, Action OnComplete)
     {

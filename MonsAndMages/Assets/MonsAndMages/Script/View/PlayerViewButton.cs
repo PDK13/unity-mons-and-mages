@@ -11,6 +11,7 @@ public class PlayerViewButton : MonoBehaviour
 
     [Space]
     [SerializeField] private TextMeshProUGUI m_tmpIndex;
+
     [SerializeField] private TextMeshProUGUI m_tmpHealth;
     [SerializeField] private TextMeshProUGUI m_tmpStun;
 
